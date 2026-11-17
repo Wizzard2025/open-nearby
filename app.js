@@ -114,7 +114,7 @@ const store = {
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
 };
 const S = {
-  lang: store.get('lang') || (/^he/i.test(navigator.language) ? 'he' : /^en/i.test(navigator.language) ? 'en' : 'ru'),
+  lang: store.get('lang') || (/^ru/i.test(navigator.language) ? 'ru' : /^en/i.test(navigator.language) ? 'en' : 'he'),  // иврит по умолчанию
   cat: 'all', me: null, selected: null, view: [], limits: { list: 60, unknown: 60, closed: 40 },
   notices: { loc: null, hebcal: [] }, loaded: false, error: false,
 };

@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ru">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="../img/favicon.ico">
+<style>body{margin:0}</style>
+<title>בטח פתוח · брендбук</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: «лист бренда» — узкая колонка подписей слева, материал справа; полосы на всю ширину для тёмных фонов */
+:root{
+  --bg:#EEF1F4; --surface:#FFFFFF; --ink:#10171C; --muted:#5D6A73; --line:#E2E7EB;
+  --brand:#0A78B0; --open:#12955A; --open-txt:#0F7A4A; --open-bg:#E2F5EA;
+  --soon:#9A5A00; --soon-bg:#FFF0D4; --closed:#B0453C; --closed-bg:#F8E5E2;
+  --band:#0F1615; --band-ink:#E6EEEB;
+  --display:"Rubik","Arial Hebrew","Segoe UI",system-ui,sans-serif;
+  --body:"Rubik","Arial Hebrew","Segoe UI",system-ui,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1014; --surface:#121A20; --ink:#E7EEF2; --muted:#95A4AD; --line:#22303A;
+  --brand:#3CC4F2; --open:#47D38A; --open-txt:#47D38A; --open-bg:#12301F;
+  --soon:#F0B44C; --soon-bg:#382A0E; --closed:#EF8A80; --closed-bg:#381C19;
+  --band:#0A0F13; --band-ink:#E8F6FC; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1014; --surface:#121A20; --ink:#E7EEF2; --muted:#95A4AD; --line:#22303A;
+  --brand:#3CC4F2; --open:#47D38A; --open-txt:#47D38A; --open-bg:#12301F;
+  --soon:#F0B44C; --soon-bg:#382A0E; --closed:#EF8A80; --closed-bg:#381C19;
+  --band:#0A0F13; --band-ink:#E8F6FC; color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body)}
+.in{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+h2{font-size:28px;font-weight:700;letter-spacing:-.01em}
+h3{font-size:17px;font-weight:600}
+p{margin:0;max-width:65ch}
+.muted{color:var(--muted)}
+code,.mono{font-family:var(--mono);font-size:.86em}
+img{max-width:100%;display:block}
+
+/* hero */
+.hero{background:radial-gradient(70% 90% at 90% 0%,rgba(60,196,242,.2),rgba(60,196,242,0) 60%),linear-gradient(180deg,#0E141A,#070B0E);color:#E8F6FC}
+.hero .in{padding-block:56px 48px;display:grid;gap:28px}
+.hero .lockups{display:flex;flex-wrap:wrap;gap:20px 40px;align-items:center}
+.hero .lockups img{height:56px;width:auto}
+.hero p{font-size:19px;color:rgba(255,255,255,.86)}
+.tag{display:inline-flex;gap:.4em;align-items:center;font-weight:600;font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  padding:.35em .8em;border-radius:99px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);color:#fff}
+.hero .meta{display:flex;flex-wrap:wrap;gap:10px}
+
+/* sections */
+section.sec{padding-block:56px;border-bottom:1px solid var(--line)}
+.sec .in{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px 48px}
+.sec .lbl{display:grid;gap:8px;align-content:start}
+.sec .lbl .k{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--brand)}
+.sec .body{display:grid;gap:28px;min-width:0}
+@media (max-width:820px){.sec .in{grid-template-columns:minmax(0,1fr)}}
+
+.tiles{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:14px;align-content:start;min-width:0}
+.tile .stage{display:grid;place-items:center;min-height:120px;border-radius:10px}
+.stage.light{background:#FFFFFF}
+.stage.dark{background:#0E141A}
+.stage.brand{background:#0A78B0}
+.tile .cap{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.stage img.lk{height:48px;width:auto;max-width:92%}
+
+.icons{display:flex;flex-wrap:wrap;gap:28px;align-items:flex-end}
+.icons figure{margin:0;display:grid;gap:8px;justify-items:center}
+.icons figcaption{font-size:12px;color:var(--muted);font-family:var(--mono)}
+
+.rules{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(240px,1fr))}
+.rule{border-left:3px solid var(--open);padding:4px 0 4px 14px}
+.rule.no{border-color:var(--closed)}
+.rule b{display:block;font-weight:600;margin-bottom:2px}
+
+/* colors */
+.sw{display:grid;gap:12px;grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.chip{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--surface);display:grid}
+.chip .c{height:92px}
+.chip .t{padding:12px 14px;display:grid;gap:2px}
+.chip .t b{font-weight:600}
+.chip button{justify-self:start;margin-top:6px;font:500 13px var(--mono);color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:8px;padding:4px 8px;cursor:pointer}
+.chip button:hover{border-color:var(--brand)}
+.chip button:focus-visible,.seg button:focus-visible,.copy:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+
+/* statuses demo */
+.status-row{display:flex;flex-wrap:wrap;gap:10px}
+.st{font-weight:600;font-size:14px;padding:.4em .85em;border-radius:99px;display:inline-flex;align-items:center;gap:.45em}
+.st::before{content:"";width:.55em;height:.55em;border-radius:50%;background:currentColor}
+.st.open{color:var(--open-txt);background:var(--open-bg)}
+.st.soon{color:var(--soon);background:var(--soon-bg)}
+.st.closed{color:var(--closed);background:var(--closed-bg)}
+
+/* type */
+.type{display:grid;gap:18px}
+.spec{display:grid;grid-template-columns:120px minmax(0,1fr);gap:4px 20px;align-items:baseline;border-top:1px solid var(--line);padding-top:14px}
+.spec .m{font-size:12px;color:var(--muted);font-family:var(--mono)}
+@media (max-width:520px){.spec{grid-template-columns:minmax(0,1fr)}}
+
+/* lang switch */
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--surface)}
+.seg button{font:600 14px var(--body);color:var(--muted);background:transparent;border:0;padding:8px 16px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--brand);color:#fff}
+
+/* copy */
+.copyset{display:grid;gap:14px}
+.cp{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;display:grid;gap:8px;min-width:0}
+.cp .h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.cp ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.cp li{display:flex;justify-content:space-between;gap:12px;align-items:baseline}
+.cp li span.txt{min-width:0;overflow-wrap:anywhere}
+.n{font:500 12px var(--mono);color:var(--muted);white-space:nowrap}
+.n.over{color:var(--closed)}
+.copy{font:500 12px var(--body);color:var(--brand);background:transparent;border:1px solid var(--line);border-radius:8px;padding:3px 8px;cursor:pointer;text-transform:none;letter-spacing:0}
+
+/* ads */
+.ads{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));align-items:start}
+.ad{margin:0;display:grid;gap:8px}
+.ad img{border-radius:10px;border:1px solid var(--line);width:100%;height:auto;background:#0B4B47}
+.ad figcaption{font-size:13px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.ad.wide{grid-column:1/-1}
+.ad.wide img{max-width:728px}
+
+/* files */
+.files{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:14px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+td code{white-space:nowrap}
+pre{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto;font:13px/1.6 var(--mono);margin:0}
+footer{padding-block:40px;color:var(--muted);font-size:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="hero">
+  <div class="in">
+    <div class="meta"><span class="tag">Бета · ноябрь 2026</span><span class="tag">Брендбук v1</span></div>
+    <div class="lockups">
+      <img src="logo/logo-he-dark.svg" alt="בטח פתוח">
+      <img src="logo/logo-ru-dark.svg" alt="Точно открыто">
+      <img src="logo/logo-en-dark.svg" alt="Betcha it’s open">
+    </div>
+    <p>«בטח פתוח» (бэтах патуах, «конечно открыто») — карта Израиля, на которой сразу видны все магазины, аптеки, пекарни и заправки, открытые прямо сейчас. По-английски Betcha it’s open, по-русски «Точно открыто»: betach и betcha звучат почти одинаково, это одно имя на трёх языках. Основная аудитория говорит на иврите, поэтому иврит всегда первый.</p>
+  </div>
+</header>
+
+<section class="sec" id="idea">
+  <div class="in">
+    <div class="lbl"><span class="k">Идея</span><h2>Огонёк на карте</h2></div>
+    <div class="body">
+      <p>Знак — метка на карте, внутри которой горит голубая точка с ореолом, как вывеска с включённым светом. Та же точка светится в шапке приложения рядом с названием. На иконке вокруг метки расходятся круги, как от радара: приложение само находит, что открыто вокруг.</p>
+      <p>В названии слово «открыто» на каждом языке горит голубым: פתוח, открыто, open. Статусы магазинов в интерфейсе остаются в своих цветах: зелёный, янтарный, красный.</p>
+      <div class="status-row" aria-label="Статусы приложения">
+        <span class="st open">פתוח עד 23:00</span><span class="st soon">Закроется через 9 мин</span><span class="st closed">Closed · opens 07:00</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="logo">
+  <div class="in">
+    <div class="lbl"><span class="k">Логотип</span><h2>Три языка, три фона</h2><p class="muted">Надписи переведены в кривые: файлы выглядят одинаково на любом компьютере.</p></div>
+    <div class="body">
+      <div class="tiles">
+        <div class="tile"><div class="stage light"><img class="lk" src="logo/logo-he-light.svg" alt="בטח פתוח, светлая версия"></div><div class="cap"><span>Иврит · светлый</span><code>logo-he-light</code></div></div>
+        <div class="tile"><div class="stage light"><img class="lk" src="logo/logo-ru-light.svg" alt="Точно открыто, светлая версия"></div><div class="cap"><span>Русский · светлый</span><code>logo-ru-light</code></div></div>
+        <div class="tile"><div class="stage light"><img class="lk" src="logo/logo-en-light.svg" alt="Betcha it’s open, светлая версия"></div><div class="cap"><span>English · светлый</span><code>logo-en-light</code></div></div>
+        <div class="tile"><div class="stage dark"><img class="lk" src="logo/logo-he-dark.svg" alt="בטח פתוח, тёмная версия"></div><div class="cap"><span>Иврит · тёмный</span><code>logo-he-dark</code></div></div>
+        <div class="tile"><div class="stage dark"><img class="lk" src="logo/logo-ru-dark.svg" alt="Точно открыто, тёмная версия"></div><div class="cap"><span>Русский · тёмный</span><code>logo-ru-dark</code></div></div>
+        <div class="tile"><div class="stage dark"><img class="lk" src="logo/logo-en-dark.svg" alt="Betcha it’s open, тёмная версия"></div><div class="cap"><span>English · тёмный</span><code>logo-en-dark</code></div></div>
+        <div class="tile"><div class="stage brand"><img class="lk" src="logo/logo-he-white.svg" alt="בטח פתוח, белая версия"></div><div class="cap"><span>Белый · на фото и цвете</span><code>logo-*-white</code></div></div>
+      </div>
+      <div class="rules">
+        <div class="rule"><b>Свободное поле</b>Вокруг логотипа оставляйте пустое место не меньше высоты зелёной точки.</div>
+        <div class="rule"><b>Минимальный размер</b>Логотип — от 24 px в высоту. Мельче используйте только знак.</div>
+        <div class="rule"><b>На фотографиях</b>Белая версия, на спокойном тёмном участке кадра.</div>
+        <div class="rule no"><b>Нельзя</b>Перекрашивать слова, растягивать, добавлять тени и обводки, менять шрифт.</div>
+        <div class="rule no"><b>Нельзя</b>Ставить цветной логотип на пёстрый фон или на зелёный.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="icon">
+  <div class="in">
+    <div class="lbl"><span class="k">Иконка</span><h2>Знак и иконка приложения</h2><p class="muted">Для 16–48 px есть упрощённая версия без ореола.</p></div>
+    <div class="body">
+      <div class="icons">
+        <figure><img src="logo/icon.svg" width="128" height="128" alt="Иконка приложения"><figcaption>icon · 128</figcaption></figure>
+        <figure><img src="logo/icon-maskable.svg" width="96" height="96" style="border-radius:50%" alt="Иконка для Android"><figcaption>maskable · 96</figcaption></figure>
+        <figure><img src="logo/icon.svg" width="64" height="64" alt=""><figcaption>64</figcaption></figure>
+        <figure><img src="logo/icon-simple.svg" width="32" height="32" alt=""><figcaption>32</figcaption></figure>
+        <figure><img src="logo/icon-simple.svg" width="16" height="16" alt=""><figcaption>16</figcaption></figure>
+        <figure><img src="logo/mark.svg" height="96" style="height:96px;width:auto" alt="Знак"><figcaption>mark</figcaption></figure>
+        <figure><img src="logo/mark-black.svg" style="height:64px;width:auto" alt="Знак, одноцветный"><figcaption>mono</figcaption></figure>
+      </div>
+      <p class="muted">Для сторов уже готовы квадраты без прозрачности: <code>store-google-play-512.png</code> и <code>store-app-store-1024.png</code>. Скругление углов сторы сделают сами.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="color">
+  <div class="in">
+    <div class="lbl"><span class="k">Цвет</span><h2>Палитра</h2><p class="muted">Совпадает с приложением. Нажмите на код, чтобы скопировать.</p></div>
+    <div class="body">
+      <div class="sw" id="swatches"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="type">
+  <div class="in">
+    <div class="lbl"><span class="k">Шрифт</span><h2>Rubik</h2><p class="muted">Один шрифт на три алфавита: иврит, кириллица, латиница. Бесплатный, Google Fonts.</p></div>
+    <div class="body type">
+      <div class="spec"><span class="m">700 · заголовки</span><span style="font:700 40px/1.1 var(--display)">מה פתוח לידך עכשיו</span></div>
+      <div class="spec"><span class="m">700 · заголовки</span><span style="font:700 32px/1.15 var(--display)">Что открыто рядом</span></div>
+      <div class="spec"><span class="m">600 · статусы, кнопки</span><span style="font:600 20px var(--body)">Open until 23:00 · Закроется через 9 мин</span></div>
+      <div class="spec"><span class="m">400 · текст</span><span style="font:400 17px/1.55 var(--body)">Продукты, аптеки, пекарни и заправки. Шаббат и праздники уже учтены.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="voice">
+  <div class="in">
+    <div class="lbl"><span class="k">Тексты</span><h2>Голос и готовая реклама</h2><p class="muted">Коротко и по делу. В иврите на кнопках инфинитив (לפתוח), в тексте обращение во множественном числе; в русском на «вы». Счётчик показывает длину и лимит площадки.</p></div>
+    <div class="body">
+      <div class="seg" role="group" aria-label="Язык текстов">
+        <button type="button" id="cl-he" data-l="he">עברית</button><button type="button" id="cl-ru" data-l="ru">Русский</button><button type="button" id="cl-en" data-l="en">English</button>
+      </div>
+      <div class="copyset" id="copyset"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="ads">
+  <div class="in">
+    <div class="lbl"><span class="k">Реклама</span><h2>Готовые макеты</h2><p class="muted">Пост, сторис, превью ссылки и два баннера под Google Ads. Ссылка в макетах ведёт на сайт на GitHub Pages.</p></div>
+    <div class="body">
+      <div class="seg" role="group" aria-label="Язык макетов">
+        <button type="button" id="al-he" data-l="he">עברית</button><button type="button" id="al-ru" data-l="ru">Русский</button><button type="button" id="al-en" data-l="en">English</button>
+      </div>
+      <div class="ads" id="adgrid"></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="files">
+  <div class="in">
+    <div class="lbl"><span class="k">Файлы</span><h2>Что куда</h2></div>
+    <div class="body">
+      <div class="files"><table>
+        <thead><tr><th>Задача</th><th>Файл</th><th>Размер</th></tr></thead>
+        <tbody>
+          <tr><td>Иконка во вкладке браузера</td><td><code>png/favicon.ico</code>, <code>logo/icon-simple.svg</code></td><td>16, 32, 48</td></tr>
+          <tr><td>Иконка PWA и Android</td><td><code>png/icon-192.png</code>, <code>png/icon-512.png</code>, <code>png/icon-maskable-512.png</code></td><td>192, 512</td></tr>
+          <tr><td>Иконка на iPhone</td><td><code>png/apple-touch-icon.png</code></td><td>180</td></tr>
+          <tr><td>Google Play / App Store</td><td><code>png/store-google-play-512.png</code>, <code>png/store-app-store-1024.png</code></td><td>512, 1024</td></tr>
+          <tr><td>Превью ссылки в WhatsApp, Telegram, Facebook</td><td><code>ads/og-1200x630-he.png</code> (на сайте: <code>img/og.png</code>)</td><td>1200×630</td></tr>
+          <tr><td>Instagram, Facebook, Telegram пост</td><td><code>ads/post-1080x1080-*.png</code></td><td>1080×1080</td></tr>
+          <tr><td>Сторис, Reels, TikTok</td><td><code>ads/story-1080x1920-*.png</code></td><td>1080×1920</td></tr>
+          <tr><td>Google Ads, медийная сеть</td><td><code>ads/banner-300x250-*.png</code>, <code>ads/banner-728x90-*.png</code></td><td>300×250, 728×90</td></tr>
+          <tr><td>Логотип для документов и сайтов</td><td><code>logo/logo-{he,ru,en}-{light,dark,white}.svg</code>, PNG в <code>png/</code></td><td>вектор, PNG ×2</td></tr>
+        </tbody>
+      </table></div>
+      <h3>Подключение на сайте</h3>
+<pre>&lt;link rel="icon" href="img/favicon.ico" sizes="48x48"&gt;
+&lt;link rel="icon" href="img/icon.svg" type="image/svg+xml"&gt;
+&lt;link rel="apple-touch-icon" href="img/apple-touch-icon.png"&gt;
+&lt;meta name="theme-color" content="#0E141A"&gt;
+&lt;meta property="og:image" content="https://wizzard2025.github.io/open-nearby/img/og.png"&gt;</pre>
+    </div>
+  </div>
+</section>
+
+<footer><div class="in">בטח פתוח · Betcha it’s open · Точно открыто. Исходники логотипов и макетов собираются скриптами <code>_src/make_logos.py</code> и <code>_src/render_all.py</code>: поменяли текст — перегенерировали.</div></footer>
+
+<script>
+const COLORS=[
+  ["#0E141A","Графит","Фон иконки и шапки приложения"],
+  ["#3CC4F2","Голубой огонёк","Точка в знаке, слово «открыто», кнопки"],
+  ["#0A78B0","Глубокий голубой","Акцент на светлом фоне"],
+  ["#12955A","Зелёный","Статус «открыто»"],
+  ["#B46A00","Янтарь","Статус «скоро закроется»"],
+  ["#B0453C","Кирпич","Статус «закрыто»"],
+  ["#E8F6FC","Лёд","Текст на тёмном фоне"]
+];
+const sw=document.getElementById("swatches");
+COLORS.forEach(([hex,name,role])=>{
+  const d=document.createElement("div");d.className="chip";
+  d.innerHTML=`<div class="c" style="background:${hex}"></div><div class="t"><b>${name}</b><span class="muted" style="font-size:13px">${role}</span><button type="button" aria-label="Скопировать ${hex}">${hex}</button></div>`;
+  sw.appendChild(d);
+});
+
+function copyText(btn,text){
+  const done=()=>{const o=btn.textContent;btn.textContent="Скопировано";setTimeout(()=>btn.textContent=o,1200)};
+  try{navigator.clipboard.writeText(text).then(done,()=>sel(btn))}catch(e){sel(btn)}
+}
+function sel(btn){const r=document.createRange();r.selectNodeContents(btn.closest("li")||btn);const s=getSelection();s.removeAllRanges();s.addRange(r)}
+sw.addEventListener("click",e=>{const b=e.target.closest("button");if(b)copyText(b,b.textContent)});
+
+const COPY={
+ he:{dir:"rtl",blocks:[
+  ["Слоган",0,["לא צריך לחפש מה פתוח","הנה כולם, על מפה אחת"]],
+  ["Google Ads · заголовки",30,["מה פתוח עכשיו לידך?","סופר פתוח עכשיו","בית מרקחת פתוח עכשיו","מה פתוח בשבת?","בטח פתוח, בחינם"]],
+  ["Google Ads · описания",90,["כל החנויות שפתוחות עכשיו לידך על מפה אחת: סופר, מאפייה, בית מרקחת ודלק.","רואים עד מתי כל מקום פתוח. שבת וחגים מחושבים. בחינם, בלי התקנה."]],
+  ["Facebook / Instagram · основной текст",125,["לא צריך לחפש מה פתוח. הנה כולם, על מפה אחת: חנויות, בתי מרקחת, מאפיות ותחנות דלק שפתוחים עכשיו לידכם."]],
+  ["Facebook / Instagram · заголовок",40,["לא צריך לחפש מה פתוח"]],
+  ["Кнопка",0,["לפתוח בחינם","לפתוח את המפה"]]]},
+ ru:{dir:"ltr",blocks:[
+  ["Слоган",0,["Не ищите, где открыто","Вот они все, на одной карте"]],
+  ["Google Ads · заголовки",30,["Где сейчас открыто?","Аптека открыта сейчас?","Что открыто в шаббат?","Точно открыто, бесплатно"]],
+  ["Google Ads · описания",90,["Все открытые магазины рядом на одной карте: продукты, аптеки, пекарни, заправки.","Видно, до скольки работает каждое место. Шаббат учтён. Бесплатно, без установки."]],
+  ["Facebook / Instagram · основной текст",125,["Не ищите, где открыто. Вот они все, на одной карте: магазины, аптеки, пекарни и заправки рядом с вами."]],
+  ["Facebook / Instagram · заголовок",40,["Не ищите, где открыто"]],
+  ["Кнопка",0,["Открыть бесплатно","Открыть карту"]]]},
+ en:{dir:"ltr",blocks:[
+  ["Tagline",0,["Stop searching for what’s open","Here they all are, on one map"]],
+  ["Google Ads · headlines",30,["What’s open near me now?","Pharmacy open right now?","What’s open on Shabbat?","Betcha it’s open. Free."]],
+  ["Google Ads · descriptions",90,["Every shop open near you right now on one map: groceries, bakeries, pharmacies, gas.","See closing times at a glance. Shabbat and holidays handled. Free, nothing to install."]],
+  ["Facebook / Instagram · primary text",125,["Stop searching for what’s open. Here they all are, on one map: shops, pharmacies, bakeries and gas near you."]],
+  ["Facebook / Instagram · headline",40,["Stop searching for what’s open"]],
+  ["Button",0,["Open it free","Open the map"]]]}
+};
+const cs=document.getElementById("copyset");
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+function renderCopy(l){
+  const c=COPY[l];cs.innerHTML="";
+  c.blocks.forEach(([title,limit,items])=>{
+    const d=document.createElement("div");d.className="cp";
+    d.innerHTML=`<div class="h"><span>${title}</span>${limit?`<span class="n">лимит ${limit}</span>`:""}</div><ul dir="${c.dir}">${items.map(t=>{
+      const n=[...t].length;return `<li><span class="txt">${esc(t)}</span><span style="display:flex;gap:8px;align-items:center;direction:ltr"><span class="n${limit&&n>limit?" over":""}">${n}${limit?"/"+limit:""}</span><button type="button" class="copy">копировать</button></span></li>`}).join("")}</ul>`;
+    cs.appendChild(d);
+  });
+}
+cs.addEventListener("click",e=>{const b=e.target.closest(".copy");if(b)copyText(b,b.closest("li").querySelector(".txt").textContent)});
+
+const ADS=[["post-1080x1080","Пост 1080×1080"],["story-1080x1920","Сторис 1080×1920"],["og-1200x630","Превью ссылки 1200×630"],["banner-300x250","Баннер 300×250"],["banner-728x90","Баннер 728×90","wide"]];
+const ag=document.getElementById("adgrid");
+function renderAds(l){
+  ag.innerHTML=ADS.map(([f,cap,cls])=>`<figure class="ad ${cls||""}"><img src="ads/${f}-${l}.png" alt="${cap}" loading="lazy"><figcaption><span>${cap}</span><code>${f}-${l}.png</code></figcaption></figure>`).join("");
+}
+function bindSeg(prefix,fn,key){
+  const btns=[...document.querySelectorAll(`[id^="${prefix}-"]`)];
+  const set=l=>{btns.forEach(b=>b.setAttribute("aria-pressed",b.dataset.l===l));fn(l);try{localStorage.setItem(key,l)}catch(e){}};
+  btns.forEach(b=>b.addEventListener("click",()=>set(b.dataset.l)));
+  let start="he";try{start=localStorage.getItem(key)||"he"}catch(e){}
+  if(!COPY[start])start="he";set(start);
+}
+bindSeg("cl",renderCopy,"bb-copy-lang");
+bindSeg("al",renderAds,"bb-ads-lang");
+</script>

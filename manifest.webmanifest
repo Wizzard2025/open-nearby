@@ -1,10 +1,13 @@
 {
-  "name": "Открыто рядом",
+  "name": "Открыто рядом — Pixel Studio",
   "short_name": "Открыто",
   "description": "Какие магазины открыты прямо сейчас рядом с вами",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#f3f5f2",
-  "theme_color": "#0f5f5a",
-  "icons": [{ "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }]
+  "background_color": "#0e141a",
+  "theme_color": "#0e141a",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
 }

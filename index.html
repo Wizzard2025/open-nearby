@@ -3,11 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0f5f5a">
+<meta name="theme-color" content="#0e141a">
 <title>Открыто рядом</title>
 <meta name="description" content="Какие магазины открыты прямо сейчас рядом с вами — продукты, пекарни, аптеки, заправки. Израиль.">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="icon" href="img/favicon.ico" sizes="48x48">
+<link rel="icon" href="img/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
@@ -17,7 +19,10 @@
 <body>
 <header class="top">
   <div class="brand">
-    <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="18" rx="4" fill="currentColor"/><path d="M8 9V7a8 8 0 0 1 16 0v2" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="16" cy="18" r="4" fill="var(--open)"/></svg>
+    <picture>
+      <source srcset="img/pixel-studio.webp" type="image/webp">
+      <img class="logo" src="img/pixel-studio.png" width="108" height="48" alt="Pixel Studio">
+    </picture>
     <h1 data-i18n="title">Открыто рядом</h1>
   </div>
   <div class="langs" role="group" aria-label="Language">

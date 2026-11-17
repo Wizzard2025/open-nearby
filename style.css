@@ -5,8 +5,10 @@
   --ink: #15201e;
   --muted: #5c6a66;
   --line: #dce3df;
-  --brand: #0f5f5a;
+  --brand: #0a78b0;
   --brand-ink: #ffffff;
+  --header: #0e141a;
+  --header-ink: #e8f6fc;
   --open: #1f9d55;
   --open-bg: #e3f5ea;
   --soon: #b86e00;
@@ -21,7 +23,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #0f1615; --surface: #172120; --ink: #e6eeeb; --muted: #9aaba6; --line: #26332f;
-    --brand: #3fb3a8; --brand-ink: #06201d;
+    --brand: #3cc4f2; --brand-ink: #04141d; --header: #0a0f13; --header-ink: #e8f6fc;
     --open: #4fd38a; --open-bg: #143323; --soon: #f0b44c; --soon-bg: #3a2a0c;
     --closed: #ef8a80; --closed-bg: #3a1c19; --unknown: #a2b0ac; --unknown-bg: #222c2a;
     color-scheme: dark;
@@ -29,7 +31,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #0f1615; --surface: #172120; --ink: #e6eeeb; --muted: #9aaba6; --line: #26332f;
-  --brand: #3fb3a8; --brand-ink: #06201d;
+  --brand: #3cc4f2; --brand-ink: #04141d; --header: #0a0f13; --header-ink: #e8f6fc;
   --open: #4fd38a; --open-bg: #143323; --soon: #f0b44c; --soon-bg: #3a2a0c;
   --closed: #ef8a80; --closed-bg: #3a1c19; --unknown: #a2b0ac; --unknown-bg: #222c2a;
   color-scheme: dark;
@@ -50,17 +52,19 @@ button, select, input { font: inherit; color: inherit; }
   position: sticky; top: 0; z-index: 1000;
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
-  background: var(--brand); color: var(--brand-ink);
+  background: var(--header); color: var(--header-ink);
+  border-bottom: 1px solid rgb(60 196 242 / 0.25);
 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.logo { width: 28px; height: 28px; flex: none; }
+.logo { display: block; height: 40px; width: auto; flex: none; }
+.brand picture { flex: none; line-height: 0; }
 h1 { margin: 0; font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em; white-space: nowrap; }
-.langs { display: flex; gap: 2px; background: rgb(0 0 0 / 0.15); border-radius: 999px; padding: 3px; }
+.langs { display: flex; gap: 2px; background: rgb(255 255 255 / 0.08); border-radius: 999px; padding: 3px; }
 .langs button {
   border: 0; background: transparent; color: inherit; padding: 4px 10px; border-radius: 999px;
   font-size: 0.8rem; font-weight: 600; cursor: pointer; letter-spacing: 0.03em;
 }
-.langs button[aria-pressed="true"] { background: var(--brand-ink); color: var(--brand); }
+.langs button[aria-pressed="true"] { background: #3cc4f2; color: #04141d; }
 
 .app { display: flex; flex-direction: column; }
 .panel {

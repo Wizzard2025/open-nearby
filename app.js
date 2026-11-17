@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    walkBtn: 'Пешком', routeTitle: '{m} мин пешком · {d}', fromCenter: 'от центра карты — включите геолокацию ➤', shadeBtn: '☀ По тени', shadeCalc: 'Считаю тень…', shadePct: 'в тени ≈ {p}%', shadeFail: 'тень сейчас посчитать не удалось', shadeNight: 'солнца нет — тень не нужна', hotNote: 'жарко {t}° — выбран путь по тени', routeFail: 'Не удалось построить маршрут. Попробуйте ещё раз.', ringMin: '{m} мин',
   },
   he: {
     title: 'פתוח קרוב', pickCity: 'עיר…', kicker: 'פתוח עכשיו',
@@ -45,6 +46,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    walkBtn: 'ברגל', routeTitle: '{m} דק׳ הליכה · {d}', fromCenter: 'ממרכז המפה — הפעילו מיקום ➤', shadeBtn: '☀ בצל', shadeCalc: 'מחשב צל…', shadePct: 'בצל ≈ {p}%', shadeFail: 'לא הצלחנו לחשב צל כרגע', shadeNight: 'אין שמש — אין צורך בצל', hotNote: 'חם {t}° — נבחר מסלול מוצל', routeFail: 'לא הצלחנו לבנות מסלול. נסו שוב.', ringMin: '{m} דק׳',
   },
   en: {
     title: 'Open Nearby', pickCity: 'City…', kicker: 'Open right now',
@@ -66,6 +68,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    walkBtn: 'Walk', routeTitle: '{m} min walk · {d}', fromCenter: 'from the map centre — turn on location ➤', shadeBtn: '☀ Shady way', shadeCalc: 'Working out shade…', shadePct: '≈ {p}% in shade', shadeFail: "couldn't work out shade right now", shadeNight: 'no sun — no shade needed', hotNote: 'hot {t}° — shady path chosen', routeFail: "Couldn't build a route. Try again.", ringMin: '{m} min',
   },
 };
 const CITIES = [
@@ -298,10 +301,77 @@ function drawMarkers(openL, unkL, closedL) {
     }
   }
 }
+let ringLayer;
 function drawMe() {
   if (!S.me) return;
   if (meMarker) meMarker.setLatLng([S.me.lat, S.me.lon]);
   else meMarker = L.marker([S.me.lat, S.me.lon], { icon: L.divIcon({ className: '', html: '<div class="me-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false, zIndexOffset: 1000 }).addTo(map);
+  // Walking-distance rings: 5 / 10 / 15 minutes at ~80 m per minute.
+  if (ringLayer) ringLayer.remove();
+  ringLayer = L.layerGroup().addTo(map);
+  for (const min of [5, 10, 15]) {
+    const r = min * 80;
+    L.circle([S.me.lat, S.me.lon], { radius: r, color: '#2a7fff', weight: 1.5, opacity: 0.55, dashArray: '5 6', fill: min === 5, fillOpacity: 0.05, interactive: false }).addTo(ringLayer);
+    const lat = S.me.lat + r / 111320;
+    L.tooltip({ permanent: true, direction: 'center', className: 'ring-label', interactive: false }).setLatLng([lat, S.me.lon]).setContent(esc(t('ringMin', { m: min }))).addTo(ringLayer);
+  }
+}
+
+// ---------- walking route ----------
+let routeLayer = null;
+const RT = { target: null, wantShade: false, seq: 0 };
+function clearRoute() {
+  if (routeLayer) routeLayer.remove();
+  routeLayer = null; RT.target = null;
+  $('#routeBox').hidden = true;
+}
+async function showRoute(it) {
+  RT.target = it;
+  const seq = ++RT.seq;
+  const from = S.me || { lat: map.getCenter().lat, lon: map.getCenter().lng };
+  const box = $('#routeBox');
+  box.hidden = false;
+  $('#routeTitle').textContent = nameOf(it);
+  $('#routeSub').textContent = '…';
+  $('#shadeBtn').textContent = t('shadeBtn');
+  $('#shadeBtn').setAttribute('aria-pressed', String(RT.wantShade));
+  if (!wide() && sheet().dataset.state === 'full') setSheet('half');
+  let res;
+  try {
+    // ?at=HH:MM simulates another time of day (for demos and testing shade at night).
+    const atQ = new URLSearchParams(location.search).get('at');
+    let at;
+    if (atQ && /^\d{1,2}(:\d{2})?$/.test(atQ)) { at = new Date(); const [h, m] = atQ.split(':'); at.setHours(+h, +(m || 0), 0, 0); }
+    const p = Route.plan(from, { lat: it.lat, lon: it.lon }, { wantShade: RT.wantShade, at });
+    // Draw the plain route quickly; shade (needs building data) may take a few seconds more.
+    res = await p;
+  } catch {
+    if (seq === RT.seq) $('#routeSub').textContent = t('routeFail');
+    return;
+  }
+  if (seq !== RT.seq) return;
+  if (routeLayer) routeLayer.remove();
+  routeLayer = L.layerGroup().addTo(map);
+  res.routes.forEach((r, i) => {
+    if (i === res.chosen) return;
+    L.polyline(r.coords, { color: cssVar('--unknown'), weight: 5, opacity: 0.45, dashArray: '2 8', lineCap: 'round' }).addTo(routeLayer);
+  });
+  const ch = res.routes[res.chosen];
+  const shady = res.shade != null;
+  L.polyline(ch.coords, { color: '#ffffff', weight: 10, opacity: 0.9, lineCap: 'round' }).addTo(routeLayer);
+  L.polyline(ch.coords, { color: shady ? '#2f9e5b' : cssVar('--brand'), weight: 6, opacity: 1, lineCap: 'round' }).addTo(routeLayer);
+  const pad = wide() ? [[440, 90], [40, 40]] : [[30, 90], [30, Math.round(window.innerHeight * 0.5) + 20]];
+  map.fitBounds(L.latLngBounds(ch.coords), { paddingTopLeft: pad[0], paddingBottomRight: pad[1], maxZoom: 17 });
+
+  const mins = Math.max(1, Math.round(ch.duration / 60));
+  $('#routeTitle').textContent = `${nameOf(it)} · ${t('routeTitle', { m: mins, d: fmtDist(ch.distance) })}`;
+  const sub = [];
+  if (!S.me) sub.push(t('fromCenter'));
+  if (shady) sub.push((res.hot && !RT.wantShade ? t('hotNote', { t: res.temp }) + ' · ' : '') + t('shadePct', { p: Math.round(res.shade * 100) }));
+  else if ((RT.wantShade || res.hot) && !res.sunUp) sub.push(t('shadeNight'));
+  else if (res.shadeFailed) sub.push(t('shadeFail'));
+  $('#routeSub').textContent = sub.join(' · ');
+  track('route-inapp', `walk · ${it.cat}${shady ? ' · shade' : ''}`);
 }
 
 // ---------- sheet (phone) ----------
@@ -384,7 +454,8 @@ function shopHTML(it, now) {
     if (st.oh) more.push(weekTable(st.oh, now));
     if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p>`);
     const acts = [
-      `<a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${it.lat},${it.lon}" target="_blank" rel="noopener">${esc(t('route'))}</a>`,
+      `<button type="button" class="walk" data-walk="${esc(it.id)}">🚶 ${esc(t('walkBtn'))}</button>`,
+      `<a href="https://www.google.com/maps/dir/?api=1&destination=${it.lat},${it.lon}" target="_blank" rel="noopener">${esc(t('route'))}</a>`,
       `<a href="https://waze.com/ul?ll=${it.lat},${it.lon}&navigate=yes" target="_blank" rel="noopener">${esc(t('waze'))}</a>`,
     ];
     const phone = tg.phone || tg['contact:phone'];
@@ -487,6 +558,11 @@ function locate(isAuto) {
 }
 function showLocErr() { S.notices.loc = { cls: 'err', text: t('geoFail') }; renderNotices(); }
 
+// ---------- analytics (GoatCounter: cookie-free, no personal data) ----------
+function track(path, title) {
+  try { window.goatcounter?.count?.({ path, title, event: true }); } catch {}
+}
+
 // ---------- wire up ----------
 async function init() {
   applyLang();
@@ -497,7 +573,12 @@ async function init() {
   initSheet();
   $('#list').innerHTML = '<li class="skeleton"></li><li class="skeleton"></li><li class="skeleton"></li>';
 
-  $('#locate').addEventListener('click', () => locate(false));
+  $('#locate').addEventListener('click', () => { track('click-locate', 'near me'); locate(false); });
+  $('#routeClose').addEventListener('click', clearRoute);
+  $('#shadeBtn').addEventListener('click', () => {
+    RT.wantShade = !RT.wantShade;
+    if (RT.target) showRoute(RT.target);
+  });
   $('#city').addEventListener('change', (e) => {
     const c = CITIES.find((x) => x[0] === e.target.value);
     if (c) { map.setView([c[1], c[2]], 15); loadHebcal(c[1], c[2]); }
@@ -515,7 +596,16 @@ async function init() {
   });
   for (const id of ['#unknownBox', '#closedBox']) $(id).addEventListener('toggle', refresh);
   $('#scroller').addEventListener('click', (e) => {
+    const a = e.target.closest('.actions a');
+    if (a) {
+      // Count "went to the shop" actions in GoatCounter (no personal data: only which button and chain category).
+      const kind = a.href.includes('google.com/maps') ? 'route' : a.href.startsWith('tel:') ? 'call' : 'waze';
+      const it = S.view.find((x) => x.id === S.selected);
+      track(`click-${kind}`, `${kind} · ${it ? it.cat : ''}`);
+    }
     if (e.target.closest('a')) return;
+    const walk = e.target.closest('[data-walk]');
+    if (walk) { const it = S.view.find((x) => x.id === walk.dataset.walk); if (it) showRoute(it); return; }
     const more = e.target.closest('[data-more]');
     if (more) { S.limits[more.dataset.more] += 60; refresh(); return; }
     if (e.target.closest('[data-zoomout]')) { map.zoomOut(2); return; }

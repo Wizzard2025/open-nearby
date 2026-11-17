@@ -19,7 +19,9 @@ python -m http.server 8765
 ```
 Затем откройте http://localhost:8765.
 
-Обновить данные: `python tools/update_data.py`. Скачивается вся страна, около 5000 точек, примерно 1 минута.
+Ежедневное обновление часов сетей идёт с компьютера в Израиле: задача Windows «OpenNearby daily refresh» запускает `tools/daily_refresh.ps1`, лог пишется в `%LOCALAPPDATA%\open-nearby\refresh.log`. Серверы GitHub сайты сетей блокируют, поэтому ночной запуск на GitHub обновляет только OpenStreetMap и берёт часы сетей из последней копии в `data/chains/`.
+
+Обновить данные вручную: `python tools/update_data.py`. Скачивается вся страна, около 5000 точек, примерно 1 минута.
 
 ## Данные: честная картина
 

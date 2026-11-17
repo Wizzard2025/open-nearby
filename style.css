@@ -1,5 +1,5 @@
 /* Layout: the map fills the screen. Phone: a draggable bottom sheet (peek / half / full) holds the answer and the list.
-   Wide screens: the sheet becomes a floating panel on the left. A graphite top bar carries the Spot On wordmark. */
+   Wide screens: the sheet becomes a floating panel on the left. A graphite top bar carries the בטח פתוח wordmark. */
 :root {
   --bg: #eef1f4;
   --surface: #ffffff;

@@ -1,6 +1,6 @@
 {
-  "name": "Открыто рядом — Spot On",
-  "short_name": "Открыто",
+  "name": "בטח פתוח · Betcha it's open",
+  "short_name": "בטח פתוח",
   "description": "Какие магазины открыты прямо сейчас рядом с вами",
   "start_url": "./",
   "display": "standalone",

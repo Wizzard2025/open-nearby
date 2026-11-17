@@ -21,6 +21,8 @@
   .wrap { width: 100%; height: 100%; display: flex; gap: 48px; align-items: center; padding: 56px 64px; }
   .copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
   .logo { align-self: flex-start; display: inline-flex; align-items: center; gap: 12px; font-size: 30px; font-weight: 800; color: var(--glow); padding: 10px 20px 10px 16px; border-radius: 16px; background: rgb(60 196 242 / 0.1); border: 1.5px solid rgb(60 196 242 / 0.4); }
+  .logo .tagline { font-weight: 500; font-size: 0.62em; color: var(--muted); padding-inline-start: 6px; border-inline-start: 1.5px solid rgb(60 196 242 / 0.35); margin-inline-start: 4px; }
+  .logo .tagline:empty { display: none; }
   .logo .dot { width: 18px; height: 18px; border-radius: 50%; background: var(--glow); box-shadow: 0 0 0 5px rgb(60 196 242 / 0.25), 0 0 18px var(--glow); }
   h1 { font-weight: 900; font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; }
   h1 em { font-style: normal; color: var(--glow); }
@@ -70,7 +72,7 @@
 <body>
 <div class="wrap">
   <div class="copy">
-    <span class="logo"><span class="dot"></span>Spot On</span>
+    <span class="logo"><span class="dot"></span><span dir="rtl">בטח פתוח</span><span class="tagline" id="tag"></span></span>
     <h1 id="h1"></h1>
     <p class="sub" id="sub"></p>
     <div class="list" id="list"></div>
@@ -94,6 +96,7 @@
   document.getElementById('sub').textContent = T.sub;
   document.getElementById('list').innerHTML = T.list.map((x) => `<span>${x}</span>`).join('');
   document.getElementById('cta').textContent = T.cta;
+  document.getElementById('tag').textContent = { ru: 'Точно открыто', he: "Betcha it's open" }[l] || '';
   document.getElementById('shot').src = `app-shot-${l}.png`;
 </script>
 </body>

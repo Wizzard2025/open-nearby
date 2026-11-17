@@ -8,7 +8,8 @@ $logDir = Join-Path $env:LOCALAPPDATA 'open-nearby'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 $log = Join-Path $logDir 'refresh.log'
 
-function Log([string]$msg) { Add-Content -Path $log -Value $msg -Encoding UTF8; Write-Output $msg }
+# Write-Host (not Write-Output) so log lines never mix into a function's return value.
+function Log([string]$msg) { Add-Content -Path $log -Value $msg -Encoding UTF8; Write-Host $msg }
 # Runs a program, writes everything it prints to the log, returns its exit code.
 function Run([string]$exe, [string[]]$arguments) {
     & $exe @arguments 2>&1 | ForEach-Object { Log "  $_" }

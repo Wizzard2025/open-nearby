@@ -5,25 +5,36 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#0e141a">
 <title>Открыто рядом</title>
-<meta name="description" content="Какие магазины открыты прямо сейчас рядом с вами — продукты, пекарни, аптеки, заправки. Израиль.">
+<meta name="description" content="Не нужно искать, где открыто. Все открытые магазины, аптеки, пекарни и заправки рядом с вами — на одной карте. Израиль.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Открыто рядом · Pixel Studio">
+<meta property="og:title" content="Открыто рядом — все открытые магазины рядом с вами">
+<meta property="og:description" content="Не нужно искать, где открыто. Вот они все — на одной карте. Продукты, аптеки, пекарни, заправки. Шаббат и праздники учтены.">
+<meta property="og:image" content="https://wizzard2025.github.io/open-nearby/img/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://wizzard2025.github.io/open-nearby/">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="img/favicon.ico" sizes="48x48">
 <link rel="icon" href="img/favicon-64.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top">
+<div id="map" role="region" aria-label="Карта"></div>
+
+<header class="topbar">
   <div class="brand">
     <picture>
       <source srcset="img/pixel-studio.webp" type="image/webp">
-      <img class="logo" src="img/pixel-studio.png" width="108" height="48" alt="Pixel Studio">
+      <img class="logo" src="img/pixel-studio.png" width="90" height="40" alt="Pixel Studio">
     </picture>
-    <h1 data-i18n="title">Открыто рядом</h1>
+    <span class="appname" data-i18n="title">Открыто рядом</span>
   </div>
   <div class="langs" role="group" aria-label="Language">
     <button type="button" data-lang="ru">RU</button>
@@ -32,40 +43,41 @@
   </div>
 </header>
 
-<main class="app">
-  <section class="panel">
-    <div class="where">
-      <button type="button" id="locate" class="primary">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
-        <span data-i18n="locate">Рядом со мной</span>
-      </button>
-      <select id="city" aria-label="City">
-        <option value="" data-i18n="pickCity">Или город…</option>
-      </select>
+<div class="mapctl">
+  <button type="button" id="locate" class="fab" aria-label="Near me">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4.5 20.3l.7.7L12 18l6.8 3 .7-.7z" fill="currentColor" transform="rotate(45 12 12)"/></svg>
+  </button>
+</div>
+
+<section class="sheet" id="sheet" data-state="half" aria-label="Список мест">
+  <button type="button" class="grab" id="grab" aria-label="Развернуть список"><span></span></button>
+
+  <div class="hero">
+    <div class="hero-main">
+      <p class="kicker" id="kicker">Сейчас открыто</p>
+      <p class="bignum"><span id="openCount">—</span> <span class="bigunit" id="openUnit">мест</span></p>
+      <p class="where" id="whereLine"></p>
     </div>
+    <select id="city" aria-label="City"></select>
+  </div>
 
-    <div id="notices"></div>
+  <div class="chips" role="group" id="cats"></div>
+  <div id="notices"></div>
 
-    <div class="chips" role="group" id="cats"></div>
-
-    <div class="summary">
-      <p id="summary" aria-live="polite"></p>
-      <label class="toggle"><input type="checkbox" id="showUnknown" checked> <span data-i18n="showUnknown">Без указанных часов</span></label>
-    </div>
-
+  <div class="scroller" id="scroller">
     <ol id="list" class="list"></ol>
-    <details id="closedBox" class="closed-box" hidden>
+    <details id="unknownBox" class="fold" hidden>
+      <summary id="unknownTitle"></summary>
+      <p class="foldnote" data-i18n="unknownNote"></p>
+      <ol id="unknownList" class="list"></ol>
+    </details>
+    <details id="closedBox" class="fold" hidden>
       <summary id="closedTitle"></summary>
       <ol id="closedList" class="list"></ol>
     </details>
-    <p class="source"><span data-i18n="source"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></p>
-  </section>
-
-  <section class="mapwrap">
-    <div id="map" role="region" aria-label="Map"></div>
-    <p class="maphint" data-i18n="mapHint">Нажмите на карту, чтобы искать в другом месте</p>
-  </section>
-</main>
+    <p class="source"><span data-i18n="source"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · <span data-i18n="madeBy"></span> Pixel Studio</p>
+  </div>
+</section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="vendor/suncalc.js"></script>

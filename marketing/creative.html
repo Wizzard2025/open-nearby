@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Creative</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800;900&display=swap">
+<style>
+  /* Ad creative template. ?f=og (1200x630) | sq (1080x1080) | story (1080x1920); ?l=ru | he */
+  :root { --bg: #0b1116; --ink: #eef7fb; --muted: #9fb3bf; --glow: #3cc4f2; --open: #47d38a; }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 100%; height: 100%; overflow: hidden; }
+  body {
+    font-family: Rubik, "Segoe UI", Arial, sans-serif; color: var(--ink); background: var(--bg);
+    background-image:
+      radial-gradient(circle at 78% 30%, rgb(60 196 242 / 0.22), transparent 45%),
+      linear-gradient(rgb(60 196 242 / 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(60 196 242 / 0.06) 1px, transparent 1px);
+    background-size: auto, 36px 36px, 36px 36px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .wrap { width: 100%; height: 100%; display: flex; gap: 48px; align-items: center; padding: 56px 64px; }
+  .copy { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 22px; }
+  .logo { height: 64px; width: auto; align-self: flex-start; filter: drop-shadow(0 0 18px rgb(60 196 242 / 0.35)); }
+  h1 { font-weight: 900; font-size: 64px; line-height: 1.02; letter-spacing: -0.02em; }
+  h1 em { font-style: normal; color: var(--glow); }
+  .sub { font-size: 30px; font-weight: 500; color: var(--ink); }
+  .list { display: flex; flex-wrap: wrap; gap: 10px; }
+  .list span { font-size: 20px; font-weight: 600; padding: 8px 16px; border-radius: 999px; background: rgb(255 255 255 / 0.07); border: 1px solid rgb(60 196 242 / 0.3); }
+  .cta { display: inline-flex; align-items: center; gap: 14px; align-self: flex-start; font-size: 24px; font-weight: 800;
+         background: var(--glow); color: #04141d; padding: 16px 26px; border-radius: 16px; box-shadow: 0 0 40px rgb(60 196 242 / 0.45); }
+  .url { font-size: 20px; color: var(--muted); font-weight: 500; }
+  .phone { flex: none; height: 100%; aspect-ratio: 1000 / 2166; border-radius: 42px; padding: 10px; background: #1b252d;
+           box-shadow: 0 30px 80px rgb(0 0 0 / 0.6), 0 0 0 2px rgb(60 196 242 / 0.35), 0 0 60px rgb(60 196 242 / 0.25); }
+  .phone img { width: 100%; height: 100%; object-fit: cover; object-position: top; border-radius: 34px; display: block; }
+  .badge { position: absolute; }
+
+  /* OG 1200x630: phone cropped on the right */
+  body.og .wrap { padding: 44px 0 44px 60px; gap: 40px; }
+  body.og h1 { font-size: 56px; }
+  body.og .sub { font-size: 26px; }
+  body.og .phone { height: 760px; align-self: flex-start; margin-top: 30px; margin-right: -40px; }
+  body.og .logo { height: 54px; }
+  body.og .list span { font-size: 17px; }
+  body.og .cta { font-size: 21px; padding: 13px 22px; }
+  [dir="rtl"] body.og .wrap, body.og[dir="rtl"] .wrap { padding: 44px 60px 44px 0; }
+
+  /* square 1080: text top, phone peeks from bottom */
+  body.sq .wrap { flex-direction: column; padding: 64px 64px 0; gap: 34px; align-items: stretch; }
+  body.sq .copy { flex: none; gap: 20px; }
+  body.sq h1 { font-size: 76px; }
+  body.sq .phone { height: 900px; align-self: center; border-radius: 42px 42px 0 0; padding-bottom: 0; }
+  body.sq .phone img { border-radius: 34px 34px 0 0; }
+  body.sq .list { display: none; }
+  body.sq .row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+
+  /* story 1080x1920 */
+  body.story .wrap { flex-direction: column; padding: 120px 72px 0; gap: 46px; align-items: stretch; }
+  body.story .copy { flex: none; gap: 28px; }
+  body.story .logo { height: 84px; }
+  body.story h1 { font-size: 92px; }
+  body.story .sub { font-size: 40px; }
+  body.story .list span { font-size: 26px; padding: 10px 20px; }
+  body.story .cta { font-size: 34px; padding: 22px 34px; }
+  body.story .url { font-size: 28px; }
+  body.story .phone { height: 1180px; align-self: center; border-radius: 52px 52px 0 0; padding-bottom: 0; }
+  body.story .phone img { border-radius: 44px 44px 0 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="copy">
+    <img class="logo" src="../img/pixel-studio.png" alt="">
+    <h1 id="h1"></h1>
+    <p class="sub" id="sub"></p>
+    <div class="list" id="list"></div>
+    <div class="row"><span class="cta" id="cta"></span> <span class="url">wizzard2025.github.io/open-nearby</span></div>
+  </div>
+  <div class="phone"><img id="shot" alt=""></div>
+</div>
+<script>
+  const p = new URLSearchParams(location.search);
+  const f = p.get('f') || 'og', l = p.get('l') || 'ru';
+  const T = {
+    ru: { h1: 'Не ищите, <em>где&nbsp;открыто.</em>', sub: 'Вот они все — на одной карте.',
+          list: ['Продукты', 'Аптеки', 'Пекарни', 'Заправки', 'Шаббат и праздники учтены'], cta: 'Открыть бесплатно →' },
+    he: { h1: 'לא צריך לחפש <em>מה&nbsp;פתוח.</em>', sub: 'הנה כולם — על מפה אחת.',
+          list: ['מזון', 'בתי מרקחת', 'מאפיות', 'תחנות דלק', 'כולל שבת וחגים'], cta: '← פתחו בחינם' },
+  }[l];
+  document.body.className = f;
+  document.documentElement.dir = l === 'he' ? 'rtl' : 'ltr';
+  document.documentElement.lang = l;
+  document.getElementById('h1').innerHTML = T.h1;
+  document.getElementById('sub').textContent = T.sub;
+  document.getElementById('list').innerHTML = T.list.map((x) => `<span>${x}</span>`).join('');
+  document.getElementById('cta').textContent = T.cta;
+  document.getElementById('shot').src = `app-shot-${l}.png`;
+</script>
+</body>
+</html>

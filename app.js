@@ -1,67 +1,71 @@
-/* Открыто рядом — MVP. Data: OpenStreetMap (Overpass API) + Hebcal (Shabbat/holidays). */
+/* Открыто рядом — Pixel Studio. Map-first: everything in the visible map area, open places first.
+   Data: data/shops.json (OpenStreetMap + official chain hours, refreshed daily) + Hebcal (Shabbat/holidays). */
 'use strict';
 
 // ---------- i18n ----------
 const I18N = {
   ru: {
-    title: 'Открыто рядом', locate: 'Рядом со мной', locating: 'Ищу вас…', pickCity: 'Или город…',
-    showUnknown: 'Показывать без часов', mapHint: 'Нажмите на карту, чтобы искать в другом месте',
-    source: 'Данные о магазинах — OpenStreetMap. Часы указаны не у всех, перед дальней поездкой лучше проверить.',
+    title: 'Открыто рядом', pickCity: 'Город…', kicker: 'Сейчас открыто',
+    units: ['место', 'места', 'мест'], whereMe: 'рядом с вами', whereMap: 'в этой части карты',
+    zoomIn: 'Приблизьте карту, чтобы увидеть магазины',
+    source: 'Данные: OpenStreetMap и официальные сайты сетей, обновляются каждый день.', madeBy: 'Сделано в',
     cats: { all: 'Всё', food: 'Продукты', bakery: 'Пекарни', pharmacy: 'Аптеки', fuel: 'Заправки' },
     types: { supermarket: 'Супермаркет', convenience: 'Минимаркет', kiosk: 'Киоск', grocery: 'Продукты', greengrocer: 'Овощи и фрукты', deli: 'Деликатесы', alcohol: 'Алкоголь', bakery: 'Пекарня', pastry: 'Кондитерская', pharmacy: 'Аптека', chemist: 'Аптека и косметика', fuel: 'Заправка' },
     open24: 'Круглосуточно', open: 'Открыто', until: 'до {t}', soon: 'Закроется через {m} мин',
-    closed: 'Закрыто', opensAt: 'откроется в {t}', opensTomorrow: 'откроется завтра в {t}', opensDay: 'откроется {d} в {t}',
+    closed: 'Закрыто', opensAt: 'откроется в {t}', opensTomorrow: 'завтра в {t}', opensDay: '{d} в {t}',
     unknown: 'Часы не указаны', allDay: 'круглосуточно', dayOff: 'закрыто',
-    summary: '{o} открыто · {u} без часов', summaryNoUnknown: '{o} открыто сейчас',
-    closedTitle: 'Сейчас закрыты ({n})', loading: 'Ищу магазины…',
-    empty: 'Поблизости открытых магазинов не нашлось.', widen: 'Искать в радиусе {r} км',
-    route: 'Маршрут', waze: 'Waze', call: 'Позвонить',
-    geoFail: 'Не получилось определить местоположение. Выберите город или нажмите на карту.',
-    demo: 'Показан центр Тель-Авива. Разрешите геолокацию или выберите город.',
-    netFail: 'Сервер данных не ответил. Попробуйте ещё раз через минуту.', retry: 'Повторить',
+    unknownTitle: 'Часы не указаны · {n}', unknownNote: 'Эти места есть на карте, но их часы работы нам пока неизвестны.',
+    closedTitle: 'Сейчас закрыты · {n}', more: 'Показать ещё {n}',
+    empty: 'В этой части карты открытых мест нет.', zoomOut: 'Отдалить карту',
+    walk: '{m} мин', shabbat: 'Шаббат', route: 'Маршрут', waze: 'Waze', call: 'Позвонить',
+    geoFail: 'Не получилось определить местоположение. Выберите город или подвиньте карту.',
+    demo: 'Показан центр Тель-Авива. Нажмите ➤, чтобы найти места рядом с вами.',
+    netFail: 'Не удалось загрузить данные. Проверьте интернет.', retry: 'Повторить',
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
-    shabbat: 'Шаббат: зажигание свечей {c}, исход {h}. Большинство сетей в это время закрыты.',
-    radius: 'радиус {r}', m: 'м', km: 'км', approx: 'примерно',
+    shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
+    m: 'м', km: 'км', expand: 'Развернуть список',
   },
   he: {
-    title: 'פתוח קרוב', locate: 'לידי', locating: 'מאתר…', pickCity: 'או עיר…',
-    showUnknown: 'להציג גם בלי שעות', mapHint: 'הקישו על המפה כדי לחפש במקום אחר',
-    source: 'נתוני החנויות מ-OpenStreetMap. לא לכל חנות יש שעות – כדאי לבדוק לפני נסיעה ארוכה.',
-    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'תחנות דלק' },
+    title: 'פתוח קרוב', pickCity: 'עיר…', kicker: 'פתוח עכשיו',
+    units: ['מקום', 'מקומות', 'מקומות'], whereMe: 'לידך', whereMap: 'באזור המפה',
+    zoomIn: 'הגדילו את המפה כדי לראות חנויות',
+    source: 'נתונים: OpenStreetMap ואתרי הרשתות, מתעדכנים מדי יום.', madeBy: 'נבנה ב-',
+    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'דלק' },
     types: { supermarket: 'סופרמרקט', convenience: 'מכולת', kiosk: 'קיוסק', grocery: 'מכולת', greengrocer: 'ירקן', deli: 'מעדנייה', alcohol: 'משקאות', bakery: 'מאפייה', pastry: 'קונדיטוריה', pharmacy: 'בית מרקחת', chemist: 'פארם', fuel: 'תחנת דלק' },
-    open24: '24 שעות', open: 'פתוח', until: 'עד {t}', soon: 'ייסגר בעוד {m} דק׳',
-    closed: 'סגור', opensAt: 'ייפתח ב-{t}', opensTomorrow: 'ייפתח מחר ב-{t}', opensDay: 'ייפתח ב{d} ב-{t}',
+    open24: '24 שעות', open: 'פתוח', until: 'עד {t}', soon: 'נסגר בעוד {m} דק׳',
+    closed: 'סגור', opensAt: 'ייפתח ב-{t}', opensTomorrow: 'מחר ב-{t}', opensDay: '{d} ב-{t}',
     unknown: 'אין שעות', allDay: '24 שעות', dayOff: 'סגור',
-    summary: '{o} פתוחים · {u} בלי שעות', summaryNoUnknown: '{o} פתוחים עכשיו',
-    closedTitle: 'סגורים כעת ({n})', loading: 'מחפש חנויות…',
-    empty: 'לא נמצאו חנויות פתוחות בסביבה.', widen: 'לחפש ברדיוס {r} ק״מ',
-    route: 'ניווט', waze: 'Waze', call: 'חיוג',
-    geoFail: 'לא הצלחנו לאתר את המיקום. בחרו עיר או הקישו על המפה.',
-    demo: 'מוצג מרכז תל אביב. אפשרו מיקום או בחרו עיר.',
-    netFail: 'שרת הנתונים לא הגיב. נסו שוב בעוד דקה.', retry: 'נסו שוב',
+    unknownTitle: 'בלי שעות · {n}', unknownNote: 'המקומות האלה מופיעים במפה, אבל שעות הפתיחה שלהם עדיין לא ידועות לנו.',
+    closedTitle: 'סגורים עכשיו · {n}', more: 'עוד {n}',
+    empty: 'אין מקומות פתוחים באזור הזה של המפה.', zoomOut: 'להרחיק את המפה',
+    walk: '{m} דק׳', shabbat: 'שבת', route: 'ניווט', waze: 'Waze', call: 'חיוג',
+    geoFail: 'לא הצלחנו לאתר את המיקום. בחרו עיר או הזיזו את המפה.',
+    demo: 'מוצג מרכז תל אביב. הקישו ➤ כדי למצוא מקומות לידכם.',
+    netFail: 'לא הצלחנו לטעון נתונים. בדקו את החיבור.', retry: 'נסו שוב',
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
-    shabbat: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
-    radius: 'רדיוס {r}', m: 'מ׳', km: 'ק״מ', approx: 'בערך',
+    shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
+    m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
   },
   en: {
-    title: 'Open Nearby', locate: 'Near me', locating: 'Locating…', pickCity: 'Or a city…',
-    showUnknown: 'Show places without hours', mapHint: 'Tap the map to search somewhere else',
-    source: 'Shop data from OpenStreetMap. Not every shop lists hours, so check before a long trip.',
-    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas stations' },
+    title: 'Open Nearby', pickCity: 'City…', kicker: 'Open right now',
+    units: ['place', 'places', 'places'], whereMe: 'near you', whereMap: 'in this part of the map',
+    zoomIn: 'Zoom in to see shops',
+    source: 'Data: OpenStreetMap and the chains\' own websites, refreshed daily.', madeBy: 'Made by',
+    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas' },
     types: { supermarket: 'Supermarket', convenience: 'Convenience store', kiosk: 'Kiosk', grocery: 'Grocery', greengrocer: 'Greengrocer', deli: 'Deli', alcohol: 'Liquor store', bakery: 'Bakery', pastry: 'Pastry shop', pharmacy: 'Pharmacy', chemist: 'Drugstore', fuel: 'Gas station' },
     open24: 'Open 24 hours', open: 'Open', until: 'until {t}', soon: 'Closes in {m} min',
-    closed: 'Closed', opensAt: 'opens at {t}', opensTomorrow: 'opens tomorrow at {t}', opensDay: 'opens {d} at {t}',
+    closed: 'Closed', opensAt: 'opens at {t}', opensTomorrow: 'tomorrow {t}', opensDay: '{d} {t}',
     unknown: 'No hours listed', allDay: '24 hours', dayOff: 'closed',
-    summary: '{o} open · {u} without hours', summaryNoUnknown: '{o} open now',
-    closedTitle: 'Closed now ({n})', loading: 'Finding shops…',
-    empty: 'No open shops found nearby.', widen: 'Search within {r} km',
-    route: 'Directions', waze: 'Waze', call: 'Call',
-    geoFail: "Couldn't get your location. Pick a city or tap the map.",
-    demo: 'Showing central Tel Aviv. Allow location or pick a city.',
-    netFail: "The data server didn't respond. Try again in a minute.", retry: 'Try again',
+    unknownTitle: 'No hours listed · {n}', unknownNote: 'These places are on the map, but we don\'t know their hours yet.',
+    closedTitle: 'Closed now · {n}', more: 'Show {n} more',
+    empty: 'Nothing open in this part of the map.', zoomOut: 'Zoom out',
+    walk: '{m} min', shabbat: 'Shabbat', route: 'Directions', waze: 'Waze', call: 'Call',
+    geoFail: "Couldn't get your location. Pick a city or move the map.",
+    demo: 'Showing central Tel Aviv. Tap ➤ to find places near you.',
+    netFail: "Couldn't load data. Check your connection.", retry: 'Try again',
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
-    shabbat: 'Shabbat: candle lighting {c}, ends {h}. Most chains are closed.',
-    radius: 'radius {r}', m: 'm', km: 'km', approx: 'about',
+    shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
+    m: 'm', km: 'km', expand: 'Expand the list',
   },
 };
 const CITIES = [
@@ -77,17 +81,24 @@ const CITIES = [
   ['tib', 32.7922, 35.5312, { ru: 'Тверия', he: 'טבריה', en: 'Tiberias' }],
   ['eil', 29.5577, 34.9519, { ru: 'Эйлат', he: 'אילת', en: 'Eilat' }],
 ];
+const ICONS = {
+  all: '<path d="M4 9.5 5.2 4h13.6L20 9.5M4 9.5h16V20H4zM9.5 20v-5.5h5V20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+  food: '<path d="M3 4h2.2l2.3 10.3a1.8 1.8 0 0 0 1.8 1.4h7.6a1.8 1.8 0 0 0 1.7-1.3L20.5 8H6.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="19.5" r="1.6" fill="currentColor"/><circle cx="17" cy="19.5" r="1.6" fill="currentColor"/>',
+  bakery: '<path d="M4 13.5C4 9.4 7.6 6.5 12 6.5s8 2.9 8 7V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 10v3.5M12 9.5v4M15 10v3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  pharmacy: '<path d="M9.5 3.5h5v6h6v5h-6v6h-5v-6h-6v-5h6z" fill="currentColor"/>',
+  fuel: '<path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15M3.5 20h12M14 9h2a1.8 1.8 0 0 1 1.8 1.8v5a1.5 1.5 0 0 0 3 0V8.2L18 5.5M7 8h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+};
+const svg = (k) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`;
 
-
-// ---------- state ----------
+// ---------- state & helpers ----------
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); } catch {} },
 };
 const S = {
   lang: store.get('lang') || (/^he/i.test(navigator.language) ? 'he' : /^en/i.test(navigator.language) ? 'en' : 'ru'),
-  cat: 'all', showUnknown: true, lat: null, lon: null, radius: 1200,
-  items: [], selected: null, loading: false, error: false, notices: { loc: null, hebcal: [] },
+  cat: 'all', me: null, selected: null, view: [], limits: { list: 60, unknown: 60, closed: 40 },
+  notices: { loc: null, hebcal: [] }, loaded: false, error: false,
 };
 const $ = (s) => document.querySelector(s);
 const t = (k, vars) => {
@@ -100,16 +111,21 @@ const locale = () => ({ ru: 'ru-RU', he: 'he-IL', en: 'en-GB' }[S.lang]);
 const fmtTime = (d) => new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit', hour12: false }).format(d);
 const fmtDay = (d) => new Intl.DateTimeFormat(locale(), { weekday: 'short' }).format(d);
 const startOfDay = (d) => { const x = new Date(d); x.setHours(0, 0, 0, 0); return x; };
+function plural(n) {
+  const u = I18N[S.lang].units;
+  if (S.lang !== 'ru') return n === 1 ? u[0] : u[1];
+  const m10 = n % 10, m100 = n % 100;
+  return m10 === 1 && m100 !== 11 ? u[0] : m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14) ? u[1] : u[2];
+}
 
 // ---------- opening hours ----------
 function normalizeHours(v) {
-  let s = v.trim();
-  // Common Israeli shorthand "24/6" = round the clock except Shabbat.
+  const s = v.trim();
   if (/^24\/6$/.test(s)) return 'Su-Th 00:00-24:00; Fr 00:00-(sunset-01:00); Sa (sunset+01:00)-24:00';
   return s;
 }
 function stripPH(v) {
-  // opening_hours.js has no Israeli public-holiday calendar, so drop PH rules; holidays are flagged via Hebcal instead.
+  // opening_hours.js has no Israeli holiday calendar; drop PH rules (holidays are flagged via Hebcal).
   return v.replace(/\bPH\s*,\s*/g, '').replace(/\s*,\s*PH\b/g, '')
     .split(';').map((r) => r.trim()).filter((r) => r && !/^PH\b/i.test(r)).join('; ')
     .replace(/,\s*PH\s+[^,;]*/g, '');
@@ -124,18 +140,18 @@ function parseHours(v, lat, lon) {
   const v2 = normalizeHours(v);
   const warn = console.warn, err = console.error; console.warn = console.error = () => {};
   try { oh = new opening_hours(v2, nom, opt); }
-  catch (e) { try { oh = new opening_hours(stripPH(v2), nom, opt); } catch { oh = null; } }
+  catch { try { oh = new opening_hours(stripPH(v2), nom, opt); } catch { oh = null; } }
   finally { console.warn = warn; console.error = err; }
   ohCache.set(key, oh);
   return oh;
 }
-function statusOf(item, now) {
-  const v = item.tags.opening_hours;
+function statusOf(it, now) {
+  const v = it.tags.opening_hours;
   if (!v) return { k: 'unknown' };
-  const oh = parseHours(v, item.lat, item.lon);
-  if (!oh) return { k: 'unknown', raw: v };
+  const oh = parseHours(v, it.lat, it.lon);
+  if (!oh) return { k: 'unknown' };
   try {
-    if (oh.getUnknown(now)) return { k: 'unknown', raw: v, oh };
+    if (oh.getUnknown(now)) return { k: 'unknown', oh };
     const open = oh.getState(now);
     const next = oh.getNextChange(now);
     if (open) {
@@ -144,8 +160,9 @@ function statusOf(item, now) {
       return { k: mins <= 45 ? 'soon' : 'open', next, mins, oh };
     }
     return { k: 'closed', next, oh };
-  } catch { return { k: 'unknown', raw: v }; }
+  } catch { return { k: 'unknown' }; }
 }
+const isOpen = (k) => k === 'open' || k === 'open24' || k === 'soon';
 function statusText(st, now) {
   switch (st.k) {
     case 'open24': return t('open24');
@@ -153,13 +170,23 @@ function statusText(st, now) {
     case 'soon': return t('soon', { m: st.mins });
     case 'closed': {
       if (!st.next) return t('closed');
-      const d0 = startOfDay(now), d1 = startOfDay(st.next);
-      const days = Math.round((d1 - d0) / 864e5);
+      const days = Math.round((startOfDay(st.next) - startOfDay(now)) / 864e5);
       const tm = fmtTime(st.next);
       return t('closed') + ' · ' + (days === 0 ? t('opensAt', { t: tm }) : days === 1 ? t('opensTomorrow', { t: tm }) : t('opensDay', { d: fmtDay(st.next), t: tm }));
     }
     default: return t('unknown');
   }
+}
+const shabCache = new Map();
+function opensOnShabbat(it, oh, now) {
+  if (shabCache.has(it.id)) return shabCache.get(it.id);
+  let r = false;
+  try {
+    const sat = startOfDay(now); sat.setDate(sat.getDate() + ((6 - sat.getDay() + 7) % 7)); sat.setHours(12);
+    r = !!oh.getState(sat);
+  } catch {}
+  shabCache.set(it.id, r);
+  return r;
 }
 function weekTable(oh, now) {
   const rows = [];
@@ -173,7 +200,8 @@ function weekTable(oh, now) {
       else if (iv.length === 1 && iv[0][0] - from < 60000 && to - iv[0][1] < 60000) txt = t('allDay');
       else txt = iv.map(([a, b]) => fmtTime(a) + '–' + (b - to >= 0 ? '24:00' : fmtTime(b))).join(', ');
     } catch { txt = '?'; }
-    rows.push(`<dt class="${i === 0 ? 'today' : ''}">${esc(fmtDay(from))}</dt><dd class="${i === 0 ? 'today' : ''}">${esc(txt)}</dd>`);
+    const c = i === 0 ? ' class="today"' : '';
+    rows.push(`<dt${c}>${esc(fmtDay(from))}</dt><dd${c}>${esc(txt)}</dd>`);
   }
   return `<dl class="week">${rows.join('')}</dl>`;
 }
@@ -185,59 +213,42 @@ function categoryOf(tg) {
   if (tg.shop === 'bakery' || tg.shop === 'pastry') return 'bakery';
   return 'food';
 }
-function typeKey(tg) { return tg.amenity === 'fuel' || tg.amenity === 'pharmacy' ? tg.amenity : tg.shop; }
-function nameOf(it) {
-  const tg = it.tags;
-  return tg['name:' + S.lang] || tg.name || tg.brand || (I18N[S.lang].types[typeKey(tg)] || '');
-}
+const typeKey = (tg) => (tg.amenity === 'fuel' || tg.amenity === 'pharmacy' ? tg.amenity : tg.shop);
+const nameOf = (it) => it.tags['name:' + S.lang] || it.tags.name || it.tags.brand || I18N[S.lang].types[typeKey(it.tags)] || '';
 function distM(aLat, aLon, bLat, bLon) {
   const R = 6371e3, r = Math.PI / 180;
   const dLat = (bLat - aLat) * r, dLon = (bLon - aLon) * r;
   const x = Math.sin(dLat / 2) ** 2 + Math.cos(aLat * r) * Math.cos(bLat * r) * Math.sin(dLon / 2) ** 2;
   return 2 * R * Math.asin(Math.sqrt(x));
 }
-function fmtDist(m) {
-  return m < 1000 ? Math.round(m / 10) * 10 + ' ' + t('m') : (m / 1000).toFixed(1).replace('.0', '') + ' ' + t('km');
-}
-// All Israeli shops are pre-downloaded nightly by tools/update_data.py into data/shops.json,
-// so the app needs no live calls to Overpass (slow and rate-limited).
-let allShops = null;
+const fmtDist = (m) => (m < 1000 ? Math.round(m / 10) * 10 + ' ' + t('m') : (m / 1000).toFixed(1).replace('.0', '') + ' ' + t('km'));
+let ALL = [];
 async function loadAll() {
-  if (allShops) return allShops;
   const r = await fetch('data/shops.json');
   if (!r.ok) throw new Error('HTTP ' + r.status);
   const j = await r.json();
-  allShops = j.shops.map(([id, lat, lon, tags]) => ({ id, lat, lon, tags }));
-  return allShops;
-}
-async function fetchShops(lat, lon, radius) {
-  const all = await loadAll();
-  const dLat = radius / 111000, dLon = radius / (111000 * Math.cos(lat * Math.PI / 180));
-  return all.filter((s) => Math.abs(s.lat - lat) < dLat && Math.abs(s.lon - lon) < dLon && distM(lat, lon, s.lat, s.lon) <= radius);
+  ALL = j.shops.map(([id, lat, lon, tags]) => ({ id, lat, lon, tags, cat: categoryOf(tags) }));
 }
 
-// ---------- Hebcal: holidays + Shabbat ----------
+// ---------- Hebcal ----------
 async function loadHebcal(lat, lon) {
   const lg = { ru: 'ru', he: 'he', en: 's' }[S.lang];
   const now = new Date();
   const ymd = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const out = [];
   try {
-    const r = await fetch(`https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=off&mod=on&nx=off&ss=off&mf=off&c=off&s=off&i=on&lg=${lg}&start=${ymd(now)}&end=${ymd(now)}`);
-    const j = await r.json();
+    const j = await (await fetch(`https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=off&mod=on&nx=off&ss=off&mf=off&c=off&s=off&i=on&lg=${lg}&start=${ymd(now)}&end=${ymd(now)}`)).json();
     const hol = (j.items || []).filter((x) => x.yomtov || x.subcat === 'modern');
     if (hol.length) out.push({ cls: '', text: t('holiday', { h: hol.map((x) => x.title).join(', ') }) });
   } catch {}
-  const dow = now.getDay();
-  if (dow === 4 || dow === 5 || dow === 6) {
+  if ([4, 5, 6].includes(now.getDay())) {
     try {
-      const r = await fetch(`https://www.hebcal.com/shabbat?cfg=json&latitude=${lat.toFixed(4)}&longitude=${lon.toFixed(4)}&tzid=Asia/Jerusalem&M=on&lg=${lg}`);
-      const j = await r.json();
+      const j = await (await fetch(`https://www.hebcal.com/shabbat?cfg=json&latitude=${lat.toFixed(3)}&longitude=${lon.toFixed(3)}&tzid=Asia/Jerusalem&M=on&lg=${lg}`)).json();
       const c = (j.items || []).find((x) => x.category === 'candles');
       const h = (j.items || []).find((x) => x.category === 'havdalah');
-      if (c && h) {
+      if (c && h && new Date(h.date) > now) {
         const cd = new Date(c.date), hd = new Date(h.date);
-        if (hd > now) out.push({ cls: 'info', text: t('shabbat', { c: fmtDay(cd) + ' ' + fmtTime(cd), h: fmtDay(hd) + ' ' + fmtTime(hd) }) });
+        out.push({ cls: 'info', text: t('shabbatNote', { c: fmtDay(cd) + ' ' + fmtTime(cd), h: fmtDay(hd) + ' ' + fmtTime(hd) }) });
       }
     } catch {}
   }
@@ -246,31 +257,104 @@ async function loadHebcal(lat, lon) {
 }
 
 // ---------- map ----------
-let map, layer, meMarker, radiusCircle;
+let map, pinLayer, dotLayer, meMarker;
 const markers = new Map();
-function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
-function initMap() {
-  map = L.map('map', { zoomControl: true, attributionControl: true }).setView([31.6, 34.95], 8);
+const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const STATUS_VAR = { open: '--open', open24: '--open', soon: '--soon', closed: '--closed', unknown: '--unknown' };
+function initMap(center, zoom) {
+  const touch = matchMedia('(pointer: coarse)').matches;
+  map = L.map('map', { zoomControl: !touch, preferCanvas: true, attributionControl: true }).setView(center, zoom);
+  if (map.zoomControl) map.zoomControl.setPosition('topright');
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
-  layer = L.layerGroup().addTo(map);
-  map.on('click', (e) => search(e.latlng.lat, e.latlng.lng, 1200, { source: 'map' }));
+  dotLayer = L.layerGroup().addTo(map);
+  pinLayer = L.layerGroup().addTo(map);
+  let timer;
+  map.on('moveend', () => { clearTimeout(timer); timer = setTimeout(refresh, 120); });
 }
-function drawMap(list) {
-  layer.clearLayers(); markers.clear();
-  if (meMarker) meMarker.remove();
-  if (radiusCircle) radiusCircle.remove();
-  meMarker = L.marker([S.lat, S.lon], { icon: L.divIcon({ className: '', html: '<div class="me-dot"></div>', iconSize: [16, 16], iconAnchor: [8, 8] }), interactive: false }).addTo(map);
-  radiusCircle = L.circle([S.lat, S.lon], { radius: S.radius, color: cssVar('--brand'), weight: 1, fillOpacity: 0.04, interactive: false }).addTo(map);
-  const col = { open: '--open', open24: '--open', soon: '--soon', closed: '--closed', unknown: '--unknown' };
-  for (const it of list) {
-    const m = L.circleMarker([it.lat, it.lon], {
-      radius: it.st.k === 'closed' ? 5 : 8, weight: 2, color: '#fff',
-      fillColor: cssVar(col[it.st.k]), fillOpacity: it.st.k === 'closed' ? 0.6 : 1,
-    }).addTo(layer);
-    m.bindTooltip(esc(nameOf(it)));
-    m.on('click', (e) => { L.DomEvent.stopPropagation(e); select(it.id, true); });
+function pinIcon(it, sel) {
+  return L.divIcon({
+    className: '', iconSize: [30, 30], iconAnchor: [15, 30],
+    html: `<div class="pin${sel ? ' sel' : ''}" style="background:${cssVar(STATUS_VAR[it.st.k])}">${svg(it.cat)}</div>`,
+  });
+}
+function drawMarkers(openL, unkL, closedL) {
+  pinLayer.clearLayers(); dotLayer.clearLayers(); markers.clear();
+  const z = map.getZoom();
+  for (const it of openL.slice(0, 250)) {
+    const m = L.marker([it.lat, it.lon], { icon: pinIcon(it, it.id === S.selected), keyboard: false, riseOnHover: true }).addTo(pinLayer);
+    m.bindTooltip(esc(nameOf(it)), { direction: 'top', offset: [0, -28] });
+    m.on('click', () => select(it.id, true));
     markers.set(it.id, m);
   }
+  if (z >= 14) {
+    const dots = [...unkL.slice(0, 300), ...closedL.slice(0, 200)];
+    for (const it of dots) {
+      const m = L.circleMarker([it.lat, it.lon], {
+        radius: 5, weight: 1.5, color: '#fff', fillColor: cssVar(STATUS_VAR[it.st.k]), fillOpacity: it.st.k === 'closed' ? 0.55 : 0.85,
+      }).addTo(dotLayer);
+      m.bindTooltip(esc(nameOf(it)));
+      m.on('click', () => select(it.id, true));
+      markers.set(it.id, m);
+    }
+  }
+}
+function drawMe() {
+  if (!S.me) return;
+  if (meMarker) meMarker.setLatLng([S.me.lat, S.me.lon]);
+  else meMarker = L.marker([S.me.lat, S.me.lon], { icon: L.divIcon({ className: '', html: '<div class="me-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false, zIndexOffset: 1000 }).addTo(map);
+}
+
+// ---------- sheet (phone) ----------
+const sheet = () => $('#sheet');
+const wide = () => matchMedia('(min-width: 860px)').matches;
+function setSheet(state) {
+  const el = sheet();
+  el.dataset.state = state;
+  if (wide()) { document.documentElement.style.setProperty('--sheet-peek', '0px'); return; }
+  const H = el.offsetHeight, vh = window.innerHeight;
+  const visible = state === 'full' ? H : state === 'half' ? Math.min(H, Math.round(vh * 0.5)) : Math.min(H, 212);
+  el.style.setProperty('--sheet-offset', H - visible + 'px');
+  document.documentElement.style.setProperty('--sheet-peek', Math.min(visible, Math.round(vh * 0.5)) + 'px');
+}
+function initSheet() {
+  const el = sheet(), grab = $('#grab');
+  const order = ['peek', 'half', 'full'];
+  grab.addEventListener('click', () => {
+    if (drag.moved) return;
+    setSheet(order[(order.indexOf(el.dataset.state) + 1) % order.length]);
+  });
+  const drag = { y0: 0, off0: 0, moved: false, on: false };
+  const start = (e) => {
+    if (wide() || e.target.closest('select,button:not(.grab),a')) return;
+    drag.on = true; drag.moved = false; drag.y0 = e.clientY;
+    drag.off0 = parseFloat(getComputedStyle(el).getPropertyValue('--sheet-offset')) || 0;
+    el.classList.add('dragging');
+    el.setPointerCapture?.(e.pointerId);
+  };
+  const move = (e) => {
+    if (!drag.on) return;
+    const dy = e.clientY - drag.y0;
+    if (Math.abs(dy) > 4) drag.moved = true;
+    const H = el.offsetHeight;
+    el.style.setProperty('--sheet-offset', Math.max(0, Math.min(H - 120, drag.off0 + dy)) + 'px');
+  };
+  const end = () => {
+    if (!drag.on) return;
+    drag.on = false; el.classList.remove('dragging');
+    if (!drag.moved) return;
+    const H = el.offsetHeight, vh = window.innerHeight;
+    const visible = H - (parseFloat(el.style.getPropertyValue('--sheet-offset')) || 0);
+    const targets = { peek: 212, half: vh * 0.5, full: H };
+    const best = Object.entries(targets).sort((a, b) => Math.abs(a[1] - visible) - Math.abs(b[1] - visible))[0][0];
+    setSheet(best);
+    setTimeout(() => { drag.moved = false; }, 0);
+  };
+  for (const h of [grab, $('.hero')]) h.addEventListener('pointerdown', start);
+  window.addEventListener('pointermove', move);
+  window.addEventListener('pointerup', end);
+  window.addEventListener('pointercancel', end);
+  window.addEventListener('resize', () => setSheet(el.dataset.state));
+  setSheet('half');
 }
 
 // ---------- render ----------
@@ -280,170 +364,173 @@ function applyLang() {
   document.title = t('title');
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
-  const sel = $('#city');
-  sel.innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
-  $('#cats').innerHTML = Object.entries(I18N[S.lang].cats).map(([k, v]) => `<button type="button" data-cat="${k}" aria-pressed="${k === S.cat}">${esc(v)}</button>`).join('');
+  $('#kicker').textContent = t('kicker');
+  $('#grab').setAttribute('aria-label', t('expand'));
+  $('#city').innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
 }
 function renderNotices() {
   const arr = [...(S.notices.loc ? [S.notices.loc] : []), ...S.notices.hebcal];
   $('#notices').innerHTML = arr.map((n) => `<p class="notice ${n.cls}">${esc(n.text)}</p>`).join('');
 }
 function shopHTML(it, now) {
-  const tg = it.tags;
+  const tg = it.tags, st = it.st;
   const type = I18N[S.lang].types[typeKey(tg)] || '';
   const name = nameOf(it);
-  const st = it.st;
-  const more = [];
-  if (st.oh) more.push(weekTable(st.oh, now));
-  if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p>`);
   const addr = [tg['addr:street'], tg['addr:housenumber']].filter(Boolean).join(' ');
-  const acts = [
-    `<a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${it.lat},${it.lon}" target="_blank" rel="noopener">${esc(t('route'))}</a>`,
-    `<a href="https://waze.com/ul?ll=${it.lat},${it.lon}&navigate=yes" target="_blank" rel="noopener">${esc(t('waze'))}</a>`,
-  ];
-  const phone = tg.phone || tg['contact:phone'];
-  if (phone) acts.push(`<a href="tel:${esc(phone.split(';')[0].replace(/\s/g, ''))}">${esc(t('call'))}</a>`);
-  more.push(`<div class="actions">${acts.join('')}</div>`);
-  return `<li class="shop${S.selected === it.id ? ' sel' : ''}" data-id="${it.id}" tabindex="0">
-    <span class="name">${esc(name)}</span><span class="dist">${fmtDist(it.d)}</span>
-    <span class="meta"><span class="pill ${st.k}">${esc(statusText(st, now))}</span>${type && type !== name ? `<span>${esc(type)}</span>` : ''}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
+  const tags = [];
+  if (st.oh && st.k !== 'open24' && opensOnShabbat(it, st.oh, now)) tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`);
+  const more = [];
+  if (S.selected === it.id) {
+    if (st.oh) more.push(weekTable(st.oh, now));
+    if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p>`);
+    const acts = [
+      `<a class="go" href="https://www.google.com/maps/dir/?api=1&destination=${it.lat},${it.lon}" target="_blank" rel="noopener">${esc(t('route'))}</a>`,
+      `<a href="https://waze.com/ul?ll=${it.lat},${it.lon}&navigate=yes" target="_blank" rel="noopener">${esc(t('waze'))}</a>`,
+    ];
+    const phone = tg.phone || tg['contact:phone'];
+    if (phone) acts.push(`<a href="tel:${esc(phone.split(';')[0].replace(/\s/g, ''))}">${esc(t('call'))}</a>`);
+    more.push(`<div class="actions">${acts.join('')}</div>`);
+  }
+  const walk = it.d < 2500 ? `<b>${esc(t('walk', { m: Math.max(1, Math.round(it.d / 80)) }))}</b>` : '';
+  return `<li class="shop${S.selected === it.id ? ' sel' : ''}" data-id="${esc(it.id)}" tabindex="0">
+    <span class="ico c-${it.cat}">${svg(it.cat)}</span>
+    <span class="name">${esc(name)}</span>
+    <span class="dist">${walk}${fmtDist(it.d)}</span>
+    <span class="meta"><span class="pill ${st.k}">${esc(statusText(st, now))}</span>${tags.join('')}${type && type !== name ? `<span>${esc(type)}</span>` : ''}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
     <div class="more">${more.join('')}</div>
   </li>`;
 }
-function render() {
+function listWithMore(items, key, now) {
+  const lim = S.limits[key];
+  const rest = items.length - lim;
+  return items.slice(0, lim).map((it) => shopHTML(it, now)).join('') +
+    (rest > 0 ? `<li class="empty"><button type="button" class="ghost" data-more="${key}">${esc(t('more', { n: rest }))}</button></li>` : '');
+}
+function refresh() {
+  if (!S.loaded) return;
   const now = new Date();
-  if (S.loading) {
-    $('#summary').textContent = t('loading');
-    $('#list').innerHTML = '<li class="skeleton"></li><li class="skeleton"></li><li class="skeleton"></li>';
-    $('#closedBox').hidden = true;
-    return;
-  }
-  if (S.error) {
-    $('#summary').textContent = '';
-    $('#list').innerHTML = `<li class="empty">${esc(t('netFail'))}<br><button type="button" class="ghost" data-retry>${esc(t('retry'))}</button></li>`;
-    $('#closedBox').hidden = true;
-    return;
-  }
-  if (S.lat == null) { $('#summary').textContent = ''; $('#list').innerHTML = ''; return; }
-  for (const it of S.items) it.st = statusOf(it, now);
-  const inCat = S.items.filter((it) => S.cat === 'all' || it.cat === S.cat);
-  const rank = { open24: 0, open: 0, soon: 0, unknown: 1, closed: 2 };
-  inCat.sort((a, b) => rank[a.st.k] - rank[b.st.k] || a.d - b.d);
-  const openL = inCat.filter((it) => rank[it.st.k] === 0);
+  const b = map.getBounds(), z = map.getZoom();
+  const c = map.getCenter();
+  const meIn = S.me && b.contains([S.me.lat, S.me.lon]);
+  const ref = meIn ? S.me : { lat: c.lat, lon: c.lng };
+  const pad = b.pad(0.05);
+  const inView = z >= 10 ? ALL.filter((s) => pad.contains([s.lat, s.lon])) : [];
+  for (const it of inView) { it.st = statusOf(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon); }
+  S.view = inView;
+  history.replaceState(null, '', `#${c.lat.toFixed(5)},${c.lng.toFixed(5)},${z}`);
+  store.set('lastView', JSON.stringify([c.lat, c.lng, z]));
+
+  // category chips with open counts
+  const openAll = inView.filter((it) => isOpen(it.st.k));
+  const counts = { all: openAll.length, food: 0, bakery: 0, pharmacy: 0, fuel: 0 };
+  for (const it of openAll) counts[it.cat]++;
+  $('#cats').innerHTML = Object.entries(I18N[S.lang].cats).map(([k, v]) =>
+    `<button type="button" class="chip" data-cat="${k}" aria-pressed="${k === S.cat}"><span class="ico c-${k}">${svg(k)}</span>${esc(v)} <span class="n">${counts[k]}</span></button>`).join('');
+
+  const inCat = inView.filter((it) => S.cat === 'all' || it.cat === S.cat).sort((a, b) => a.d - b.d);
+  const openL = inCat.filter((it) => isOpen(it.st.k));
   const unkL = inCat.filter((it) => it.st.k === 'unknown');
   const closedL = inCat.filter((it) => it.st.k === 'closed');
-  const shown = S.showUnknown ? [...openL, ...unkL] : openL;
-  $('#summary').textContent = S.showUnknown ? t('summary', { o: openL.length, u: unkL.length }) : t('summaryNoUnknown', { o: openL.length });
-  if (!openL.length && !(S.showUnknown && unkL.length)) {
-    const r2 = S.radius < 3000 ? 3000 : S.radius < 6000 ? 6000 : 0;
-    $('#list').innerHTML = `<li class="empty">${esc(t('empty'))}${r2 ? `<br><button type="button" class="ghost" data-widen="${r2}">${esc(t('widen', { r: r2 / 1000 }))}</button>` : ''}</li>`;
+
+  $('#openCount').textContent = z >= 10 ? openL.length : '—';
+  $('#openUnit').textContent = plural(openL.length);
+  $('#whereLine').textContent = z < 10 ? t('zoomIn') : meIn ? t('whereMe') : t('whereMap');
+
+  if (S.error) {
+    $('#list').innerHTML = `<li class="empty">${esc(t('netFail'))}<br><button type="button" class="ghost" data-retry>${esc(t('retry'))}</button></li>`;
+  } else if (z < 10) {
+    $('#list').innerHTML = `<li class="empty">${esc(t('zoomIn'))}</li>`;
+  } else if (!openL.length) {
+    $('#list').innerHTML = `<li class="empty">${esc(t('empty'))}<br><button type="button" class="ghost" data-zoomout>${esc(t('zoomOut'))}</button></li>`;
   } else {
-    $('#list').innerHTML = shown.map((it) => shopHTML(it, now)).join('');
+    $('#list').innerHTML = listWithMore(openL, 'list', now);
   }
+  $('#unknownBox').hidden = !unkL.length;
+  $('#unknownTitle').textContent = t('unknownTitle', { n: unkL.length });
+  if ($('#unknownBox').open) $('#unknownList').innerHTML = listWithMore(unkL, 'unknown', now);
   $('#closedBox').hidden = !closedL.length;
   $('#closedTitle').textContent = t('closedTitle', { n: closedL.length });
-  $('#closedList').innerHTML = closedL.map((it) => shopHTML(it, now)).join('');
-  drawMap(S.showUnknown ? inCat : [...openL, ...closedL]);
+  if ($('#closedBox').open) $('#closedList').innerHTML = listWithMore(closedL, 'closed', now);
+  S.lists = { unknown: unkL, closed: closedL };
+  drawMarkers(openL, unkL, closedL);
 }
 function select(id, fromMap) {
   S.selected = S.selected === id && !fromMap ? null : id;
-  document.querySelectorAll('.shop').forEach((el) => el.classList.toggle('sel', el.dataset.id === S.selected));
-  const it = S.items.find((x) => x.id === id);
-  if (!it) return;
-  if (fromMap) {
-    const el = document.querySelector(`.shop[data-id="${id}"]`);
-    if (el) { if (el.closest('details')) el.closest('details').open = true; el.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
-  } else if (S.selected) {
-    map.panTo([it.lat, it.lon]);
-    markers.get(id)?.openTooltip();
+  const it = S.view.find((x) => x.id === id);
+  if (fromMap && it) {
+    if (it.st.k === 'unknown') $('#unknownBox').open = true;
+    if (it.st.k === 'closed') $('#closedBox').open = true;
+    if (!wide() && sheet().dataset.state === 'peek') setSheet('half');
   }
+  refresh();
+  const el = document.querySelector(`.shop[data-id="${CSS.escape(id)}"]`);
+  if (el && fromMap) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  if (!fromMap && S.selected && it && !map.getBounds().pad(-0.15).contains([it.lat, it.lon])) map.panTo([it.lat, it.lon]);
 }
 
-// ---------- flow ----------
-let searchSeq = 0;
-async function search(lat, lon, radius = 1200, { source, auto } = {}) {
-  const seq = ++searchSeq;
-  S.lat = lat; S.lon = lon; S.radius = radius; S.selected = null; S.loading = true; S.error = false;
-  if (source !== 'demo') S.notices.loc = null;
-  history.replaceState(null, '', '#' + lat.toFixed(5) + ',' + lon.toFixed(5));
-  store.set('lastLoc', JSON.stringify([lat, lon]));
-  renderNotices(); render();
-  const z = radius <= 1200 ? 15 : radius <= 3000 ? 14 : 13;
-  map.setView([lat, lon], source === 'map' ? Math.max(map.getZoom(), z) : z);
-  loadHebcal(lat, lon);
-  try {
-    const raw = await fetchShops(lat, lon, radius);
-    if (seq !== searchSeq) return;
-    S.items = raw.map((it) => ({ ...it, cat: categoryOf(it.tags), d: distM(lat, lon, it.lat, it.lon) }));
-    S.loading = false;
-    render();
-    const now = new Date();
-    const openCount = S.items.filter((it) => ['open', 'open24', 'soon'].includes(statusOf(it, now).k)).length;
-    if (!auto && openCount < 3 && radius < 3000) search(lat, lon, 3000, { source, auto: true });
-  } catch (e) {
-    if (seq !== searchSeq) return;
-    S.loading = false; S.error = true; render();
-  }
-}
+// ---------- location ----------
 function locate(isAuto) {
   const btn = $('#locate');
-  if (!navigator.geolocation) { fallback(isAuto); return; }
+  if (!navigator.geolocation) { if (!isAuto) showLocErr(); return; }
   btn.setAttribute('aria-busy', 'true');
-  btn.querySelector('span').textContent = t('locating');
   navigator.geolocation.getCurrentPosition(
-    (p) => { resetBtn(); search(p.coords.latitude, p.coords.longitude, 1200, { source: 'gps' }); },
-    () => { resetBtn(); fallback(isAuto); },
+    (p) => {
+      btn.removeAttribute('aria-busy'); btn.classList.add('on');
+      S.me = { lat: p.coords.latitude, lon: p.coords.longitude };
+      S.notices.loc = null; renderNotices(); drawMe();
+      map.setView([S.me.lat, S.me.lon], Math.max(map.getZoom(), 16));
+      loadHebcal(S.me.lat, S.me.lon);
+    },
+    () => { btn.removeAttribute('aria-busy'); if (isAuto) { S.notices.loc = { cls: 'info', text: t('demo') }; renderNotices(); } else showLocErr(); },
     { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
   );
-  function resetBtn() { btn.removeAttribute('aria-busy'); btn.querySelector('span').textContent = t('locate'); }
 }
-function fallback(isAuto) {
-  if (isAuto && S.lat == null) {
-    search(32.0853, 34.7818, 1200, { source: 'demo' });
-    S.notices.loc = { cls: 'info', text: t('demo') };
-  } else {
-    S.notices.loc = { cls: 'err', text: t('geoFail') };
-  }
-  renderNotices();
-}
+function showLocErr() { S.notices.loc = { cls: 'err', text: t('geoFail') }; renderNotices(); }
 
 // ---------- wire up ----------
-function init() {
+async function init() {
   applyLang();
-  initMap();
+  const m = location.hash.match(/^#(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,(\d+))?$/);
+  let last = null; try { last = JSON.parse(store.get('lastView') || 'null'); } catch {}
+  const start = m ? [+m[1], +m[2], +(m[3] || 16)] : last || [32.0853, 34.7818, 15];
+  initMap([start[0], start[1]], start[2]);
+  initSheet();
+  $('#list').innerHTML = '<li class="skeleton"></li><li class="skeleton"></li><li class="skeleton"></li>';
+
   $('#locate').addEventListener('click', () => locate(false));
   $('#city').addEventListener('change', (e) => {
     const c = CITIES.find((x) => x[0] === e.target.value);
-    if (c) search(c[1], c[2], 1200, { source: 'city' });
+    if (c) { map.setView([c[1], c[2]], 15); loadHebcal(c[1], c[2]); }
+    e.target.value = '';
   });
   $('#cats').addEventListener('click', (e) => {
     const b = e.target.closest('[data-cat]'); if (!b) return;
-    S.cat = b.dataset.cat;
-    document.querySelectorAll('#cats button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-    render();
+    S.cat = b.dataset.cat; S.limits = { list: 60, unknown: 60, closed: 40 }; refresh();
   });
-  $('#showUnknown').addEventListener('change', (e) => { S.showUnknown = e.target.checked; render(); });
   document.querySelector('.langs').addEventListener('click', (e) => {
     const b = e.target.closest('[data-lang]'); if (!b) return;
     S.lang = b.dataset.lang; store.set('lang', S.lang);
-    applyLang(); render();
-    if (S.lat != null) loadHebcal(S.lat, S.lon);
+    applyLang(); refresh();
+    const c = S.me || { lat: map.getCenter().lat, lon: map.getCenter().lng }; loadHebcal(c.lat, c.lon);
   });
-  document.querySelector('.panel').addEventListener('click', (e) => {
+  for (const id of ['#unknownBox', '#closedBox']) $(id).addEventListener('toggle', refresh);
+  $('#scroller').addEventListener('click', (e) => {
     if (e.target.closest('a')) return;
-    const w = e.target.closest('[data-widen]');
-    if (w) { search(S.lat, S.lon, +w.dataset.widen, { auto: true }); return; }
-    if (e.target.closest('[data-retry]')) { search(S.lat, S.lon, S.radius); return; }
+    const more = e.target.closest('[data-more]');
+    if (more) { S.limits[more.dataset.more] += 60; refresh(); return; }
+    if (e.target.closest('[data-zoomout]')) { map.zoomOut(2); return; }
+    if (e.target.closest('[data-retry]')) { location.reload(); return; }
     const li = e.target.closest('.shop'); if (li) select(li.dataset.id, false);
   });
-  document.querySelector('.panel').addEventListener('keydown', (e) => {
+  $('#scroller').addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const li = e.target.closest('.shop'); if (li && e.target === li) { e.preventDefault(); select(li.dataset.id, false); }
   });
-  setInterval(() => { if (!S.loading && S.items.length) render(); }, 60000);
+  setInterval(refresh, 60000);
 
-  const m = location.hash.match(/^#(-?\d+\.?\d*),(-?\d+\.?\d*)$/);
-  if (m) { search(+m[1], +m[2], 1200, { source: 'link' }); return; }
-  locate(true);
+  try { await loadAll(); S.loaded = true; } catch { S.loaded = true; S.error = true; }
+  refresh();
+  const c = map.getCenter(); loadHebcal(c.lat, c.lng);
+  if (!m) locate(true);
 }
 init();

@@ -57,6 +57,8 @@ def clean(text):
     pick = 2 if is_summer() else 1
     text = re.sub(rf"שעון\s+חורף\s*[-:]?\s*({TIME}\s*(?:-|–|עד)\s*{TIME})[^0-9]{{0,20}}?שעון\s+קיץ\s*[-:]?\s*({TIME}\s*(?:-|–|עד)\s*{TIME})",
                   lambda m: m.group(pick if pick == 1 else 6), text)
+    # A lone season label inside a range ("7:30 – חורף 13:00") is noise once pairs are resolved.
+    text = re.sub(r"(?:חורף|קיץ)\s*", "", text)
     return re.sub(r"[ \t]+", " ", text).strip()
 
 
@@ -246,6 +248,61 @@ def ramilevy():
     return out
 
 
+def victory():
+    """Public branches page: each branch block carries data-latitude/longitude and a per-day hours list."""
+    page = get("https://victory.co.il/branches/")
+    out = []
+    for block in page.split('class="col-md-12 single-branch')[1:]:
+        ll = re.search(r'data-latitude="([\d.]+)"\s+data-longitude="([\d.]+)"', block)
+        name = re.search(r"<h3[^>]*>\s*([^<]+?)\s*</h3>", block)
+        if not ll or not name:
+            continue
+        addr = re.search(r"כתובת:\s*<br\s*/?>\s*([^<]+)", block)
+        phone = re.search(r'href="tel:([^"]+)"', block)
+        rules = {}
+        for day, o, c in re.findall(r'day-name">\s*([^<]+?)\s*</span>\s*<span class="open-hour">\s*([^<]+?)\s*</span>.*?<span class="close-hour">\s*([^<]+?)\s*</span>', block, re.S):
+            d = LETTER.get(day.strip()[:1])
+            m_o = re.match(r"(\d{1,2})[:.](\d{2})", o)
+            if d is None or not m_o:
+                continue
+            m_c = re.match(r"(\d{1,2})[:.](\d{2})", c)
+            if m_c:
+                to = hhmm(*m_c.groups())
+                to = "24:00" if to == "00:00" else to
+            elif "לפני" in c and "שבת" in c:
+                to = "(sunset-02:00)"
+            else:
+                continue
+            rules.setdefault(d, []).append((hhmm(*m_o.groups()), to))
+        title = html.unescape(name.group(1)).replace("סניף", "").strip()
+        out.append({"chain": "victory", "id": title, "lat": float(ll.group(1)), "lon": float(ll.group(2)),
+                    "opening_hours": compose(rules) if rules else None,
+                    "tags": {"name": "ויקטורי " + title, "name:en": "Victory", "name:ru": "Виктори", "brand": "Victory",
+                             "shop": "supermarket", "addr:street": html.unescape(addr.group(1)).strip() if addr else "",
+                             "phone": phone.group(1) if phone else ""}})
+    return out
+
+
+def osherad():
+    """Public stores page (Elementor listing): name, "city, street" and an hours paragraph per store; geocoded."""
+    page = get("https://osherad.co.il/stores/")
+    out, seen = [], set()
+    for block in page.split("jet-listing-grid__item ")[1:]:
+        heads = [html.unescape(h).strip() for h in re.findall(r'<h2 class="elementor-heading-title[^"]*">([^<]+)</h2>', block)]
+        hours = re.search(r"שעות פעילות:(.*?)</div>", block, re.S)
+        if len(heads) < 2 or not hours or "יפתח" in heads[1] or heads[1] in seen:
+            continue
+        seen.add(heads[1])
+        city, _, street = heads[1].partition(",")
+        ll = geocode(street.strip(), city.strip()) if street.strip() else None
+        if not ll:
+            continue
+        out.append({"chain": "osherad", "id": heads[0], "lat": ll[0], "lon": ll[1], "opening_hours": hebrew_to_oh(hours.group(1)),
+                    "tags": {"name": "אושר עד " + heads[0], "name:en": "Osher Ad", "name:ru": "Ошер Ад", "brand": "Osher Ad",
+                             "shop": "supermarket", "addr:street": street.strip(), "addr:city": city.strip(), "phone": "076-8899999"}})
+    return out
+
+
 # ---------------------------------------------------------------- geocoding (Nominatim, cached; max 1 request/second)
 _geocache = None
 
@@ -283,6 +340,8 @@ ALIASES = {
     "superpharm": ["סופר-פארם", "סופר פארם", "super-pharm", "super pharm", "superpharm"],
     "delek": ["דלק", "delek", "מנטה", "menta"],
     "ramilevy": ["רמי לוי", "rami levy", "rami-levy"],
+    "victory": ["ויקטורי", "victory"],
+    "osherad": ["אושר עד", "osher ad", "osher-ad"],
 }
 
 
@@ -352,7 +411,7 @@ def merge_into(shops, branches):
 
 # Delek is off by default: its station list is only served through the site's internal AJAX call guarded by a
 # per-page token. Enable it (--with-delek) only after Delek agrees to the data being reused.
-FETCHERS = {"shufersal": shufersal, "superpharm": superpharm, "ramilevy": ramilevy}
+FETCHERS = {"shufersal": shufersal, "superpharm": superpharm, "ramilevy": ramilevy, "victory": victory, "osherad": osherad}
 if "--with-delek" in sys.argv:
     FETCHERS["delek"] = delek
 

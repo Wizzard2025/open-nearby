@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    pkTitle: 'Парковка', pk_free: 'есть места', pk_busy: 'почти полно', pk_full: 'мест нет', pk_gone: 'парковки нет', pkNoReports: 'Отметок пока нет.', pkAsk: 'Вы здесь? Как сейчас:', pkNeedLoc: 'Чтобы отметить парковку, включите геолокацию ➤', pkFar: 'Отметить парковку можно только рядом (до 500 м).',
     ciAsk: 'Вы здесь? Помогите другим:', ciOpen: '✓ Открыто', ciClosed: '✗ Закрыто', ciOkTag: '✓ подтвердили {m}', ciBadTag: '✗ сообщили: закрыто {m}', ciAgo: '{n} мин назад', ciNow: 'только что', ciThanks: 'Спасибо! Ваша отметка видна всем.', ciFar: 'Отметить можно только рядом с магазином (до 300 м). Подойдите ближе.', ciNeedLoc: 'Чтобы отметить, включите геолокацию ➤', ciTooSoon: 'Вы уже отмечали этот магазин недавно.', ciConfirmedOpen: 'Открыто · подтвердили {m}',
     parkNear: 'Парковка в {d}', parkNone: 'Парковок рядом на карте нет', parkShow: 'показать', parkOn: 'Парковки на карте', parkZoom: 'Приблизьте карту, чтобы увидеть парковки',
     addOpen: '+ Нет нужного магазина? Добавьте', addTitle: 'Добавить магазин', addHintPin: 'Нажмите на карте, где он находится. Можно подвинуть карту.', addHintForm: 'Точка выбрана. Заполните пару полей:', addName: 'Название (например, «Маколет у Моше»)', addHoursOther: 'Свои часы', addHoursPh: 'например: вс–чт 7:00–23:00, пт до 14:00', addSend: 'Добавить на карту', addCancel: 'Отмена', addNote: 'Магазин сразу появится на карте у всех с пометкой «добавлено пользователем» и уйдёт в OpenStreetMap как заметка для проверки.', addThanks: 'Спасибо! «{n}» теперь на карте.', addFail: 'Не удалось отправить. Проверьте интернет и попробуйте ещё раз.', h247: 'Круглосуточно', h246: '24/6 (кроме шаббата)', hUnknown: 'Не знаю', userTag: 'добавлено пользователем',
@@ -49,6 +50,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    pkTitle: 'חניה', pk_free: 'יש מקום', pk_busy: 'כמעט מלא', pk_full: 'אין מקום', pk_gone: 'אין כאן חניה', pkNoReports: 'עדיין אין דיווחים.', pkAsk: 'אתם כאן? מה המצב:', pkNeedLoc: 'כדי לדווח על חניה, הפעילו מיקום ➤', pkFar: 'אפשר לדווח רק מקרוב (עד 500 מ׳).',
     ciAsk: 'אתם כאן? עזרו לאחרים:', ciOpen: '✓ פתוח', ciClosed: '✗ סגור', ciOkTag: '✓ אושר {m}', ciBadTag: '✗ דווח: סגור {m}', ciAgo: 'לפני {n} דק׳', ciNow: 'עכשיו', ciThanks: 'תודה! הסימון שלכם גלוי לכולם.', ciFar: 'אפשר לסמן רק ליד החנות (עד 300 מ׳). התקרבו.', ciNeedLoc: 'כדי לסמן, הפעילו מיקום ➤', ciTooSoon: 'כבר סימנתם את החנות הזו לא מזמן.', ciConfirmedOpen: 'פתוח · אושר {m}',
     parkNear: 'חניה במרחק {d}', parkNone: 'אין חניונים קרובים במפה', parkShow: 'להראות', parkOn: 'חניות במפה', parkZoom: 'הגדילו את המפה כדי לראות חניות',
     addOpen: '+ חסרה חנות? הוסיפו אותה', addTitle: 'הוספת חנות', addHintPin: 'הקישו על המפה במקום שבו היא נמצאת.', addHintForm: 'המקום נבחר. מלאו כמה פרטים:', addName: 'שם (למשל «המכולת של משה»)', addHoursOther: 'שעות אחרות', addHoursPh: 'למשל: א׳–ה׳ 7:00–23:00, ו׳ עד 14:00', addSend: 'הוספה למפה', addCancel: 'ביטול', addNote: 'החנות תופיע מיד במפה לכולם עם הסימון «נוסף על ידי משתמש» ותישלח ל-OpenStreetMap כהערה לבדיקה.', addThanks: 'תודה! «{n}» מופיעה עכשיו במפה.', addFail: 'השליחה נכשלה. בדקו את החיבור ונסו שוב.', h247: '24/7', h246: '24/6 (בלי שבת)', hUnknown: 'לא יודע/ת', userTag: 'נוסף על ידי משתמש',
@@ -74,6 +76,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    pkTitle: 'Parking', pk_free: 'spaces free', pk_busy: 'almost full', pk_full: 'full', pk_gone: 'no parking here', pkNoReports: 'No reports yet.', pkAsk: 'Here now? How is it:', pkNeedLoc: 'Turn on location ➤ to report parking', pkFar: 'You can only report parking nearby (within 500 m).',
     ciAsk: 'Here now? Help others:', ciOpen: '✓ Open', ciClosed: '✗ Closed', ciOkTag: '✓ confirmed {m}', ciBadTag: '✗ reported closed {m}', ciAgo: '{n} min ago', ciNow: 'just now', ciThanks: 'Thanks! Everyone can see your check-in.', ciFar: 'You can only check in near the shop (within 300 m). Get a bit closer.', ciNeedLoc: 'Turn on location ➤ to check in', ciTooSoon: 'You checked in here recently.', ciConfirmedOpen: 'Open · confirmed {m}',
     parkNear: 'Parking {d} away', parkNone: 'No car parks nearby on the map', parkShow: 'show', parkOn: 'Parking on the map', parkZoom: 'Zoom in to see parking',
     addOpen: '+ Missing a shop? Add it', addTitle: 'Add a shop', addHintPin: 'Tap the map where it is. You can move the map.', addHintForm: 'Spot picked. Fill in a couple of fields:', addName: "Name (e.g. “Moshe's makolet”)", addHoursOther: 'Other hours', addHoursPh: 'e.g. Sun–Thu 7:00–23:00, Fri until 14:00', addSend: 'Add to the map', addCancel: 'Cancel', addNote: 'It shows on the map for everyone right away, marked “added by a user”, and goes to OpenStreetMap as a note for mappers to check.', addThanks: 'Thanks! “{n}” is on the map now.', addFail: "Couldn't send it. Check your connection and try again.", h247: 'Open 24/7', h246: '24/6 (closed Shabbat)', hUnknown: "Don't know", userTag: 'added by a user',
@@ -476,7 +479,7 @@ function shopHTML(it, now) {
     const phone = tg.phone || tg['contact:phone'];
     if (phone) acts.push(`<a href="tel:${esc(phone.split(';')[0].replace(/\s/g, ''))}">${esc(t('call'))}</a>`);
     more.push(`<div class="ci-row"><span>${esc(t('ciAsk'))}</span><button type="button" class="ci-btn ok" data-ci="${esc(it.id)}" data-v="open">${esc(t('ciOpen'))}</button><button type="button" class="ci-btn bad" data-ci="${esc(it.id)}" data-v="closed">${esc(t('ciClosed'))}</button></div>`);
-    more.push(`<p class="parkline" data-park-for="${esc(it.id)}">${PARK.cache.get(it.id) || '…'}</p>`);
+    more.push(`<p class="parkline" data-park-for="${esc(it.id)}">${parkLineHTML(it.id)}</p>`);
     more.push(`<div class="actions">${acts.join('')}</div>`);
   }
   const walk = it.d < 2500 ? `<b>${esc(t('walk', { m: Math.max(1, Math.round(it.d / 80)) }))}</b>` : '';
@@ -759,33 +762,118 @@ async function checkIn(id, v) {
 
 // ---------- parking (car parks from the map tiles we already load for shade) ----------
 const PARK = { on: false, layer: null, nearMarker: null, cache: new Map() };
+const pid = (p) => p.lat.toFixed(5) + ',' + p.lon.toFixed(5);
+
+// Parking reports: same approach as check-ins (ntfy.sh topic per ~5 km tile, kept 12 h).
+// Message {"p": "lat,lon", "v": "free"|"busy"|"full"|"gone"}; a report counts for 90 minutes ("gone": 12 h).
+const PK = new Map(), pkTiles = new Map();
+const PK_EMOJI = { free: '🟢', busy: '🟡', full: '🔴', gone: '⚫' };
+const pkTopic = (lat, lon) => `betachpatuach-pk-${Math.floor(lat / CI_T)}-${Math.floor(lon / CI_T)}`;
+function pkAdd(m) {
+  try {
+    const x = JSON.parse(m.message);
+    if (!x || typeof x.p !== 'string' || !PK_EMOJI[x.v]) return;
+    const arr = PK.get(x.p) || [];
+    if (!arr.some((y) => y.id === m.id)) arr.push({ id: m.id, v: x.v, time: m.time });
+    arr.sort((a, b) => b.time - a.time);
+    PK.set(x.p, arr.slice(0, 10));
+  } catch {}
+}
+function pkLatest(id) {
+  const r = (PK.get(id) || [])[0];
+  if (!r) return null;
+  const age = Date.now() / 1000 - r.time;
+  return age < (r.v === 'gone' ? 12 * 3600 : 90 * 60) ? r : null;
+}
+async function loadParkReports(s, w, n, e) {
+  const topics = new Set();
+  for (let la = Math.floor(s / CI_T); la <= Math.floor(n / CI_T); la++)
+    for (let lo = Math.floor(w / CI_T); lo <= Math.floor(e / CI_T); lo++) topics.add(`betachpatuach-pk-${la}-${lo}`);
+  if (topics.size > 6) return false;
+  let got = false;
+  await Promise.all([...topics].map(async (tp) => {
+    const last = pkTiles.get(tp);
+    if (last && Date.now() - last < 120000) return;
+    pkTiles.set(tp, Date.now());
+    try {
+      const txt = await (await fetch(`https://ntfy.sh/${tp}/json?poll=1&since=12h`)).text();
+      for (const line of txt.split('\n')) {
+        if (!line.trim()) continue;
+        const m = JSON.parse(line);
+        if (m.event === 'message') { pkAdd(m); got = true; }
+      }
+    } catch { pkTiles.delete(tp); }
+  }));
+  return got;
+}
+function pkStatusText(r) { return `${PK_EMOJI[r.v]} ${t('pk_' + r.v)}, ${ciAgo(r.time)}`; }
+function pkPopupHTML(p) {
+  const id = pid(p), r = pkLatest(id);
+  const btn = (v) => `<button type="button" class="pk-btn pk-${v}" data-pk="${id}" data-v="${v}">${PK_EMOJI[v]} ${esc(t('pk_' + v))}</button>`;
+  return `<div class="pk-pop"><b>${esc(p.name || t('pkTitle'))}</b>
+    <p class="pk-now">${r ? esc(pkStatusText(r)) : esc(t('pkNoReports'))}</p>
+    <p class="pk-ask">${esc(t('pkAsk'))}</p>
+    <div class="pk-btns">${btn('free')}${btn('busy')}${btn('full')}${btn('gone')}</div></div>`;
+}
+function pkIcon(p) {
+  const r = pkLatest(pid(p));
+  return L.divIcon({ className: '', html: `<div class="p-pin${r ? ' pk-' + r.v : ''}">P</div>`, iconSize: [22, 22], iconAnchor: [11, 11] });
+}
 async function drawParking() {
   if (PARK.layer) { PARK.layer.remove(); PARK.layer = null; }
   if (!PARK.on) return;
   if (map.getZoom() < 14) { S.notices.loc = { cls: 'info', text: t('parkZoom') }; renderNotices(); return; }
   const b = map.getBounds().pad(0.1);
-  const list = await Route.parkingIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
+  const [list] = await Promise.all([
+    Route.parkingIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]),
+    loadParkReports(b.getSouth(), b.getWest(), b.getNorth(), b.getEast()),
+  ]);
   if (!PARK.on) return;
   if (PARK.layer) PARK.layer.remove();
   PARK.layer = L.layerGroup().addTo(map);
   for (const p of list.slice(0, 300)) {
-    L.marker([p.lat, p.lon], { icon: L.divIcon({ className: '', html: '<div class="p-pin">P</div>', iconSize: [22, 22], iconAnchor: [11, 11] }), keyboard: false })
-      .bindTooltip(esc(p.name || 'P')).addTo(PARK.layer);
+    L.marker([p.lat, p.lon], { icon: pkIcon(p), keyboard: false })
+      .bindPopup(() => pkPopupHTML(p), { maxWidth: 260 })
+      .addTo(PARK.layer);
   }
 }
+async function pkReport(id, v) {
+  const [lat, lon] = id.split(',').map(Number);
+  const note = (text, cls = 'info') => { S.notices.loc = { cls, text }; renderNotices(); };
+  if (!S.me) { note(t('pkNeedLoc')); locate(false); return; }
+  if (distM(S.me.lat, S.me.lon, lat, lon) > 500) { note(t('pkFar')); return; }
+  const key = 'pk:' + id;
+  if (Date.now() - Number(store.get(key) || 0) < 15 * 60000) { note(t('ciTooSoon')); return; }
+  try {
+    const r = await fetch(`https://ntfy.sh/${pkTopic(lat, lon)}`, { method: 'POST', body: JSON.stringify({ p: id, v }) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    pkAdd(await r.json());
+    store.set(key, String(Date.now()));
+    track('parking-report', v);
+    note(t('ciThanks'));
+    map.closePopup();
+    drawParking();
+    refresh();
+  } catch { note(t('addFail'), 'err'); }
+}
+function parkLineHTML(itId) {
+  const c = PARK.cache.get(itId);
+  if (c === undefined) return '…';
+  if (!c) return `<span class="pbadge">P</span> ${esc(t('parkNone'))}`;
+  const r = pkLatest(pid(c.p));
+  return `<span class="pbadge">P</span> ${esc(t('parkNear', { d: fmtDist(c.d) }))}${r ? ' · ' + esc(pkStatusText(r)) : ''} · <button type="button" data-park-go="${c.p.lat},${c.p.lon}">${esc(t('parkShow'))}</button>`;
+}
 async function fillParkLine(it) {
-  if (PARK.cache.has(it.id)) return;
-  const d = 0.006;
-  const list = await Route.parkingIn([it.lat - d, it.lon - d * 1.2, it.lat + d, it.lon + d * 1.2]).catch(() => []);
-  let best = null, bd = 500;
-  for (const p of list) { const x = distM(it.lat, it.lon, p.lat, p.lon); if (x < bd) { bd = x; best = p; } }
+  if (!PARK.cache.has(it.id)) {
+    const d = 0.006;
+    const list = await Route.parkingIn([it.lat - d, it.lon - d * 1.2, it.lat + d, it.lon + d * 1.2]).catch(() => []);
+    let best = null, bd = 500;
+    for (const p of list) { const x = distM(it.lat, it.lon, p.lat, p.lon); if (x < bd) { bd = x; best = p; } }
+    PARK.cache.set(it.id, best ? { p: best, d: bd } : null);
+  }
+  await loadParkReports(it.lat - 0.01, it.lon - 0.01, it.lat + 0.01, it.lon + 0.01);
   const el2 = document.querySelector(`[data-park-for="${CSS.escape(it.id)}"]`);
-  if (!el2) return;
-  const html = best
-    ? `<span class="pbadge">P</span> ${esc(t('parkNear', { d: fmtDist(bd) }))} · <button type="button" data-park-go="${best.lat},${best.lon}">${esc(t('parkShow'))}</button>`
-    : `<span class="pbadge">P</span> ${esc(t('parkNone'))}`;
-  PARK.cache.set(it.id, html);
-  el2.innerHTML = html;
+  if (el2) el2.innerHTML = parkLineHTML(it.id);
 }
 function showParkSpot(lat, lon) {
   if (PARK.nearMarker) PARK.nearMarker.remove();
@@ -817,6 +905,10 @@ async function init() {
   });
   map.on('moveend', () => { if (PARK.on) drawParking(); });
   initAdd();
+  document.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-pk]');
+    if (b) { e.preventDefault(); pkReport(b.dataset.pk, b.dataset.v); }
+  });
   $('#shadeBtn').addEventListener('click', () => {
     RT.wantShade = !RT.wantShade;
     if (RT.target) showRoute(RT.target);

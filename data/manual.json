@@ -1,0 +1,15 @@
+{
+  "_note": "Shops verified by hand (by the team or reported by people who know them). Merged into shops.json on every update and take priority over other sources. Add: id, lat, lon, name, shop or amenity, opening_hours (OSM syntax), source.",
+  "shops": [
+    {
+      "id": "in-and-out-kiryat-yam",
+      "lat": 32.85189, "lon": 35.07794,
+      "name": "In&Out 24/7", "name:he": "אין אנד אאוט 24/7", "name:ru": "In&Out 24/7",
+      "shop": "convenience",
+      "opening_hours": "24/7",
+      "addr:street": "שדרות ירושלים 81", "addr:city": "קרית ים",
+      "phone": "04-877-9176",
+      "source": "user report 2026-11-17; Google Maps & Waze list 24 hours"
+    }
+  ]
+}

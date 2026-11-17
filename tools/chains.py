@@ -303,6 +303,18 @@ def osherad():
     return out
 
 
+def manual():
+    """Hand-verified shops from data/manual.json (independent makolets etc. missing from every other source)."""
+    path = DATA / "manual.json"
+    if not path.exists():
+        return []
+    out = []
+    for s in json.loads(path.read_text(encoding="utf-8"))["shops"]:
+        tags = {k: v for k, v in s.items() if k not in ("id", "lat", "lon", "opening_hours", "source") and v}
+        out.append({"chain": "manual", "id": s["id"], "lat": s["lat"], "lon": s["lon"], "opening_hours": s.get("opening_hours"), "tags": tags})
+    return out
+
+
 # ---------------------------------------------------------------- geocoding (Nominatim, cached; max 1 request/second)
 _geocache = None
 
@@ -342,6 +354,7 @@ ALIASES = {
     "ramilevy": ["רמי לוי", "rami levy", "rami-levy"],
     "victory": ["ויקטורי", "victory"],
     "osherad": ["אושר עד", "osher ad", "osher-ad"],
+    "manual": [],
 }
 
 
@@ -375,13 +388,13 @@ def merge_into(shops, branches):
     used, stats = set(), {}
     for b in branches:
         key = b["chain"] + (":Be" if b.get("net") == "Be" else "")
-        radius = 300 if b["chain"] == "delek" else 200
+        radius = 300 if b["chain"] == "delek" else 40 if b["chain"] == "manual" else 200
         best, bd = None, radius
         gy, gx = round(b["lat"] * 100), round(b["lon"] * 100)
         for dy in (-1, 0, 1):
             for dx in (-1, 0, 1):
                 for s in grid.get((gy + dy, gx + dx), []):
-                    if s[0] in used or not matches(key, s[3]):
+                    if s[0] in used or (key != "manual" and not matches(key, s[3])):
                         continue
                     d = dist(b["lat"], b["lon"], s[1], s[2])
                     if d < bd:
@@ -411,7 +424,7 @@ def merge_into(shops, branches):
 
 # Delek is off by default: its station list is only served through the site's internal AJAX call guarded by a
 # per-page token. Enable it (--with-delek) only after Delek agrees to the data being reused.
-FETCHERS = {"shufersal": shufersal, "superpharm": superpharm, "ramilevy": ramilevy, "victory": victory, "osherad": osherad}
+FETCHERS = {"shufersal": shufersal, "superpharm": superpharm, "ramilevy": ramilevy, "victory": victory, "osherad": osherad, "manual": manual}
 if "--with-delek" in sys.argv:
     FETCHERS["delek"] = delek
 

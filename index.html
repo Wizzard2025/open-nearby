@@ -71,6 +71,24 @@
   <div class="chips" role="group" id="cats"></div>
   <div id="notices"></div>
 
+  <form class="addbox" id="addBox" hidden autocomplete="off">
+    <p class="add-title" id="addTitle"></p>
+    <p class="add-hint" id="addHint"></p>
+    <div id="addFields" hidden>
+      <input id="addName" required maxlength="60">
+      <div class="add-row">
+        <select id="addType"></select>
+      </div>
+      <div class="add-hours" id="addHours" role="radiogroup"></div>
+      <input id="addHoursText" hidden maxlength="80">
+      <div class="add-actions">
+        <button type="submit" class="walk" id="addSend"></button>
+        <button type="button" class="ghost" id="addCancel"></button>
+      </div>
+      <p class="add-note" id="addNote"></p>
+    </div>
+  </form>
+
   <div class="scroller" id="scroller">
     <ol id="list" class="list"></ol>
     <details id="unknownBox" class="fold" hidden>
@@ -82,6 +100,7 @@
       <summary id="closedTitle"></summary>
       <ol id="closedList" class="list"></ol>
     </details>
+    <button type="button" class="addcta" id="addOpen"></button>
     <p class="source"><span data-i18n="source"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></p>
   </div>
 </section>

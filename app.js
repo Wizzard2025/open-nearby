@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    addOpen: '+ Нет нужного магазина? Добавьте', addTitle: 'Добавить магазин', addHintPin: 'Нажмите на карте, где он находится. Можно подвинуть карту.', addHintForm: 'Точка выбрана. Заполните пару полей:', addName: 'Название (например, «Маколет у Моше»)', addHoursOther: 'Свои часы', addHoursPh: 'например: вс–чт 7:00–23:00, пт до 14:00', addSend: 'Добавить на карту', addCancel: 'Отмена', addNote: 'Магазин сразу появится на карте у всех с пометкой «добавлено пользователем» и уйдёт в OpenStreetMap как заметка для проверки.', addThanks: 'Спасибо! «{n}» теперь на карте.', addFail: 'Не удалось отправить. Проверьте интернет и попробуйте ещё раз.', h247: 'Круглосуточно', h246: '24/6 (кроме шаббата)', hUnknown: 'Не знаю', userTag: 'добавлено пользователем',
     walkBtn: 'Пешком', routeTitle: '{m} мин пешком · {d}', fromCenter: 'от центра карты — включите геолокацию ➤', shadeBtn: '☀ По тени', shadeCalc: 'Считаю тень…', shadePct: 'в тени ≈ {p}%', shadeFail: 'тень сейчас посчитать не удалось', shadeNight: 'солнца нет — тень не нужна', hotNote: 'жарко {t}° — выбран путь по тени', routeFail: 'Не удалось построить маршрут. Попробуйте ещё раз.', ringMin: '{m} мин',
   },
   he: {
@@ -46,6 +47,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    addOpen: '+ חסרה חנות? הוסיפו אותה', addTitle: 'הוספת חנות', addHintPin: 'הקישו על המפה במקום שבו היא נמצאת.', addHintForm: 'המקום נבחר. מלאו כמה פרטים:', addName: 'שם (למשל «המכולת של משה»)', addHoursOther: 'שעות אחרות', addHoursPh: 'למשל: א׳–ה׳ 7:00–23:00, ו׳ עד 14:00', addSend: 'הוספה למפה', addCancel: 'ביטול', addNote: 'החנות תופיע מיד במפה לכולם עם הסימון «נוסף על ידי משתמש» ותישלח ל-OpenStreetMap כהערה לבדיקה.', addThanks: 'תודה! «{n}» מופיעה עכשיו במפה.', addFail: 'השליחה נכשלה. בדקו את החיבור ונסו שוב.', h247: '24/7', h246: '24/6 (בלי שבת)', hUnknown: 'לא יודע/ת', userTag: 'נוסף על ידי משתמש',
     walkBtn: 'ברגל', routeTitle: '{m} דק׳ הליכה · {d}', fromCenter: 'ממרכז המפה — הפעילו מיקום ➤', shadeBtn: '☀ בצל', shadeCalc: 'מחשב צל…', shadePct: 'בצל ≈ {p}%', shadeFail: 'לא הצלחנו לחשב צל כרגע', shadeNight: 'אין שמש — אין צורך בצל', hotNote: 'חם {t}° — נבחר מסלול מוצל', routeFail: 'לא הצלחנו לבנות מסלול. נסו שוב.', ringMin: '{m} דק׳',
   },
   en: {
@@ -68,6 +70,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    addOpen: '+ Missing a shop? Add it', addTitle: 'Add a shop', addHintPin: 'Tap the map where it is. You can move the map.', addHintForm: 'Spot picked. Fill in a couple of fields:', addName: "Name (e.g. “Moshe's makolet”)", addHoursOther: 'Other hours', addHoursPh: 'e.g. Sun–Thu 7:00–23:00, Fri until 14:00', addSend: 'Add to the map', addCancel: 'Cancel', addNote: 'It shows on the map for everyone right away, marked “added by a user”, and goes to OpenStreetMap as a note for mappers to check.', addThanks: 'Thanks! “{n}” is on the map now.', addFail: "Couldn't send it. Check your connection and try again.", h247: 'Open 24/7', h246: '24/6 (closed Shabbat)', hUnknown: "Don't know", userTag: 'added by a user',
     walkBtn: 'Walk', routeTitle: '{m} min walk · {d}', fromCenter: 'from the map centre — turn on location ➤', shadeBtn: '☀ Shady way', shadeCalc: 'Working out shade…', shadePct: '≈ {p}% in shade', shadeFail: "couldn't work out shade right now", shadeNight: 'no sun — no shade needed', hotNote: 'hot {t}° — shady path chosen', routeFail: "Couldn't build a route. Try again.", ringMin: '{m} min',
   },
 };
@@ -435,6 +438,7 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   $('#kicker').textContent = t('kicker');
+  $('#addOpen').textContent = t('addOpen');
   $('#grab').setAttribute('aria-label', t('expand'));
   $('#city').innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
 }
@@ -449,6 +453,7 @@ function shopHTML(it, now) {
   const addr = [tg['addr:street'], tg['addr:housenumber']].filter(Boolean).join(' ');
   const tags = [];
   if (st.oh && st.k !== 'open24' && opensOnShabbat(it, st.oh, now)) tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`);
+  if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);
   const more = [];
   if (S.selected === it.id) {
     if (st.oh) more.push(weekTable(st.oh, now));
@@ -485,7 +490,8 @@ function refresh() {
   const meIn = S.me && b.contains([S.me.lat, S.me.lon]);
   const ref = meIn ? S.me : { lat: c.lat, lon: c.lng };
   const pad = b.pad(0.05);
-  const inView = z >= 10 ? ALL.filter((s) => pad.contains([s.lat, s.lon])) : [];
+  const inView = z >= 10 ? ALL.concat(USER_SHOPS).filter((s) => pad.contains([s.lat, s.lon])) : [];
+  if (z >= 13) loadUserShops(b);
   for (const it of inView) { it.st = statusOf(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon); }
   S.view = inView;
   history.replaceState(null, '', `#${c.lat.toFixed(5)},${c.lng.toFixed(5)},${z}`);
@@ -558,6 +564,119 @@ function locate(isAuto) {
 }
 function showLocErr() { S.notices.loc = { cls: 'err', text: t('geoFail') }; renderNotices(); }
 
+// ---------- shops added by people (OpenStreetMap notes, no server of our own) ----------
+// A report becomes a public OSM note tagged #betachpatuach. Everyone's app reads those notes for the visible
+// area and shows them right away; OSM mappers can then add the shop to the map for good.
+const NOTES_API = 'https://api.openstreetmap.org/api/0.6/notes';
+const NOTE_TAG = '#betachpatuach';
+const OSM_TYPE = { food: 'shop=convenience', bakery: 'shop=bakery', pharmacy: 'amenity=pharmacy', fuel: 'amenity=fuel' };
+let USER_SHOPS = [];
+const noteTiles = new Map();
+function noteToShop(f) {
+  const text = f.properties.comments?.[0]?.text || '';
+  if (!text.includes(NOTE_TAG)) return null;
+  const tags = { 'source:hours': 'user' };
+  const lines = text.split('\n').map((x) => x.trim()).filter(Boolean);
+  tags.name = lines[0].slice(0, 60);
+  for (const ln of lines) {
+    const m = ln.match(/^(shop|amenity|opening_hours)=(.+)$/);
+    if (m && m[2] !== '?') tags[m[1]] = m[2].slice(0, 120);
+  }
+  if (!tags.shop && !tags.amenity) tags.shop = 'convenience';
+  const [lon, lat] = f.geometry.coordinates;
+  return { id: 'note' + f.properties.id, lat, lon, tags, cat: categoryOf(tags), user: true };
+}
+async function loadUserShops(bounds) {
+  // Notes are fetched per ~2 km tile, once per session.
+  const T = 0.02;
+  const keys = [];
+  for (let la = Math.floor(bounds.getSouth() / T); la <= Math.floor(bounds.getNorth() / T); la++)
+    for (let lo = Math.floor(bounds.getWest() / T); lo <= Math.floor(bounds.getEast() / T); lo++) keys.push([la, lo]);
+  if (keys.length > 16) return;
+  let added = false;
+  await Promise.all(keys.map(async ([la, lo]) => {
+    const k = la + ',' + lo;
+    if (noteTiles.has(k)) return;
+    noteTiles.set(k, 'loading');
+    try {
+      const r = await fetch(`${NOTES_API}.json?bbox=${(lo * T).toFixed(3)},${(la * T).toFixed(3)},${((lo + 1) * T).toFixed(3)},${((la + 1) * T).toFixed(3)}&closed=0&limit=100`);
+      const j = await r.json();
+      for (const f of j.features || []) {
+        const s = noteToShop(f);
+        if (s && !USER_SHOPS.some((x) => x.id === s.id)) { USER_SHOPS.push(s); added = true; }
+      }
+      noteTiles.set(k, 'ok');
+    } catch { noteTiles.delete(k); }
+  }));
+  if (added) refresh();
+}
+
+const ADD = { on: false, pin: null, marker: null, hours: '24/7', cat: 'food' };
+function addStart() {
+  ADD.on = true; ADD.pin = null;
+  $('#addBox').hidden = false; $('#addFields').hidden = true;
+  $('#addTitle').textContent = t('addTitle'); $('#addHint').textContent = t('addHintPin');
+  if (!wide()) setSheet('peek');
+  track('add-start', 'add shop');
+}
+function addStop() {
+  ADD.on = false; ADD.pin = null;
+  if (ADD.marker) { ADD.marker.remove(); ADD.marker = null; }
+  $('#addBox').hidden = true; $('#addBox').reset();
+}
+function addPick(latlng) {
+  ADD.pin = latlng;
+  if (ADD.marker) ADD.marker.setLatLng(latlng);
+  else ADD.marker = L.marker(latlng, { draggable: true, icon: L.divIcon({ className: '', html: '<div class="add-pin"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }) })
+    .on('dragend', (e) => { ADD.pin = e.target.getLatLng(); }).addTo(map);
+  $('#addHint').textContent = t('addHintForm');
+  $('#addFields').hidden = false;
+  $('#addName').placeholder = t('addName');
+  $('#addType').innerHTML = ['food', 'bakery', 'pharmacy', 'fuel'].map((k) => `<option value="${k}"${k === ADD.cat ? ' selected' : ''}>${esc(I18N[S.lang].cats[k])}</option>`).join('');
+  const opts = [['24/7', t('h247')], ['24/6', t('h246')], ['?', t('hUnknown')], ['other', t('addHoursOther')]];
+  $('#addHours').innerHTML = opts.map(([v, l]) => `<button type="button" role="radio" data-h="${v}" aria-checked="${v === ADD.hours}">${esc(l)}</button>`).join('');
+  $('#addHoursText').placeholder = t('addHoursPh');
+  $('#addHoursText').hidden = ADD.hours !== 'other';
+  $('#addSend').textContent = t('addSend'); $('#addCancel').textContent = t('addCancel'); $('#addNote').textContent = t('addNote');
+  if (!wide()) setSheet('half');
+  setTimeout(() => $('#addName').focus(), 50);
+}
+async function addSubmit(e) {
+  e.preventDefault();
+  const name = $('#addName').value.trim();
+  if (!name || !ADD.pin) return;
+  const hours = ADD.hours === 'other' ? ($('#addHoursText').value.trim() || '?') : ADD.hours;
+  const text = `${name}\n${OSM_TYPE[$('#addType').value]}\nopening_hours=${hours}\n\nShop reported by a user of בטח פתוח (wizzard2025.github.io/open-nearby). ${NOTE_TAG}`;
+  const btn = $('#addSend'); btn.disabled = true;
+  try {
+    const body = new URLSearchParams({ lat: ADD.pin.lat.toFixed(6), lon: ADD.pin.lng.toFixed(6), text });
+    const r = await fetch(`${NOTES_API}.json`, { method: 'POST', body });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const s = noteToShop(await r.json());
+    if (s) USER_SHOPS.push(s);
+    track('add-sent', `add · ${$('#addType').value} · ${hours === '?' ? 'no hours' : 'hours'}`);
+    addStop();
+    S.notices.loc = { cls: 'info', text: t('addThanks', { n: name }) }; renderNotices();
+    refresh();
+  } catch {
+    $('#addNote').textContent = t('addFail');
+  } finally { btn.disabled = false; }
+}
+function initAdd() {
+  $('#addOpen').addEventListener('click', addStart);
+  $('#addCancel').addEventListener('click', addStop);
+  $('#addBox').addEventListener('submit', addSubmit);
+  $('#addType').addEventListener('change', (e) => { ADD.cat = e.target.value; });
+  $('#addHours').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-h]'); if (!b) return;
+    ADD.hours = b.dataset.h;
+    document.querySelectorAll('#addHours [data-h]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
+    $('#addHoursText').hidden = ADD.hours !== 'other';
+    if (ADD.hours === 'other') $('#addHoursText').focus();
+  });
+  map.on('click', (e) => { if (ADD.on) addPick(e.latlng); });
+}
+
 // ---------- analytics (GoatCounter: cookie-free, no personal data) ----------
 function track(path, title) {
   try { window.goatcounter?.count?.({ path, title, event: true }); } catch {}
@@ -575,6 +694,7 @@ async function init() {
 
   $('#locate').addEventListener('click', () => { track('click-locate', 'near me'); locate(false); });
   $('#routeClose').addEventListener('click', clearRoute);
+  initAdd();
   $('#shadeBtn').addEventListener('click', () => {
     RT.wantShade = !RT.wantShade;
     if (RT.target) showRoute(RT.target);

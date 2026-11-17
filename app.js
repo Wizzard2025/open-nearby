@@ -1,4 +1,4 @@
-/* Открыто рядом — Pixel Studio. Map-first: everything in the visible map area, open places first.
+/* Открыто рядом — Spot On. Map-first: everything in the visible map area, open places first.
    Data: data/shops.json (OpenStreetMap + official chain hours, refreshed daily) + Hebcal (Shabbat/holidays). */
 'use strict';
 

@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Icon</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@800&display=swap">
+<style>
+  /* App icon source, rendered at 512x512. ?text=1 adds the "Spot On" label (app icons); without it: favicon mark. */
+  html, body { margin: 0; width: 512px; height: 512px; overflow: hidden; background: #0e141a; }
+  .wrap { position: relative; width: 512px; height: 512px; display: grid; place-items: center;
+          background: radial-gradient(circle at 50% 44%, rgb(60 196 242 / 0.22), transparent 60%), #0e141a; }
+  .rings { position: absolute; left: 50%; top: var(--cy); transform: translate(-50%, -50%); }
+  .ring { position: absolute; left: 50%; top: 50%; border-radius: 50%; border: 6px solid #3cc4f2; transform: translate(-50%, -50%); }
+  .dot { position: absolute; left: 50%; top: 50%; width: 92px; height: 92px; border-radius: 50%; background: #3cc4f2;
+         transform: translate(-50%, -50%); box-shadow: 0 0 40px #3cc4f2, 0 0 90px rgb(60 196 242 / 0.6); }
+  .label { position: absolute; left: 0; right: 0; bottom: 74px; text-align: center; font: 800 64px/1 Rubik, sans-serif; color: #e8f6fc; letter-spacing: 0.01em; }
+</style>
+</head>
+<body>
+<div class="wrap" id="w">
+  <div class="rings" id="r">
+    <div class="ring" style="width:190px;height:190px;opacity:.9"></div>
+    <div class="ring" style="width:290px;height:290px;opacity:.5"></div>
+    <div class="ring" style="width:390px;height:390px;opacity:.22"></div>
+    <div class="dot"></div>
+  </div>
+  <div class="label" id="label">Spot On</div>
+</div>
+<script>
+  const text = new URLSearchParams(location.search).get('text') === '1';
+  document.getElementById('label').hidden = !text;
+  document.getElementById('w').style.setProperty('--cy', text ? '206px' : '256px');
+  if (!text) for (const r of document.querySelectorAll('.ring')) { r.style.borderWidth = '14px'; }
+  if (!text) { const d = document.querySelector('.dot'); d.style.width = d.style.height = '150px'; document.querySelectorAll('.ring')[2].remove(); }
+</script>
+</body>
+</html>

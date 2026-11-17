@@ -1,5 +1,5 @@
 /* Layout: the map fills the screen. Phone: a draggable bottom sheet (peek / half / full) holds the answer and the list.
-   Wide screens: the sheet becomes a floating panel on the left. A graphite top bar carries the Pixel Studio mark. */
+   Wide screens: the sheet becomes a floating panel on the left. A graphite top bar carries the Spot On wordmark. */
 :root {
   --bg: #eef1f4;
   --surface: #ffffff;
@@ -76,9 +76,13 @@ button, select, input { font: inherit; color: inherit; }
   backdrop-filter: blur(8px);
 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
-.brand picture { flex: none; line-height: 0; }
-.logo { display: block; height: 36px; width: auto; }
-@media (max-width: 420px) { .logo { height: 28px; } .appname { font-size: 0.95rem; } .langs button { padding: 4px 7px; } }
+.wordmark {
+  flex: none; display: inline-flex; align-items: center; gap: 7px; padding: 5px 11px 5px 9px; border-radius: 10px;
+  font-weight: 800; font-size: 1.05rem; letter-spacing: 0.01em; color: var(--glow);
+  background: rgb(60 196 242 / 0.1); border: 1px solid rgb(60 196 242 / 0.35); white-space: nowrap;
+}
+.wordmark .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--glow); box-shadow: 0 0 0 3px rgb(60 196 242 / 0.25), 0 0 10px var(--glow); }
+@media (max-width: 420px) { .wordmark { font-size: 0.92rem; padding: 4px 8px; } .appname { font-size: 0.95rem; } .langs button { padding: 4px 7px; } }
 .appname { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .langs { display: flex; gap: 2px; background: rgb(255 255 255 / 0.08); border-radius: 999px; padding: 3px; flex: none; }
 .langs button { border: 0; background: transparent; color: inherit; padding: 4px 9px; border-radius: 999px; font-size: 0.78rem; font-weight: 600; cursor: pointer; }

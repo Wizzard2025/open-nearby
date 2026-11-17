@@ -5,7 +5,7 @@
 <title>Icon</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@800&display=swap">
 <style>
-  /* App icon source, rendered at 512x512. ?text=1 adds the "בטח פתוח" label (app icons); without it: favicon mark. */
+  /* App icon source, rendered at 512x512. ?text=1 adds the "בטוח? פתוח!" label (app icons); without it: favicon mark. */
   html, body { margin: 0; width: 512px; height: 512px; overflow: hidden; background: #0e141a; }
   .wrap { position: relative; width: 512px; height: 512px; display: grid; place-items: center;
           background: radial-gradient(circle at 50% 44%, rgb(60 196 242 / 0.22), transparent 60%), #0e141a; }
@@ -24,7 +24,7 @@
     <div class="ring" style="width:390px;height:390px;opacity:.22"></div>
     <div class="dot"></div>
   </div>
-  <div class="label" id="label" dir="rtl">בטח פתוח</div>
+  <div class="label" id="label" dir="rtl">בטוח? פתוח!</div>
 </div>
 <script>
   const text = new URLSearchParams(location.search).get('text') === '1';

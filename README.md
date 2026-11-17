@@ -7,7 +7,7 @@
   <a href="#עברית">עברית</a> · <a href="#русский">Русский</a> · <a href="#english">English</a>
 </p>
 
-<p align="center"><img src="img/og.png" alt="בטח פתוח" width="640"></p>
+<p align="center"><img src="img/og.png" alt="בטוח? פתוח!" width="640"></p>
 
 ---
 
@@ -15,7 +15,7 @@
 
 ## עברית
 
-### בטח פתוח
+### בטוח? פתוח!
 
 **לא צריך לחפש מה פתוח. הנה כולם, על מפה אחת.**
 
@@ -40,7 +40,7 @@
 
 ## Русский
 
-### Точно открыто (בטח פתוח)
+### Точно открыто (בטוח? פתוח!)
 
 **Не ищите, где открыто. Вот они все, на одной карте.**
 
@@ -92,7 +92,7 @@ python -m http.server 8765
 
 ## English
 
-### Betcha it's open (בטח פתוח)
+### Betcha it's open (בטוח? פתוח!)
 
 **Stop searching for what's open. Here they all are, on one map.**
 

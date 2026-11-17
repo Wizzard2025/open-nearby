@@ -1,11 +1,11 @@
-/* בטח פתוח · Betcha it's open · Точно открыто. Map-first: everything in the visible map area, open places first.
+/* בטוח? פתוח! · Betcha it's open · Точно открыто. Map-first: everything in the visible map area, open places first.
    Data: data/shops.json (OpenStreetMap + official chain hours, refreshed daily) + Hebcal (Shabbat/holidays). */
 'use strict';
 
 // ---------- i18n ----------
 const I18N = {
   ru: {
-    title: 'בטח פתוח · Точно открыто', tagline: 'Точно открыто', pickCity: 'Город…', kicker: 'Сейчас открыто',
+    title: 'בטוח? פתוח! · Точно открыто', tagline: 'Точно открыто', pickCity: 'Город…', kicker: 'Сейчас открыто',
     units: ['место', 'места', 'мест'], whereMe: 'рядом с вами', whereMap: 'в этой части карты',
     zoomIn: 'Приблизьте карту, чтобы увидеть магазины',
     source: 'Данные: OpenStreetMap и официальные сайты сетей, обновляются каждый день.', madeBy: 'Сделано в',
@@ -32,7 +32,7 @@ const I18N = {
     walkBtn: 'Пешком', routeTitle: '{m} мин пешком · {d}', fromCenter: 'от центра карты — включите геолокацию ➤', shadeBtn: '☀ По тени', shadeCalc: 'Считаю тень…', shadePct: 'в тени ≈ {p}%', shadeFail: 'тень сейчас посчитать не удалось', shadeNight: 'солнца нет — тень не нужна', hotNote: 'жарко {t}° — выбран путь по тени', routeFail: 'Не удалось построить маршрут. Попробуйте ещё раз.', ringMin: '{m} мин',
   },
   he: {
-    title: 'בטח פתוח', tagline: "Betcha it's open", pickCity: 'עיר…', kicker: 'פתוח עכשיו',
+    title: 'בטוח? פתוח!', tagline: "Betcha it's open", pickCity: 'עיר…', kicker: 'פתוח עכשיו',
     units: ['מקום', 'מקומות', 'מקומות'], whereMe: 'לידך', whereMap: 'באזור המפה',
     zoomIn: 'הגדילו את המפה כדי לראות חנויות',
     source: 'נתונים: OpenStreetMap ואתרי הרשתות, מתעדכנים מדי יום.', madeBy: 'נבנה ב-',
@@ -59,7 +59,7 @@ const I18N = {
     walkBtn: 'ברגל', routeTitle: '{m} דק׳ הליכה · {d}', fromCenter: 'ממרכז המפה — הפעילו מיקום ➤', shadeBtn: '☀ בצל', shadeCalc: 'מחשב צל…', shadePct: 'בצל ≈ {p}%', shadeFail: 'לא הצלחנו לחשב צל כרגע', shadeNight: 'אין שמש — אין צורך בצל', hotNote: 'חם {t}° — נבחר מסלול מוצל', routeFail: 'לא הצלחנו לבנות מסלול. נסו שוב.', ringMin: '{m} דק׳',
   },
   en: {
-    title: "בטח פתוח · Betcha it's open", tagline: "Betcha it's open", pickCity: 'City…', kicker: 'Open right now',
+    title: "בטוח? פתוח! · Betcha it's open", tagline: "Betcha it's open", pickCity: 'City…', kicker: 'Open right now',
     units: ['place', 'places', 'places'], whereMe: 'near you', whereMap: 'in this part of the map',
     zoomIn: 'Zoom in to see shops',
     source: 'Data: OpenStreetMap and the chains\' own websites, refreshed daily.', madeBy: 'Made by',
@@ -683,7 +683,7 @@ async function addSubmit(e) {
   const name = $('#addName').value.trim();
   if (!name || !ADD.pin) return;
   const hours = ADD.hours === 'other' ? ($('#addHoursText').value.trim() || '?') : ADD.hours;
-  const text = `${name}\n${OSM_TYPE[$('#addType').value]}\nopening_hours=${hours}\n\nShop reported by a user of בטח פתוח (betahopen.app). ${NOTE_TAG}`;
+  const text = `${name}\n${OSM_TYPE[$('#addType').value]}\nopening_hours=${hours}\n\nShop reported by a user of בטוח? פתוח! (betahopen.app). ${NOTE_TAG}`;
   const btn = $('#addSend'); btn.disabled = true;
   try {
     const body = new URLSearchParams({ lat: ADD.pin.lat.toFixed(6), lon: ADD.pin.lng.toFixed(6), text });

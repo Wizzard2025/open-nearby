@@ -23,7 +23,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css?v=20261118c">
 <script data-goatcounter="https://open-nearby.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -42,6 +42,7 @@
 </header>
 
 <div class="mapctl">
+  <button type="button" id="parkBtn" class="fab park" aria-pressed="false" aria-label="Parking">P</button>
   <button type="button" id="locate" class="fab" aria-label="Near me">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4.5 20.3l.7.7L12 18l6.8 3 .7-.7z" fill="currentColor" transform="rotate(45 12 12)"/></svg>
   </button>
@@ -102,13 +103,14 @@
     </details>
     <button type="button" class="addcta" id="addOpen"></button>
     <p class="source"><span data-i18n="source"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></p>
+    <p class="madeby">made by <b>Vichi</b> · 2026</p>
   </div>
 </section>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="vendor/suncalc.js"></script>
 <script src="vendor/opening_hours.js"></script>
-<script src="route.js"></script>
-<script src="app.js"></script>
+<script src="route.js?v=20261118c"></script>
+<script src="app.js?v=20261118c"></script>
 </body>
 </html>

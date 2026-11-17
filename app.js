@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    parkNear: 'Парковка в {d}', parkNone: 'Парковок рядом на карте нет', parkShow: 'показать', parkOn: 'Парковки на карте', parkZoom: 'Приблизьте карту, чтобы увидеть парковки',
     addOpen: '+ Нет нужного магазина? Добавьте', addTitle: 'Добавить магазин', addHintPin: 'Нажмите на карте, где он находится. Можно подвинуть карту.', addHintForm: 'Точка выбрана. Заполните пару полей:', addName: 'Название (например, «Маколет у Моше»)', addHoursOther: 'Свои часы', addHoursPh: 'например: вс–чт 7:00–23:00, пт до 14:00', addSend: 'Добавить на карту', addCancel: 'Отмена', addNote: 'Магазин сразу появится на карте у всех с пометкой «добавлено пользователем» и уйдёт в OpenStreetMap как заметка для проверки.', addThanks: 'Спасибо! «{n}» теперь на карте.', addFail: 'Не удалось отправить. Проверьте интернет и попробуйте ещё раз.', h247: 'Круглосуточно', h246: '24/6 (кроме шаббата)', hUnknown: 'Не знаю', userTag: 'добавлено пользователем',
     walkBtn: 'Пешком', routeTitle: '{m} мин пешком · {d}', fromCenter: 'от центра карты — включите геолокацию ➤', shadeBtn: '☀ По тени', shadeCalc: 'Считаю тень…', shadePct: 'в тени ≈ {p}%', shadeFail: 'тень сейчас посчитать не удалось', shadeNight: 'солнца нет — тень не нужна', hotNote: 'жарко {t}° — выбран путь по тени', routeFail: 'Не удалось построить маршрут. Попробуйте ещё раз.', ringMin: '{m} мин',
   },
@@ -47,6 +48,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    parkNear: 'חניה במרחק {d}', parkNone: 'אין חניונים קרובים במפה', parkShow: 'להראות', parkOn: 'חניות במפה', parkZoom: 'הגדילו את המפה כדי לראות חניות',
     addOpen: '+ חסרה חנות? הוסיפו אותה', addTitle: 'הוספת חנות', addHintPin: 'הקישו על המפה במקום שבו היא נמצאת.', addHintForm: 'המקום נבחר. מלאו כמה פרטים:', addName: 'שם (למשל «המכולת של משה»)', addHoursOther: 'שעות אחרות', addHoursPh: 'למשל: א׳–ה׳ 7:00–23:00, ו׳ עד 14:00', addSend: 'הוספה למפה', addCancel: 'ביטול', addNote: 'החנות תופיע מיד במפה לכולם עם הסימון «נוסף על ידי משתמש» ותישלח ל-OpenStreetMap כהערה לבדיקה.', addThanks: 'תודה! «{n}» מופיעה עכשיו במפה.', addFail: 'השליחה נכשלה. בדקו את החיבור ונסו שוב.', h247: '24/7', h246: '24/6 (בלי שבת)', hUnknown: 'לא יודע/ת', userTag: 'נוסף על ידי משתמש',
     walkBtn: 'ברגל', routeTitle: '{m} דק׳ הליכה · {d}', fromCenter: 'ממרכז המפה — הפעילו מיקום ➤', shadeBtn: '☀ בצל', shadeCalc: 'מחשב צל…', shadePct: 'בצל ≈ {p}%', shadeFail: 'לא הצלחנו לחשב צל כרגע', shadeNight: 'אין שמש — אין צורך בצל', hotNote: 'חם {t}° — נבחר מסלול מוצל', routeFail: 'לא הצלחנו לבנות מסלול. נסו שוב.', ringMin: '{m} דק׳',
   },
@@ -70,6 +72,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    parkNear: 'Parking {d} away', parkNone: 'No car parks nearby on the map', parkShow: 'show', parkOn: 'Parking on the map', parkZoom: 'Zoom in to see parking',
     addOpen: '+ Missing a shop? Add it', addTitle: 'Add a shop', addHintPin: 'Tap the map where it is. You can move the map.', addHintForm: 'Spot picked. Fill in a couple of fields:', addName: "Name (e.g. “Moshe's makolet”)", addHoursOther: 'Other hours', addHoursPh: 'e.g. Sun–Thu 7:00–23:00, Fri until 14:00', addSend: 'Add to the map', addCancel: 'Cancel', addNote: 'It shows on the map for everyone right away, marked “added by a user”, and goes to OpenStreetMap as a note for mappers to check.', addThanks: 'Thanks! “{n}” is on the map now.', addFail: "Couldn't send it. Check your connection and try again.", h247: 'Open 24/7', h246: '24/6 (closed Shabbat)', hUnknown: "Don't know", userTag: 'added by a user',
     walkBtn: 'Walk', routeTitle: '{m} min walk · {d}', fromCenter: 'from the map centre — turn on location ➤', shadeBtn: '☀ Shady way', shadeCalc: 'Working out shade…', shadePct: '≈ {p}% in shade', shadeFail: "couldn't work out shade right now", shadeNight: 'no sun — no shade needed', hotNote: 'hot {t}° — shady path chosen', routeFail: "Couldn't build a route. Try again.", ringMin: '{m} min',
   },
@@ -456,7 +459,7 @@ function shopHTML(it, now) {
   if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);
   const more = [];
   if (S.selected === it.id) {
-    if (st.oh) more.push(weekTable(st.oh, now));
+    if (st.oh && st.k !== 'open24') more.push(weekTable(st.oh, now));
     if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p>`);
     const acts = [
       `<button type="button" class="walk" data-walk="${esc(it.id)}">🚶 ${esc(t('walkBtn'))}</button>`,
@@ -465,6 +468,7 @@ function shopHTML(it, now) {
     ];
     const phone = tg.phone || tg['contact:phone'];
     if (phone) acts.push(`<a href="tel:${esc(phone.split(';')[0].replace(/\s/g, ''))}">${esc(t('call'))}</a>`);
+    more.push(`<p class="parkline" data-park-for="${esc(it.id)}">${PARK.cache.get(it.id) || '…'}</p>`);
     more.push(`<div class="actions">${acts.join('')}</div>`);
   }
   const walk = it.d < 2500 ? `<b>${esc(t('walk', { m: Math.max(1, Math.round(it.d / 80)) }))}</b>` : '';
@@ -540,6 +544,7 @@ function select(id, fromMap) {
     if (!wide() && sheet().dataset.state === 'peek') setSheet('half');
   }
   refresh();
+  if (S.selected && it) fillParkLine(it);
   const el = document.querySelector(`.shop[data-id="${CSS.escape(id)}"]`);
   if (el && fromMap) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   if (!fromMap && S.selected && it && !map.getBounds().pad(-0.15).contains([it.lat, it.lon])) map.panTo([it.lat, it.lon]);
@@ -677,6 +682,43 @@ function initAdd() {
   map.on('click', (e) => { if (ADD.on) addPick(e.latlng); });
 }
 
+// ---------- parking (car parks from the map tiles we already load for shade) ----------
+const PARK = { on: false, layer: null, nearMarker: null, cache: new Map() };
+async function drawParking() {
+  if (PARK.layer) { PARK.layer.remove(); PARK.layer = null; }
+  if (!PARK.on) return;
+  if (map.getZoom() < 14) { S.notices.loc = { cls: 'info', text: t('parkZoom') }; renderNotices(); return; }
+  const b = map.getBounds().pad(0.1);
+  const list = await Route.parkingIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
+  if (!PARK.on) return;
+  if (PARK.layer) PARK.layer.remove();
+  PARK.layer = L.layerGroup().addTo(map);
+  for (const p of list.slice(0, 300)) {
+    L.marker([p.lat, p.lon], { icon: L.divIcon({ className: '', html: '<div class="p-pin">P</div>', iconSize: [22, 22], iconAnchor: [11, 11] }), keyboard: false })
+      .bindTooltip(esc(p.name || 'P')).addTo(PARK.layer);
+  }
+}
+async function fillParkLine(it) {
+  if (PARK.cache.has(it.id)) return;
+  const d = 0.006;
+  const list = await Route.parkingIn([it.lat - d, it.lon - d * 1.2, it.lat + d, it.lon + d * 1.2]).catch(() => []);
+  let best = null, bd = 500;
+  for (const p of list) { const x = distM(it.lat, it.lon, p.lat, p.lon); if (x < bd) { bd = x; best = p; } }
+  const el2 = document.querySelector(`[data-park-for="${CSS.escape(it.id)}"]`);
+  if (!el2) return;
+  const html = best
+    ? `<span class="pbadge">P</span> ${esc(t('parkNear', { d: fmtDist(bd) }))} · <button type="button" data-park-go="${best.lat},${best.lon}">${esc(t('parkShow'))}</button>`
+    : `<span class="pbadge">P</span> ${esc(t('parkNone'))}`;
+  PARK.cache.set(it.id, html);
+  el2.innerHTML = html;
+}
+function showParkSpot(lat, lon) {
+  if (PARK.nearMarker) PARK.nearMarker.remove();
+  PARK.nearMarker = L.marker([lat, lon], { icon: L.divIcon({ className: '', html: '<div class="p-pin near">P</div>', iconSize: [22, 22], iconAnchor: [11, 11] }) }).addTo(map);
+  map.panTo([lat, lon]);
+  track('parking-show', 'parking near shop');
+}
+
 // ---------- analytics (GoatCounter: cookie-free, no personal data) ----------
 function track(path, title) {
   try { window.goatcounter?.count?.({ path, title, event: true }); } catch {}
@@ -694,6 +736,11 @@ async function init() {
 
   $('#locate').addEventListener('click', () => { track('click-locate', 'near me'); locate(false); });
   $('#routeClose').addEventListener('click', clearRoute);
+  $('#parkBtn').addEventListener('click', () => {
+    PARK.on = !PARK.on; $('#parkBtn').setAttribute('aria-pressed', String(PARK.on));
+    track('parking-toggle', PARK.on ? 'on' : 'off'); drawParking();
+  });
+  map.on('moveend', () => { if (PARK.on) drawParking(); });
   initAdd();
   $('#shadeBtn').addEventListener('click', () => {
     RT.wantShade = !RT.wantShade;
@@ -724,6 +771,8 @@ async function init() {
       track(`click-${kind}`, `${kind} · ${it ? it.cat : ''}`);
     }
     if (e.target.closest('a')) return;
+    const pg = e.target.closest('[data-park-go]');
+    if (pg) { const [la, lo] = pg.dataset.parkGo.split(',').map(Number); showParkSpot(la, lo); return; }
     const walk = e.target.closest('[data-walk]');
     if (walk) { const it = S.view.find((x) => x.id === walk.dataset.walk); if (it) showRoute(it); return; }
     const more = e.target.closest('[data-more]');

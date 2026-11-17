@@ -89,7 +89,7 @@ button, select, input { font: inherit; color: inherit; }
 .langs button[aria-pressed="true"] { background: var(--glow); color: #04141d; }
 
 /* ---------- locate button ---------- */
-.mapctl { position: fixed; z-index: 900; right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(var(--sheet-peek) + 14px); transition: bottom 0.25s ease; }
+.mapctl { display: flex; flex-direction: column; gap: 10px; position: fixed; z-index: 900; right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(var(--sheet-peek) + 14px); transition: bottom 0.25s ease; }
 [dir="rtl"] .mapctl { right: auto; left: max(12px, env(safe-area-inset-left, 0px)); }
 .fab {
   width: 52px; height: 52px; border-radius: 50%; border: 0; cursor: pointer;
@@ -136,6 +136,9 @@ button, select, input { font: inherit; color: inherit; }
   padding: 0 max(18px, env(safe-area-inset-right, 0px)) 10px max(18px, env(safe-area-inset-left, 0px));
 }
 .chips::-webkit-scrollbar { display: none; }
+/* On touch screens the chip row scrolls; fade the far edge so it's clear there is more. */
+@media (max-width: 859px) { .chips { -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+  [dir="rtl"] .chips { -webkit-mask-image: linear-gradient(270deg, #000 85%, transparent); mask-image: linear-gradient(270deg, #000 85%, transparent); } }
 .chip {
   flex: none; display: inline-flex; align-items: center; gap: 6px;
   border: 1px solid var(--line); background: var(--surface); border-radius: 999px;
@@ -235,6 +238,8 @@ button, select, input { font: inherit; color: inherit; }
 .ghost { border: 1px solid var(--brand); color: var(--brand); background: transparent; border-radius: 10px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
 .source { font-size: 0.75rem; color: var(--muted); margin: 14px 6px 0; }
 .source a { color: inherit; }
+.madeby { margin: 6px 6px 0; font-size: 0.78rem; color: var(--muted); letter-spacing: 0.02em; }
+.madeby b { color: var(--glow); font-weight: 700; }
 .skeleton { height: 64px; margin: 8px 0; border-radius: 12px; background: linear-gradient(90deg, var(--line), var(--surface-2), var(--line)); background-size: 200% 100%; animation: sh 1.2s infinite linear; }
 @keyframes sh { to { background-position: -200% 0; } }
 @media (prefers-reduced-motion: reduce) { .skeleton, .fab[aria-busy="true"] svg { animation: none; } .sheet { transition: none; } }
@@ -255,7 +260,17 @@ button, select, input { font: inherit; color: inherit; }
   [dir="rtl"] .sheet { left: auto; right: max(12px, env(safe-area-inset-right, 0px)); }
   .grab { display: none; }
   .hero { padding-top: 16px; }
+  .chips { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; }
   .mapctl { bottom: 28px; }
   .topbar { right: auto; width: 410px; }
   [dir="rtl"] .topbar { left: auto; right: max(10px, env(safe-area-inset-right, 0px)); }
 }
+
+/* parking */
+.fab.park { font: 800 1.25rem/1 var(--font); color: #2563eb; }
+.fab.park[aria-pressed="true"] { background: #2563eb; color: #fff; }
+.p-pin { width: 22px; height: 22px; border-radius: 6px; background: #2563eb; color: #fff; display: grid; place-items: center; font: 800 13px/1 var(--font); border: 2px solid #fff; box-shadow: 0 1px 4px rgb(0 0 0 / 0.3); }
+.p-pin.near { outline: 3px solid #f2b33d; }
+.parkline { display: flex; align-items: center; gap: 8px; font-size: 0.86rem; }
+.parkline button { border: 0; background: none; color: #2563eb; font-weight: 700; cursor: pointer; padding: 0; text-decoration: underline; }
+.parkline .pbadge { width: 20px; height: 20px; border-radius: 5px; background: #2563eb; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 12px; }

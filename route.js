@@ -142,7 +142,21 @@ window.Route = (() => {
         const lat = Math.atan(Math.sinh(Math.PI * (1 - (2 * (ty + py / L.extent)) / n))) / RAD;
         return [lat, lon];
       };
+      const parking = [];
       for (const L of layers) {
+        if (L.name === 'poi') {
+          // Car parks are points in the poi layer (class/subclass "parking"; bicycle parking excluded).
+          for (const F of L.feats) {
+            if (F.type !== 1 || F.geom.length < 3) continue;
+            const tags = {};
+            for (let i = 0; i < F.tags.length; i += 2) tags[L.keys[F.tags[i]]] = L.values[F.tags[i + 1]];
+            if (tags.class !== 'parking' || /bicycle|motorcycle/.test(tags.subclass || '')) continue;
+            const dx = F.geom[1], dy = F.geom[2];
+            const [lat, lon] = toLL(L, [(dx >> 1) ^ -(dx & 1), (dy >> 1) ^ -(dy & 1)]);
+            parking.push({ lat, lon, name: tags['name:he'] || tags.name || '', sub: tags.subclass || 'parking' });
+          }
+          continue;
+        }
         if (L.name !== 'building' && L.name !== 'landcover') continue;
         for (const F of L.feats) {
           if (F.type !== 3) continue;
@@ -155,7 +169,7 @@ window.Route = (() => {
           for (const ring of rings(F.geom)) res.push({ h: Math.min(h, 150), poly: ring.map((pt) => toLL(L, pt)) });
         }
       }
-      return res;
+      return { obs: res, parking };
     })();
     tileCache.set(key, pr);
     pr.catch(() => tileCache.delete(key));
@@ -167,7 +181,7 @@ window.Route = (() => {
     if (jobs.length > 9) return null; // too far for a walk
     try {
       const parts = await Promise.all(jobs);
-      return { buildings: parts.flat(), trees: [] };
+      return { buildings: parts.flatMap((p) => p.obs), trees: [] };
     } catch { return null; }
   }
 
@@ -269,5 +283,18 @@ window.Route = (() => {
     return out;
   }
 
-  return { plan, weather, isHot };
+  // Car parks in a bounding box [s, w, n, e], from the same cached tiles.
+  async function parkingIn([s, w, n, e]) {
+    const jobs = [];
+    for (let tx = lon2x(w); tx <= lon2x(e); tx++) for (let ty = lat2y(n); ty <= lat2y(s); ty++) jobs.push(loadTile(tx, ty).catch(() => null));
+    if (jobs.length > 12) return [];
+    const seen = new Set(), out = [];
+    for (const part of await Promise.all(jobs)) for (const p of part?.parking || []) {
+      const k = p.lat.toFixed(5) + ',' + p.lon.toFixed(5);
+      if (!seen.has(k) && p.lat >= s && p.lat <= n && p.lon >= w && p.lon <= e) { seen.add(k); out.push(p); }
+    }
+    return out;
+  }
+
+  return { plan, weather, isHot, parkingIn };
 })();

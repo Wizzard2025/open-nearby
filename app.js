@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    layers: 'Что показывать', lyShops: '🛒 Магазины на карте', lyParking: '🅿 Парковки', lyRings: '⭕ Кольца «минут пешком»',
     pkTitle: 'Парковка', pk_free: 'есть места', pk_busy: 'почти полно', pk_full: 'мест нет', pk_gone: 'парковки нет', pkNoReports: 'Отметок пока нет.', pkAsk: 'Вы здесь? Как сейчас:', pkNeedLoc: 'Чтобы отметить парковку, включите геолокацию ➤', pkFar: 'Отметить парковку можно только рядом (до 500 м).',
     ciAsk: 'Вы здесь? Помогите другим:', ciOpen: '✓ Открыто', ciClosed: '✗ Закрыто', ciOkTag: '✓ подтвердили {m}', ciBadTag: '✗ сообщили: закрыто {m}', ciAgo: '{n} мин назад', ciNow: 'только что', ciThanks: 'Спасибо! Ваша отметка видна всем.', ciFar: 'Отметить можно только рядом с магазином (до 300 м). Подойдите ближе.', ciNeedLoc: 'Чтобы отметить, включите геолокацию ➤', ciTooSoon: 'Вы уже отмечали этот магазин недавно.', ciConfirmedOpen: 'Открыто · подтвердили {m}',
     parkNear: 'Парковка в {d}', parkNone: 'Парковок рядом на карте нет', parkShow: 'показать', parkOn: 'Парковки на карте', parkZoom: 'Приблизьте карту, чтобы увидеть парковки',
@@ -50,6 +51,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    layers: 'מה להציג', lyShops: '🛒 חנויות במפה', lyParking: '🅿 חניות', lyRings: '⭕ טבעות «דקות הליכה»',
     pkTitle: 'חניה', pk_free: 'יש מקום', pk_busy: 'כמעט מלא', pk_full: 'אין מקום', pk_gone: 'אין כאן חניה', pkNoReports: 'עדיין אין דיווחים.', pkAsk: 'אתם כאן? מה המצב:', pkNeedLoc: 'כדי לדווח על חניה, הפעילו מיקום ➤', pkFar: 'אפשר לדווח רק מקרוב (עד 500 מ׳).',
     ciAsk: 'אתם כאן? עזרו לאחרים:', ciOpen: '✓ פתוח', ciClosed: '✗ סגור', ciOkTag: '✓ אושר {m}', ciBadTag: '✗ דווח: סגור {m}', ciAgo: 'לפני {n} דק׳', ciNow: 'עכשיו', ciThanks: 'תודה! הסימון שלכם גלוי לכולם.', ciFar: 'אפשר לסמן רק ליד החנות (עד 300 מ׳). התקרבו.', ciNeedLoc: 'כדי לסמן, הפעילו מיקום ➤', ciTooSoon: 'כבר סימנתם את החנות הזו לא מזמן.', ciConfirmedOpen: 'פתוח · אושר {m}',
     parkNear: 'חניה במרחק {d}', parkNone: 'אין חניונים קרובים במפה', parkShow: 'להראות', parkOn: 'חניות במפה', parkZoom: 'הגדילו את המפה כדי לראות חניות',
@@ -76,6 +78,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    layers: 'Show on map', lyShops: '🛒 Shops on the map', lyParking: '🅿 Parking', lyRings: '⭕ Walking-time rings',
     pkTitle: 'Parking', pk_free: 'spaces free', pk_busy: 'almost full', pk_full: 'full', pk_gone: 'no parking here', pkNoReports: 'No reports yet.', pkAsk: 'Here now? How is it:', pkNeedLoc: 'Turn on location ➤ to report parking', pkFar: 'You can only report parking nearby (within 500 m).',
     ciAsk: 'Here now? Help others:', ciOpen: '✓ Open', ciClosed: '✗ Closed', ciOkTag: '✓ confirmed {m}', ciBadTag: '✗ reported closed {m}', ciAgo: '{n} min ago', ciNow: 'just now', ciThanks: 'Thanks! Everyone can see your check-in.', ciFar: 'You can only check in near the shop (within 300 m). Get a bit closer.', ciNeedLoc: 'Turn on location ➤ to check in', ciTooSoon: 'You checked in here recently.', ciConfirmedOpen: 'Open · confirmed {m}',
     parkNear: 'Parking {d} away', parkNone: 'No car parks nearby on the map', parkShow: 'show', parkOn: 'Parking on the map', parkZoom: 'Zoom in to see parking',
@@ -277,11 +280,23 @@ let map, pinLayer, dotLayer, meMarker;
 const markers = new Map();
 const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const STATUS_VAR = { open: '--open', open24: '--open', soon: '--soon', closed: '--closed', unknown: '--unknown', ciopen: '--open' };
+// Base map: OpenFreeMap vector style without shop/parking icons (free, no key, commercial use allowed).
+// Falls back to OpenStreetMap raster tiles if WebGL or the style is unavailable.
+async function addBaseMap() {
+  try {
+    if (!L.maplibreGL || !window.maplibregl) throw new Error('no maplibre');
+    const style = await (await fetch('https://tiles.openfreemap.org/styles/liberty')).json();
+    style.layers = style.layers.filter((l) => l['source-layer'] !== 'poi'); // no built-in shop / parking icons
+    L.maplibreGL({ style, attribution: '© <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © OpenStreetMap' }).addTo(map);
+  } catch {
+    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+  }
+}
 function initMap(center, zoom) {
   const touch = matchMedia('(pointer: coarse)').matches;
   map = L.map('map', { zoomControl: !touch, preferCanvas: true, attributionControl: true }).setView(center, zoom);
   if (map.zoomControl) map.zoomControl.setPosition('topright');
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+  addBaseMap();
   dotLayer = L.layerGroup().addTo(map);
   pinLayer = L.layerGroup().addTo(map);
   let timer;
@@ -321,7 +336,8 @@ function drawMe() {
   else meMarker = L.marker([S.me.lat, S.me.lon], { icon: L.divIcon({ className: '', html: '<div class="me-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false, zIndexOffset: 1000 }).addTo(map);
   // Walking-distance rings: 5 / 10 / 15 minutes at ~80 m per minute.
   if (ringLayer) ringLayer.remove();
-  ringLayer = L.layerGroup().addTo(map);
+  ringLayer = L.layerGroup();
+  if (LY.rings) ringLayer.addTo(map);
   for (const min of [5, 10, 15]) {
     const r = min * 80;
     L.circle([S.me.lat, S.me.lon], { radius: r, color: '#2a7fff', weight: 1.5, opacity: 0.55, dashArray: '5 6', fill: min === 5, fillOpacity: 0.05, interactive: false }).addTo(ringLayer);
@@ -479,7 +495,7 @@ function shopHTML(it, now) {
     const phone = tg.phone || tg['contact:phone'];
     if (phone) acts.push(`<a href="tel:${esc(phone.split(';')[0].replace(/\s/g, ''))}">${esc(t('call'))}</a>`);
     more.push(`<div class="ci-row"><span>${esc(t('ciAsk'))}</span><button type="button" class="ci-btn ok" data-ci="${esc(it.id)}" data-v="open">${esc(t('ciOpen'))}</button><button type="button" class="ci-btn bad" data-ci="${esc(it.id)}" data-v="closed">${esc(t('ciClosed'))}</button></div>`);
-    more.push(`<p class="parkline" data-park-for="${esc(it.id)}">${parkLineHTML(it.id)}</p>`);
+    if (PARK.on) more.push(`<p class="parkline" data-park-for="${esc(it.id)}">${parkLineHTML(it.id)}</p>`);
     more.push(`<div class="actions">${acts.join('')}</div>`);
   }
   const walk = it.d < 2500 ? `<b>${esc(t('walk', { m: Math.max(1, Math.round(it.d / 80)) }))}</b>` : '';
@@ -560,7 +576,7 @@ function select(id, fromMap) {
     if (!wide() && sheet().dataset.state === 'peek') setSheet('half');
   }
   refresh();
-  if (S.selected && it) fillParkLine(it);
+  if (S.selected && it && PARK.on) fillParkLine(it);
   const el = document.querySelector(`.shop[data-id="${CSS.escape(id)}"]`);
   if (el && fromMap) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   if (!fromMap && S.selected && it && !map.getBounds().pad(-0.15).contains([it.lat, it.lon])) map.panTo([it.lat, it.lon]);
@@ -882,6 +898,32 @@ function showParkSpot(lat, lon) {
   track('parking-show', 'parking near shop');
 }
 
+// ---------- layers menu: what to draw on the map (remembered per device) ----------
+const LY = Object.assign({ shops: true, parking: false, rings: true }, (() => { try { return JSON.parse(store.get('layers') || '{}'); } catch { return {}; } })());
+function applyLayers() {
+  for (const lyr of [pinLayer, dotLayer]) { if (LY.shops) lyr.addTo(map); else lyr.remove(); }
+  if (ringLayer) { if (LY.rings) ringLayer.addTo(map); else ringLayer.remove(); }
+  PARK.on = LY.parking;
+  if (!PARK.on && PARK.nearMarker) { PARK.nearMarker.remove(); PARK.nearMarker = null; }
+  drawParking();
+  store.set('layers', JSON.stringify(LY));
+}
+function initLayers() {
+  const pop = $('#layersPop'), btn = $('#layersBtn');
+  const sync = () => { $('#lyShops').checked = LY.shops; $('#lyParking').checked = LY.parking; $('#lyRings').checked = LY.rings; };
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden));
+    $('#lpTitle').textContent = t('layers'); $('#lyShopsL').textContent = t('lyShops'); $('#lyParkingL').textContent = t('lyParking'); $('#lyRingsL').textContent = t('lyRings');
+    sync();
+  });
+  for (const [id, k] of [['#lyShops', 'shops'], ['#lyParking', 'parking'], ['#lyRings', 'rings']]) {
+    $(id).addEventListener('change', (e) => { LY[k] = e.target.checked; track('layer-' + k, LY[k] ? 'on' : 'off'); applyLayers(); refresh(); });
+  }
+  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#layersPop, #layersBtn')) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
+  applyLayers();
+}
+
 // ---------- analytics (GoatCounter: cookie-free, no personal data) ----------
 function track(path, title) {
   try { window.goatcounter?.count?.({ path, title, event: true }); } catch {}
@@ -899,10 +941,7 @@ async function init() {
 
   $('#locate').addEventListener('click', () => { track('click-locate', 'near me'); locate(false); });
   $('#routeClose').addEventListener('click', clearRoute);
-  $('#parkBtn').addEventListener('click', () => {
-    PARK.on = !PARK.on; $('#parkBtn').setAttribute('aria-pressed', String(PARK.on));
-    track('parking-toggle', PARK.on ? 'on' : 'off'); drawParking();
-  });
+  initLayers();
   map.on('moveend', () => { if (PARK.on) drawParking(); });
   initAdd();
   document.addEventListener('click', (e) => {

@@ -295,3 +295,14 @@ button, select, input { font: inherit; color: inherit; }
 .pk-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .pk-btn { border: 1px solid #d5dde3; background: #fff; color: #10171c; border-radius: 10px; padding: 7px 8px; font: 600 0.82rem var(--font); cursor: pointer; text-align: start; }
 .pk-btn:hover { background: #f2f5f7; }
+
+/* layers menu */
+.layers-pop { position: absolute; right: 64px; bottom: 0; min-width: 220px; padding: 12px 14px; border-radius: 14px;
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 10px; }
+[dir="rtl"] .layers-pop { right: auto; left: 64px; }
+.layers-pop label { display: flex; align-items: center; gap: 10px; font-weight: 600; cursor: pointer; }
+.layers-pop input { width: 20px; height: 20px; accent-color: var(--brand); }
+.lp-title { margin: 0; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+.mapctl { position: fixed; }
+#layersBtn[aria-expanded="true"] { background: var(--brand); color: var(--brand-ink); }
+.leaflet-container .maplibregl-map { background: var(--bg); }

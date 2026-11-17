@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f5f5a">
+<title>Открыто рядом</title>
+<meta name="description" content="Какие магазины открыты прямо сейчас рядом с вами — продукты, пекарни, аптеки, заправки. Израиль.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="9" width="26" height="18" rx="4" fill="currentColor"/><path d="M8 9V7a8 8 0 0 1 16 0v2" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="16" cy="18" r="4" fill="var(--open)"/></svg>
+    <h1 data-i18n="title">Открыто рядом</h1>
+  </div>
+  <div class="langs" role="group" aria-label="Language">
+    <button type="button" data-lang="ru">RU</button>
+    <button type="button" data-lang="he">עב</button>
+    <button type="button" data-lang="en">EN</button>
+  </div>
+</header>
+
+<main class="app">
+  <section class="panel">
+    <div class="where">
+      <button type="button" id="locate" class="primary">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2" fill="currentColor"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        <span data-i18n="locate">Рядом со мной</span>
+      </button>
+      <select id="city" aria-label="City">
+        <option value="" data-i18n="pickCity">Или город…</option>
+      </select>
+    </div>
+
+    <div id="notices"></div>
+
+    <div class="chips" role="group" id="cats"></div>
+
+    <div class="summary">
+      <p id="summary" aria-live="polite"></p>
+      <label class="toggle"><input type="checkbox" id="showUnknown" checked> <span data-i18n="showUnknown">Без указанных часов</span></label>
+    </div>
+
+    <ol id="list" class="list"></ol>
+    <details id="closedBox" class="closed-box" hidden>
+      <summary id="closedTitle"></summary>
+      <ol id="closedList" class="list"></ol>
+    </details>
+    <p class="source"><span data-i18n="source"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></p>
+  </section>
+
+  <section class="mapwrap">
+    <div id="map" role="region" aria-label="Map"></div>
+    <p class="maphint" data-i18n="mapHint">Нажмите на карту, чтобы искать в другом месте</p>
+  </section>
+</main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="vendor/suncalc.js"></script>
+<script src="vendor/opening_hours.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

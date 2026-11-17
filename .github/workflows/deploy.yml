@@ -1,0 +1,29 @@
+# Обновляет данные о магазинах каждую ночь и публикует сайт на GitHub Pages.
+name: Update data & deploy
+on:
+  schedule: [{ cron: "0 1 * * *" }]   # 03:00–04:00 по Израилю
+  workflow_dispatch:
+  push: { branches: [main] }
+permissions: { contents: write, pages: write, id-token: write }
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Download shops from OpenStreetMap
+        run: python tools/update_data.py
+      - name: Commit fresh data
+        run: |
+          git config user.name "data-bot"; git config user.email "data-bot@users.noreply.github.com"
+          git add data/shops.json && git commit -m "Update shop data" || echo "no changes"
+          git push || true
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: . }
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: { name: github-pages }
+    steps:
+      - uses: actions/deploy-pages@v4

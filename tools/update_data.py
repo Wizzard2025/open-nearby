@@ -1,0 +1,65 @@
+"""Downloads all shops in Israel from OpenStreetMap (Overpass API) into data/shops.json.
+Run nightly (cron / GitHub Actions):  python tools/update_data.py
+"""
+import json, sys, time, urllib.request, urllib.parse, pathlib
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import chains  # noqa: E402
+
+OUT = pathlib.Path(__file__).resolve().parent.parent / "data" / "shops.json"
+RAW = pathlib.Path(__file__).resolve().parent.parent / "data" / "osm_raw.json"
+SHOPS = "supermarket|convenience|kiosk|grocery|greengrocer|deli|alcohol|bakery|pastry|chemist"
+QUERY = f"""[out:json][timeout:180];
+area["ISO3166-1"="IL"][admin_level=2]->.il;
+(
+  nwr["shop"~"^({SHOPS})$"](area.il);
+  nwr["amenity"~"^(pharmacy|fuel)$"](area.il);
+);
+out center tags;"""
+MIRRORS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
+KEEP = ["name", "name:he", "name:ru", "name:en", "name:ar", "brand", "shop", "amenity", "opening_hours",
+        "addr:street", "addr:housenumber", "addr:city", "phone", "contact:phone", "website"]
+
+def fetch():
+    body = urllib.parse.urlencode({"data": QUERY}).encode()
+    for url in MIRRORS:
+        for attempt in range(2):
+            try:
+                req = urllib.request.Request(url, data=body, headers={"User-Agent": "open-nearby-data/1.0"})
+                with urllib.request.urlopen(req, timeout=240) as r:
+                    return json.load(r)["elements"]
+            except Exception as e:
+                print(f"{url} attempt {attempt + 1}: {e}", file=sys.stderr)
+                time.sleep(10)
+    sys.exit("All Overpass mirrors failed")
+
+def main():
+    # --skip-osm reuses the last OpenStreetMap download (handy when only chain data changed).
+    if "--skip-osm" in sys.argv and RAW.exists():
+        out = json.loads(RAW.read_text(encoding="utf-8"))
+    else:
+        out = []
+        for e in fetch():
+            lat = e.get("lat", e.get("center", {}).get("lat"))
+            lon = e.get("lon", e.get("center", {}).get("lon"))
+            if lat is None:
+                continue
+            tags = {k: v for k, v in e.get("tags", {}).items() if k in KEEP}
+            out.append([e["type"][0] + str(e["id"]), round(lat, 6), round(lon, 6), tags])
+        RAW.parent.mkdir(parents=True, exist_ok=True)
+        RAW.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    osm_hours = sum('opening_hours' in s[3] for s in out)
+
+    # Official chain branch lists: attach their hours to OSM points, add branches OSM doesn't have.
+    stats = chains.merge_into(out, chains.fetch_all())
+    for name, st in stats.items():
+        print(f"  {name}: {st}")
+
+    OUT.write_text(json.dumps({"updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "shops": out},
+                              ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    total_hours = sum('opening_hours' in s[3] for s in out)
+    print(f"{len(out)} shops, with hours: {osm_hours} from OSM -> {total_hours} after chains "
+          f"({100 * total_hours // len(out)}%) -> {OUT.name} ({OUT.stat().st_size // 1024} KB)")
+
+if __name__ == "__main__":
+    main()

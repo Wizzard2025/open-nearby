@@ -1,8 +1,5 @@
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="brand/logo/logo-he-dark.svg">
-    <img src="brand/logo/logo-he-light.svg" alt="בטח פתוח" height="72">
-  </picture>
+  <img src="brand/logo/user-logo-sloth.png" alt="בטוח? פתוח!" width="240">
 </p>
 
 <p align="center">
@@ -49,7 +46,7 @@
 
 Открываешь приложение и сразу видишь, какие магазины рядом открыты прямо сейчас и до скольки. Израиль, на иврите, русском и английском. Бесплатно, без регистрации и установки.
 
-**Бренд:** логотип, иконки, палитра и готовые рекламные макеты на трёх языках лежат в [`brand/`](brand/), брендбук на сайте: [`/brand/`](https://betahopen.app/brand/). Логотипы и макеты пересобираются скриптами `brand/_src/make_logos.py` и `brand/_src/render_all.py`.
+**Бренд:** логотип, иконки, палитра и готовые рекламные макеты на трёх языках лежат в [`brand/`](brand/), брендбук на сайте: [`/brand/`](https://betahopen.app/brand/). Макеты пересобираются скриптом `brand/_src/render_ads.py`.
 
 #### Что уже работает (MVP)
 

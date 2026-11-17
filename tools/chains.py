@@ -358,12 +358,26 @@ if "--with-delek" in sys.argv:
 
 
 def fetch_all():
+    """Fetches every chain. A chain that fails (site down, or blocking non-Israeli servers such as GitHub's)
+    falls back to its last good copy in data/chains/<name>.json, so its branches never disappear from the site."""
+    cache_dir = DATA / "chains"
+    cache_dir.mkdir(parents=True, exist_ok=True)
     branches = []
     for name, fn in FETCHERS.items():
+        cache = cache_dir / f"{name}.json"
         try:
             got = fn()
+            if not got:
+                raise ValueError("empty branch list")
+            cache.write_text(json.dumps({"fetched": time.strftime("%Y-%m-%d"), "branches": got}, ensure_ascii=False), encoding="utf-8")
             print(f"{name}: {len(got)} branches, {sum(1 for b in got if b['opening_hours'])} with hours", file=sys.stderr)
-            branches += got
         except Exception as e:  # one broken site must not stop the nightly update
-            print(f"{name}: FAILED {e!r}", file=sys.stderr)
+            if cache.exists():
+                saved = json.loads(cache.read_text(encoding="utf-8"))
+                got = saved["branches"]
+                print(f"{name}: FAILED {e!r}; using cached copy from {saved['fetched']} ({len(got)} branches)", file=sys.stderr)
+            else:
+                got = []
+                print(f"{name}: FAILED {e!r}; no cached copy", file=sys.stderr)
+        branches += got
     return branches

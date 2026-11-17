@@ -15,7 +15,7 @@ for d in (PNG, ADS, TMP):
     os.makedirs(d, exist_ok=True)
 
 CHROME = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-URL_SITE = "wizzard2025.github.io/open-nearby"
+URL_SITE = "betahopen.app"
 
 
 def uri(p):

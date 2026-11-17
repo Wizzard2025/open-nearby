@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  <b><a href="https://wizzard2025.github.io/open-nearby/">wizzard2025.github.io/open-nearby</a></b><br>
+  <b><a href="https://betahopen.app/">betahopen.app</a></b><br>
   <a href="#עברית">עברית</a> · <a href="#русский">Русский</a> · <a href="#english">English</a>
 </p>
 
@@ -33,7 +33,7 @@
 - מסלול הליכה ודקות הליכה, ניווט ב־Google Maps או Waze, חיוג.
 - טלפון ומחשב, מצב כהה, אפשר להתקין כאפליקציה (PWA). אפליקציה ל־Android בדרך.
 
-**מיתוג:** לוגו, אייקונים ומודעות מוכנות בשלוש שפות נמצאים בתיקייה [`brand/`](brand/), וספר המותג באתר: [`/brand/`](https://wizzard2025.github.io/open-nearby/brand/).
+**מיתוג:** לוגו, אייקונים ומודעות מוכנות בשלוש שפות נמצאים בתיקייה [`brand/`](brand/), וספר המותג באתר: [`/brand/`](https://betahopen.app/brand/).
 
 **הרצה מקומית:** `python -m http.server 8765` ואז http://localhost:8765
 
@@ -49,7 +49,7 @@
 
 Открываешь приложение и сразу видишь, какие магазины рядом открыты прямо сейчас и до скольки. Израиль, на иврите, русском и английском. Бесплатно, без регистрации и установки.
 
-**Бренд:** логотип, иконки, палитра и готовые рекламные макеты на трёх языках лежат в [`brand/`](brand/), брендбук на сайте: [`/brand/`](https://wizzard2025.github.io/open-nearby/brand/). Логотипы и макеты пересобираются скриптами `brand/_src/make_logos.py` и `brand/_src/render_all.py`.
+**Бренд:** логотип, иконки, палитра и готовые рекламные макеты на трёх языках лежат в [`brand/`](brand/), брендбук на сайте: [`/brand/`](https://betahopen.app/brand/). Логотипы и макеты пересобираются скриптами `brand/_src/make_logos.py` и `brand/_src/render_all.py`.
 
 #### Что уже работает (MVP)
 
@@ -110,7 +110,7 @@ Open the app and instantly see which shops near you are open right now, and unti
 - Walking routes and times, directions via Google Maps or Waze, tap to call.
 - Phone and desktop, dark mode, installable as an app (PWA). Android app coming.
 
-**Brand kit:** logo, icons and ready-made ads in three languages are in [`brand/`](brand/); the brand book is at [`/brand/`](https://wizzard2025.github.io/open-nearby/brand/).
+**Brand kit:** logo, icons and ready-made ads in three languages are in [`brand/`](brand/); the brand book is at [`/brand/`](https://betahopen.app/brand/).
 
 **Run locally:** `python -m http.server 8765`, then open http://localhost:8765
 

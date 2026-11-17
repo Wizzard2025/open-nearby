@@ -683,7 +683,7 @@ async function addSubmit(e) {
   const name = $('#addName').value.trim();
   if (!name || !ADD.pin) return;
   const hours = ADD.hours === 'other' ? ($('#addHoursText').value.trim() || '?') : ADD.hours;
-  const text = `${name}\n${OSM_TYPE[$('#addType').value]}\nopening_hours=${hours}\n\nShop reported by a user of בטח פתוח (wizzard2025.github.io/open-nearby). ${NOTE_TAG}`;
+  const text = `${name}\n${OSM_TYPE[$('#addType').value]}\nopening_hours=${hours}\n\nShop reported by a user of בטח פתוח (betahopen.app). ${NOTE_TAG}`;
   const btn = $('#addSend'); btn.disabled = true;
   try {
     const body = new URLSearchParams({ lat: ADD.pin.lat.toFixed(6), lon: ADD.pin.lng.toFixed(6), text });

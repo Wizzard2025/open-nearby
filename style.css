@@ -274,3 +274,13 @@ button, select, input { font: inherit; color: inherit; }
 .parkline { display: flex; align-items: center; gap: 8px; font-size: 0.86rem; }
 .parkline button { border: 0; background: none; color: #2563eb; font-weight: 700; cursor: pointer; padding: 0; text-decoration: underline; }
 .parkline .pbadge { width: 20px; height: 20px; border-radius: 5px; background: #2563eb; color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 12px; }
+
+/* "it's open" check-ins */
+.ci-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 0.86rem; color: var(--muted); }
+.ci-btn { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 6px 12px; font-weight: 700; font-size: 0.85rem; cursor: pointer; }
+.ci-btn.ok { color: var(--open); border-color: color-mix(in srgb, var(--open) 45%, transparent); }
+.ci-btn.bad { color: var(--closed); border-color: color-mix(in srgb, var(--closed) 45%, transparent); }
+.ci-btn:hover { background: var(--surface-2); }
+.tag.ci-ok { color: var(--open); border-color: color-mix(in srgb, var(--open) 40%, transparent); background: var(--open-bg); }
+.tag.ci-bad { color: var(--closed); border-color: color-mix(in srgb, var(--closed) 40%, transparent); background: var(--closed-bg); }
+.pill.ciopen { background: var(--open-bg); color: var(--open); }

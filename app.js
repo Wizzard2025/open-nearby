@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    ciAsk: 'Вы здесь? Помогите другим:', ciOpen: '✓ Открыто', ciClosed: '✗ Закрыто', ciOkTag: '✓ подтвердили {m}', ciBadTag: '✗ сообщили: закрыто {m}', ciAgo: '{n} мин назад', ciNow: 'только что', ciThanks: 'Спасибо! Ваша отметка видна всем.', ciFar: 'Отметить можно только рядом с магазином (до 300 м). Подойдите ближе.', ciNeedLoc: 'Чтобы отметить, включите геолокацию ➤', ciTooSoon: 'Вы уже отмечали этот магазин недавно.', ciConfirmedOpen: 'Открыто · подтвердили {m}',
     parkNear: 'Парковка в {d}', parkNone: 'Парковок рядом на карте нет', parkShow: 'показать', parkOn: 'Парковки на карте', parkZoom: 'Приблизьте карту, чтобы увидеть парковки',
     addOpen: '+ Нет нужного магазина? Добавьте', addTitle: 'Добавить магазин', addHintPin: 'Нажмите на карте, где он находится. Можно подвинуть карту.', addHintForm: 'Точка выбрана. Заполните пару полей:', addName: 'Название (например, «Маколет у Моше»)', addHoursOther: 'Свои часы', addHoursPh: 'например: вс–чт 7:00–23:00, пт до 14:00', addSend: 'Добавить на карту', addCancel: 'Отмена', addNote: 'Магазин сразу появится на карте у всех с пометкой «добавлено пользователем» и уйдёт в OpenStreetMap как заметка для проверки.', addThanks: 'Спасибо! «{n}» теперь на карте.', addFail: 'Не удалось отправить. Проверьте интернет и попробуйте ещё раз.', h247: 'Круглосуточно', h246: '24/6 (кроме шаббата)', hUnknown: 'Не знаю', userTag: 'добавлено пользователем',
     walkBtn: 'Пешком', routeTitle: '{m} мин пешком · {d}', fromCenter: 'от центра карты — включите геолокацию ➤', shadeBtn: '☀ По тени', shadeCalc: 'Считаю тень…', shadePct: 'в тени ≈ {p}%', shadeFail: 'тень сейчас посчитать не удалось', shadeNight: 'солнца нет — тень не нужна', hotNote: 'жарко {t}° — выбран путь по тени', routeFail: 'Не удалось построить маршрут. Попробуйте ещё раз.', ringMin: '{m} мин',
@@ -48,6 +49,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    ciAsk: 'אתם כאן? עזרו לאחרים:', ciOpen: '✓ פתוח', ciClosed: '✗ סגור', ciOkTag: '✓ אושר {m}', ciBadTag: '✗ דווח: סגור {m}', ciAgo: 'לפני {n} דק׳', ciNow: 'עכשיו', ciThanks: 'תודה! הסימון שלכם גלוי לכולם.', ciFar: 'אפשר לסמן רק ליד החנות (עד 300 מ׳). התקרבו.', ciNeedLoc: 'כדי לסמן, הפעילו מיקום ➤', ciTooSoon: 'כבר סימנתם את החנות הזו לא מזמן.', ciConfirmedOpen: 'פתוח · אושר {m}',
     parkNear: 'חניה במרחק {d}', parkNone: 'אין חניונים קרובים במפה', parkShow: 'להראות', parkOn: 'חניות במפה', parkZoom: 'הגדילו את המפה כדי לראות חניות',
     addOpen: '+ חסרה חנות? הוסיפו אותה', addTitle: 'הוספת חנות', addHintPin: 'הקישו על המפה במקום שבו היא נמצאת.', addHintForm: 'המקום נבחר. מלאו כמה פרטים:', addName: 'שם (למשל «המכולת של משה»)', addHoursOther: 'שעות אחרות', addHoursPh: 'למשל: א׳–ה׳ 7:00–23:00, ו׳ עד 14:00', addSend: 'הוספה למפה', addCancel: 'ביטול', addNote: 'החנות תופיע מיד במפה לכולם עם הסימון «נוסף על ידי משתמש» ותישלח ל-OpenStreetMap כהערה לבדיקה.', addThanks: 'תודה! «{n}» מופיעה עכשיו במפה.', addFail: 'השליחה נכשלה. בדקו את החיבור ונסו שוב.', h247: '24/7', h246: '24/6 (בלי שבת)', hUnknown: 'לא יודע/ת', userTag: 'נוסף על ידי משתמש',
     walkBtn: 'ברגל', routeTitle: '{m} דק׳ הליכה · {d}', fromCenter: 'ממרכז המפה — הפעילו מיקום ➤', shadeBtn: '☀ בצל', shadeCalc: 'מחשב צל…', shadePct: 'בצל ≈ {p}%', shadeFail: 'לא הצלחנו לחשב צל כרגע', shadeNight: 'אין שמש — אין צורך בצל', hotNote: 'חם {t}° — נבחר מסלול מוצל', routeFail: 'לא הצלחנו לבנות מסלול. נסו שוב.', ringMin: '{m} דק׳',
@@ -72,6 +74,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    ciAsk: 'Here now? Help others:', ciOpen: '✓ Open', ciClosed: '✗ Closed', ciOkTag: '✓ confirmed {m}', ciBadTag: '✗ reported closed {m}', ciAgo: '{n} min ago', ciNow: 'just now', ciThanks: 'Thanks! Everyone can see your check-in.', ciFar: 'You can only check in near the shop (within 300 m). Get a bit closer.', ciNeedLoc: 'Turn on location ➤ to check in', ciTooSoon: 'You checked in here recently.', ciConfirmedOpen: 'Open · confirmed {m}',
     parkNear: 'Parking {d} away', parkNone: 'No car parks nearby on the map', parkShow: 'show', parkOn: 'Parking on the map', parkZoom: 'Zoom in to see parking',
     addOpen: '+ Missing a shop? Add it', addTitle: 'Add a shop', addHintPin: 'Tap the map where it is. You can move the map.', addHintForm: 'Spot picked. Fill in a couple of fields:', addName: "Name (e.g. “Moshe's makolet”)", addHoursOther: 'Other hours', addHoursPh: 'e.g. Sun–Thu 7:00–23:00, Fri until 14:00', addSend: 'Add to the map', addCancel: 'Cancel', addNote: 'It shows on the map for everyone right away, marked “added by a user”, and goes to OpenStreetMap as a note for mappers to check.', addThanks: 'Thanks! “{n}” is on the map now.', addFail: "Couldn't send it. Check your connection and try again.", h247: 'Open 24/7', h246: '24/6 (closed Shabbat)', hUnknown: "Don't know", userTag: 'added by a user',
     walkBtn: 'Walk', routeTitle: '{m} min walk · {d}', fromCenter: 'from the map centre — turn on location ➤', shadeBtn: '☀ Shady way', shadeCalc: 'Working out shade…', shadePct: '≈ {p}% in shade', shadeFail: "couldn't work out shade right now", shadeNight: 'no sun — no shade needed', hotNote: 'hot {t}° — shady path chosen', routeFail: "Couldn't build a route. Try again.", ringMin: '{m} min',
@@ -171,7 +174,7 @@ function statusOf(it, now) {
     return { k: 'closed', next, oh };
   } catch { return { k: 'unknown' }; }
 }
-const isOpen = (k) => k === 'open' || k === 'open24' || k === 'soon';
+const isOpen = (k) => k === 'open' || k === 'open24' || k === 'soon' || k === 'ciopen';
 function statusText(st, now) {
   switch (st.k) {
     case 'open24': return t('open24');
@@ -183,6 +186,7 @@ function statusText(st, now) {
       const tm = fmtTime(st.next);
       return t('closed') + ' · ' + (days === 0 ? t('opensAt', { t: tm }) : days === 1 ? t('opensTomorrow', { t: tm }) : t('opensDay', { d: fmtDay(st.next), t: tm }));
     }
+    case 'ciopen': return t('ciConfirmedOpen', { m: ciAgo(st.ci.time) });
     default: return t('unknown');
   }
 }
@@ -269,7 +273,7 @@ async function loadHebcal(lat, lon) {
 let map, pinLayer, dotLayer, meMarker;
 const markers = new Map();
 const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const STATUS_VAR = { open: '--open', open24: '--open', soon: '--soon', closed: '--closed', unknown: '--unknown' };
+const STATUS_VAR = { open: '--open', open24: '--open', soon: '--soon', closed: '--closed', unknown: '--unknown', ciopen: '--open' };
 function initMap(center, zoom) {
   const touch = matchMedia('(pointer: coarse)').matches;
   map = L.map('map', { zoomControl: !touch, preferCanvas: true, attributionControl: true }).setView(center, zoom);
@@ -457,6 +461,9 @@ function shopHTML(it, now) {
   const tags = [];
   if (st.oh && st.k !== 'open24' && opensOnShabbat(it, st.oh, now)) tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`);
   if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);
+  const ci = ciLatest(it.id);
+  if (ci && st.k !== 'ciopen' && Date.now() / 1000 - ci.time < 3 * 3600)
+    tags.push(ci.v === 'open' ? `<span class="tag ci-ok">${esc(t('ciOkTag', { m: ciAgo(ci.time) }))}</span>` : `<span class="tag ci-bad">${esc(t('ciBadTag', { m: ciAgo(ci.time) }))}</span>`);
   const more = [];
   if (S.selected === it.id) {
     if (st.oh && st.k !== 'open24') more.push(weekTable(st.oh, now));
@@ -468,6 +475,7 @@ function shopHTML(it, now) {
     ];
     const phone = tg.phone || tg['contact:phone'];
     if (phone) acts.push(`<a href="tel:${esc(phone.split(';')[0].replace(/\s/g, ''))}">${esc(t('call'))}</a>`);
+    more.push(`<div class="ci-row"><span>${esc(t('ciAsk'))}</span><button type="button" class="ci-btn ok" data-ci="${esc(it.id)}" data-v="open">${esc(t('ciOpen'))}</button><button type="button" class="ci-btn bad" data-ci="${esc(it.id)}" data-v="closed">${esc(t('ciClosed'))}</button></div>`);
     more.push(`<p class="parkline" data-park-for="${esc(it.id)}">${PARK.cache.get(it.id) || '…'}</p>`);
     more.push(`<div class="actions">${acts.join('')}</div>`);
   }
@@ -496,7 +504,12 @@ function refresh() {
   const pad = b.pad(0.05);
   const inView = z >= 10 ? ALL.concat(USER_SHOPS).filter((s) => pad.contains([s.lat, s.lon])) : [];
   if (z >= 13) loadUserShops(b);
-  for (const it of inView) { it.st = statusOf(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon); }
+  for (const it of inView) {
+    it.st = statusOf(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon);
+    const ci = ciLatest(it.id);
+    if (ci && ci.v === 'open' && it.st.k === 'unknown' && Date.now() / 1000 - ci.time < 3600) it.st = { k: 'ciopen', ci };
+  }
+  if (z >= 13) loadCheckins(b);
   S.view = inView;
   history.replaceState(null, '', `#${c.lat.toFixed(5)},${c.lng.toFixed(5)},${z}`);
   store.set('lastView', JSON.stringify([c.lat, c.lng, z]));
@@ -682,6 +695,68 @@ function initAdd() {
   map.on('click', (e) => { if (ADD.on) addPick(e.latlng); });
 }
 
+// ---------- "it's open" check-ins (ntfy.sh public topics, kept 12 h; no personal data) ----------
+// One topic per ~5 km tile. A message is {"s": shopId, "v": "open"|"closed"}; ntfy stamps the time.
+const CI_T = 0.05, CI = new Map(), ciTiles = new Map();
+const ciTopic = (lat, lon) => `betachpatuach-ci-${Math.floor(lat / CI_T)}-${Math.floor(lon / CI_T)}`;
+function ciAdd(m) {
+  try {
+    const x = JSON.parse(m.message);
+    if (!x || typeof x.s !== 'string' || (x.v !== 'open' && x.v !== 'closed')) return;
+    const arr = CI.get(x.s) || [];
+    if (!arr.some((y) => y.id === m.id)) arr.push({ id: m.id, v: x.v, time: m.time });
+    arr.sort((a, b) => b.time - a.time);
+    CI.set(x.s, arr.slice(0, 20));
+  } catch {}
+}
+function ciLatest(id) { const a = CI.get(id); return a && a[0]; }
+function ciAgo(time) {
+  const n = Math.round((Date.now() / 1000 - time) / 60);
+  return n < 2 ? t('ciNow') : t('ciAgo', { n });
+}
+async function loadCheckins(bounds) {
+  const topics = new Set();
+  for (let la = Math.floor(bounds.getSouth() / CI_T); la <= Math.floor(bounds.getNorth() / CI_T); la++)
+    for (let lo = Math.floor(bounds.getWest() / CI_T); lo <= Math.floor(bounds.getEast() / CI_T); lo++) topics.add(`betachpatuach-ci-${la}-${lo}`);
+  if (topics.size > 6) return;
+  let got = false;
+  await Promise.all([...topics].map(async (tp) => {
+    const last = ciTiles.get(tp);
+    if (last && Date.now() - last < 120000) return; // re-poll a tile at most every 2 minutes
+    ciTiles.set(tp, Date.now());
+    try {
+      const txt = await (await fetch(`https://ntfy.sh/${tp}/json?poll=1&since=12h`)).text();
+      for (const line of txt.split('\n')) {
+        if (!line.trim()) continue;
+        const m = JSON.parse(line);
+        if (m.event === 'message') { ciAdd(m); got = true; }
+      }
+    } catch { ciTiles.delete(tp); }
+  }));
+  if (got) refreshSoon();
+}
+let refreshTimer = null;
+function refreshSoon() { clearTimeout(refreshTimer); refreshTimer = setTimeout(refresh, 50); }
+async function checkIn(id, v) {
+  const it = S.view.find((x) => x.id === id);
+  if (!it) return;
+  const note = (text, cls = 'info') => { S.notices.loc = { cls, text }; renderNotices(); };
+  if (!S.me) { note(t('ciNeedLoc')); locate(false); return; }
+  if (distM(S.me.lat, S.me.lon, it.lat, it.lon) > 300) { note(t('ciFar')); return; }
+  const key = 'ci:' + id;
+  const lastMine = Number(store.get(key) || 0);
+  if (Date.now() - lastMine < 30 * 60000) { note(t('ciTooSoon')); return; }
+  try {
+    const r = await fetch(`https://ntfy.sh/${ciTopic(it.lat, it.lon)}`, { method: 'POST', body: JSON.stringify({ s: id, v }) });
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    ciAdd(await r.json());
+    store.set(key, String(Date.now()));
+    track('checkin', `${v} · ${it.cat}`);
+    note(t('ciThanks'));
+    refresh();
+  } catch { note(t('addFail'), 'err'); }
+}
+
 // ---------- parking (car parks from the map tiles we already load for shade) ----------
 const PARK = { on: false, layer: null, nearMarker: null, cache: new Map() };
 async function drawParking() {
@@ -771,6 +846,8 @@ async function init() {
       track(`click-${kind}`, `${kind} · ${it ? it.cat : ''}`);
     }
     if (e.target.closest('a')) return;
+    const cb = e.target.closest('[data-ci]');
+    if (cb) { checkIn(cb.dataset.ci, cb.dataset.v); return; }
     const pg = e.target.closest('[data-park-go]');
     if (pg) { const [la, lo] = pg.dataset.parkGo.split(',').map(Number); showParkSpot(la, lo); return; }
     const walk = e.target.closest('[data-walk]');

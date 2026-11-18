@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    openNear: 'открыто рядом', go: 'Идти', adLabel: 'Реклама', adBanner: 'Здесь может быть ваша реклама — её видят те, кто ищет открытое рядом', adCardTitle: 'Ваш бизнес здесь', adCardSub: 'Покажитесь тем, кто рядом и ищет открытое', adClose: 'Скрыть рекламу', noneCard: 'Здесь ничего не открыто. Отдалите карту.', tilt3d: 'Наклонить карту (3D)', tilt2d: 'Вид сверху (2D)', listAll: 'Весь список',
     kickerAt: 'Открыто в {t}',
     srcChain: 'Часы с официального сайта сети', srcUser: 'Часы указал посетитель', srcOsm: 'Часы из OpenStreetMap — могут быть устаревшими', doubtClosed: 'посетитель: закрыто ({m})', doubtOpen: 'посетитель: открыто ({m})', showingAt: 'Показываю, что открыто в {t}. Нажмите «Сейчас», чтобы вернуться.',
     kosher: 'кошерно', takeaway: 'с собой', delivery: 'доставка', privAtm: 'частный банкомат, обычно с комиссией', ownerOf: '{o}',
@@ -59,6 +60,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    openNear: 'פתוחים לידך', go: 'ללכת', adLabel: 'מודעה', adBanner: 'כאן יכולה להיות המודעה שלכם — רואים אותה מי שמחפשים מה פתוח בסביבה', adCardTitle: 'העסק שלכם כאן', adCardSub: 'הופיעו מול מי שנמצא קרוב ומחפש מה פתוח', adClose: 'להסתיר מודעה', noneCard: 'אין כאן מקומות פתוחים. הרחיקו את המפה.', tilt3d: 'להטות את המפה (3D)', tilt2d: 'מבט מלמעלה (2D)', listAll: 'כל הרשימה',
     kickerAt: 'פתוח ב-{t}',
     srcChain: 'שעות מהאתר הרשמי של הרשת', srcUser: 'שעות שעדכן מבקר', srcOsm: 'שעות מ-OpenStreetMap — ייתכן שאינן מעודכנות', doubtClosed: 'מבקר: סגור ({m})', doubtOpen: 'מבקר: פתוח ({m})', showingAt: 'מוצג מה פתוח ב-{t}. לחצו «עכשיו» כדי לחזור.',
     kosher: 'כשר', takeaway: 'טייק אווי', delivery: 'משלוחים', privAtm: 'כספומט פרטי, בדרך כלל בעמלה', ownerOf: '{o}',
@@ -94,6 +96,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    openNear: 'open nearby', go: 'Go', adLabel: 'Ad', adBanner: "Your ad here — seen by people looking for what's open nearby", adCardTitle: 'Your business here', adCardSub: "Get seen by people nearby looking for what's open", adClose: 'Hide ad', noneCard: 'Nothing open here. Zoom out.', tilt3d: 'Tilt the map (3D)', tilt2d: 'Top view (2D)', listAll: 'Full list',
     kickerAt: 'Open at {t}',
     srcChain: "Hours from the chain's official site", srcUser: 'Hours from a visitor', srcOsm: 'Hours from OpenStreetMap — may be out of date', doubtClosed: 'visitor: closed ({m})', doubtOpen: 'visitor: open ({m})', showingAt: "Showing what's open at {t}. Tap Now to go back.",
     kosher: 'kosher', takeaway: 'takeaway', delivery: 'delivery', privAtm: 'private ATM, usually charges a fee', ownerOf: '{o}',
@@ -341,85 +344,176 @@ async function loadHebcal(lat, lon) {
   renderNotices();
 }
 
+// ---------- brands: a small round badge in the brand's colours on pins and cards, like map apps do ----------
+const BRANDS = [
+  [/שופרסל|shufersal/i, 'שופרסל', '#e2231a', '#fff'], [/רמי לוי|rami ?levy/i, 'רמי לוי', '#ffffff', '#e2001a'],
+  [/ויקטורי|victory/i, 'VICTORY', '#e30613', '#fff'], [/אושר עד|osher ?ad/i, 'אושר עד', '#ffc20e', '#1b3c87'],
+  [/יוחננוף|yochananof|yohananof/i, 'יוחננוף', '#e4002b', '#fff'], [/חצי חינם|hatzi ?hinam/i, 'חצי חינם', '#f39200', '#fff'],
+  [/טיב טעם|tiv ?taam/i, 'טיב טעם', '#d0021b', '#fff'], [/מגה|mega/i, 'MEGA', '#e30613', '#fff'],
+  [/am:?pm/i, 'am:pm', '#111111', '#ff7a00'], [/קרפור|carrefour/i, 'C', '#0055a4', '#fff'], [/יינות ביתן|yeinot/i, 'ביתן', '#7a1f2b', '#fff'],
+  [/סופר.?פארם|super.?pharm/i, 'SUPER PHARM', '#003da5', '#fff'], [/be\b|בי פארם/i, 'BE', '#00a19a', '#fff'], [/גוד ?פארם|good ?pharm/i, 'GOOD', '#ec008c', '#fff'],
+  [/^yellow|ילו/i, 'yellow', '#ffd200', '#1a1a1a'], [/^פז$|^paz\b/i, 'פז', '#ffd100', '#0033a0'], [/סונול|sonol/i, 'sonol', '#ffcc00', '#d6001c'],
+  [/דור אלון|dor ?alon|אלונית|alonit/i, 'אלון', '#0072bc', '#fff'], [/^דלק|^delek/i, 'דלק', '#e31e24', '#fff'], [/^טן$|^ten\b/i, 'TEN', '#e4002b', '#fff'],
+  [/פועלים|hapoalim/i, 'פועלים', '#e30613', '#fff'], [/לאומי|leumi/i, 'לאומי', '#003f87', '#fff'], [/דיסקונט|discount/i, 'דיסקונט', '#00843d', '#fff'],
+  [/מזרחי|mizrahi/i, 'מזרחי', '#f58220', '#fff'], [/בינלאומי|first international|fibi/i, 'הבינ"ל', '#0c3c78', '#fff'],
+  [/מקדונלד|mcdonald/i, 'M', '#da291c', '#ffc72c'], [/בורגר קינג|burger king/i, 'BK', '#d62300', '#f5ebdc'], [/ארומה|aroma/i, 'aroma', '#c8102e', '#fff'],
+  [/קופיקס|cofix/i, 'cofix', '#e6007e', '#fff'], [/דומינו|domino/i, 'D', '#006491', '#fff'], [/פיצה האט|pizza hut/i, 'PH', '#c8102e', '#fff'],
+  [/גרג|greg/i, 'greg', '#6d2c1e', '#fff'], [/לנדוור|landwer/i, 'L', '#1d1d1b', '#fff'], [/kfc/i, 'KFC', '#a3080c', '#fff'],
+];
+function brandOf(tg) {
+  const hay = [tg.brand, tg['brand:en'], tg.operator, tg.name, tg['name:en']].filter(Boolean).join(' | ');
+  if (!hay) return null;
+  for (const [re, txt, bg, fg] of BRANDS) if (re.test(hay)) return { t: txt, bg, fg };
+  return null;
+}
+const brandTile = (it) => { const b = brandOf(it.tags); return b ? `<span class="ico brand" style="background:${b.bg};color:${b.fg}">${esc(b.t)}</span>` : `<span class="ico c-${it.cat}">${svg(it.cat)}</span>`; };
+
+// ---------- ad slots (empty for now: a house placeholder shows where ads will go) ----------
+// To run a real ad, fill these: { title, sub, href, img } — they are labelled "Ad" and never cover the answer.
+const ADS = { banner: null, card: null };
+const adClosed = () => { try { return sessionStorage.getItem('adClosed') === '1'; } catch { return false; } };
+function renderAdBanner() {
+  const el = $('#adBanner'); if (!el) return;
+  el.hidden = adClosed();
+  const a = ADS.banner;
+  el.innerHTML = `<span class="adtag">${esc(t('adLabel'))}</span>` +
+    (a ? `<a href="${esc(a.href)}" target="_blank" rel="noopener sponsored">${esc(a.title)}</a>` : `<span class="adtext">${esc(t('adBanner'))}</span>`) +
+    `<button type="button" class="adx" data-ad-close aria-label="${esc(t('adClose'))}">×</button>`;
+}
+function adCardHTML() {
+  const a = ADS.card;
+  return `<article class="pcard ad" data-ad-slot="card"><span class="adtag">${esc(t('adLabel'))}</span>
+    <div class="pc-top"><span class="ico adico">★</span><div class="pc-name"><b>${esc(a ? a.title : t('adCardTitle'))}</b><small>${esc(a ? a.sub : t('adCardSub'))}</small></div></div>
+    ${a ? `<div class="pc-bottom"><span></span><a class="gobtn" href="${esc(a.href)}" target="_blank" rel="noopener sponsored">${esc(t('go'))}</a></div>` : ''}</article>`;
+}
+// Swipeable cards of open places (glance mode): name, status, walk time and one big "Go".
+function cardsHTML(openL, now) {
+  if (!openL.length) return `<article class="pcard none"><p>${esc(t('noneCard'))}</p><button type="button" class="ghost" data-zoomout>${esc(t('zoomOut'))}</button></article>`;
+  const out = openL.slice(0, 12).map((it) => {
+    const st = it.st, mins = Math.max(1, Math.round(it.d / 80));
+    return `<article class="pcard${S.selected === it.id ? ' sel' : ''}" data-card="${esc(it.id)}">
+      <div class="pc-top">${brandTile(it)}<div class="pc-name"><b>${esc(nameOf(it))}</b><small>${it.d < 2500 ? `<b>${esc(t('walk', { m: mins }))}</b> · ` : ''}${esc(fmtDist(it.d))}</small></div></div>
+      <div class="pc-bottom"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && trustOf(it) === 'osm' ? ' approx' : ''}">${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>
+      <button type="button" class="gobtn" data-walk="${esc(it.id)}">${esc(t('go'))}</button></div></article>`;
+  });
+  out.splice(Math.min(1, out.length), 0, adCardHTML());
+  return out.join('');
+}
+
 // ---------- map ----------
-let map, pinLayer, dotLayer, meMarker;
-const markers = new Map();
+let map, pinLayer, meMarker;
 const CSSV = new Map();
 const cssVar = (n) => { if (!CSSV.has(n)) CSSV.set(n, getComputedStyle(document.documentElement).getPropertyValue(n).trim()); return CSSV.get(n); };
 const STATUS_VAR = { open: '--open', open24: '--open', soon: '--soon', closed: '--closed', unknown: '--unknown', ciopen: '--open' };
-// Base map: OpenFreeMap vector style without shop/parking icons (free, no key, commercial use allowed).
-// Falls back to OpenStreetMap raster tiles if WebGL or the style is unavailable.
-async function addBaseMap() {
-  try {
-    if (!L.maplibreGL || !window.maplibregl) throw new Error('no maplibre');
-    const style = await (await fetch('https://tiles.openfreemap.org/styles/liberty')).json();
-    style.layers = style.layers.filter((l) => l['source-layer'] !== 'poi'); // no built-in shop / parking icons
-    S.gl = L.maplibreGL({ style, attribution: '© <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © OpenStreetMap' }).addTo(map);
-    S.gl.getMaplibreMap().once('load', () => { setGLNight(document.documentElement.classList.contains('night-map')); drawLights(); });
-  } catch {
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
-  }
-}
+// Base map: OpenFreeMap vector style without shop/parking icons (free, no key, commercial use allowed), drawn by MapLibre,
+// so the map can tilt into 3D like Google Maps (two-finger drag, or the 3D button).
+const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 function initMap(center, zoom) {
   const touch = matchMedia('(pointer: coarse)').matches;
-  map = L.map('map', { zoomControl: !touch, preferCanvas: true, attributionControl: true }).setView(center, zoom);
-  if (map.zoomControl) map.zoomControl.setPosition('topright');
-  addBaseMap();
-  dotLayer = L.layerGroup().addTo(map);
-  pinLayer = L.layerGroup().addTo(map);
+  map = new MK.Map('map', { center, zoom, touch, style: { version: 8, sources: {}, layers: [] } });
+  map.gm.setStyle(STYLE_URL, { transformStyle: (_, next) => ({ ...next, layers: next.layers.filter((l) => l['source-layer'] !== 'poi') }) });
+  map.styled = new Promise((res) => map.gm.on('style.load', () => { if (map.gm.getStyle().layers.length > 5) res(); }));
+  map.styled.then(() => {
+    addAppLayers();
+    setGLNight(document.documentElement.classList.contains('night-map'));
+    drawLights();
+    if (S.loaded) refresh();
+    if (SH.on) drawShade();
+  });
+  pinLayer = MK.group().addTo(map);
   let timer;
   map.on('moveend', () => { clearTimeout(timer); timer = setTimeout(refresh, 120); });
+  map.gm.on('pitchend', syncTiltBtn);
+}
+// Our own layers on the vector map: building shadows (under the buildings), small dots for places without hours or closed,
+// walking-time rings, the walking route, street lamps and open-shop glows at night.
+function addAppLayers() {
+  const gm = map.gm;
+  for (const id of ['shade', 'dots', 'rings', 'route', 'glows']) map.ensureSource(id);
+  const firstBuilding = map.firstLayer((l) => l['source-layer'] === 'building');
+  const firstLabel = map.firstLayer((l) => l.type === 'symbol');
+  gm.addLayer({ id: 'shade', type: 'fill', source: 'shade', paint: { 'fill-color': '#142054', 'fill-opacity': 0.5, 'fill-antialias': true } }, firstBuilding || firstLabel);
+  gm.addLayer({ id: 'rings-fill', type: 'fill', source: 'rings', filter: ['==', ['get', 'm'], 5], paint: { 'fill-color': '#2a7fff', 'fill-opacity': 0.05 } }, firstLabel);
+  gm.addLayer({ id: 'rings-line', type: 'line', source: 'rings', paint: { 'line-color': '#2a7fff', 'line-opacity': 0.55, 'line-width': 1.5, 'line-dasharray': [3, 3] } }, firstLabel);
+  gm.addLayer({ id: 'route-alt', type: 'line', source: 'route', filter: ['==', ['get', 'r'], 'alt'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#6b7780', 'line-opacity': 0.5, 'line-width': 5, 'line-dasharray': [0.5, 2] } });
+  gm.addLayer({ id: 'route-case', type: 'line', source: 'route', filter: ['==', ['get', 'r'], 'main'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#ffffff', 'line-width': 10, 'line-opacity': 0.9 } });
+  gm.addLayer({ id: 'route-main', type: 'line', source: 'route', filter: ['==', ['get', 'r'], 'main'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['get', 'c'], 'line-width': 6 } });
+  gm.addLayer({ id: 'glows', type: 'circle', source: 'glows', paint: { 'circle-color': '#ffd68c', 'circle-blur': 1, 'circle-opacity': 0.55, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, 10, 17, 34] } });
+  gm.addLayer({ id: 'dots', type: 'circle', source: 'dots', paint: {
+    'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, 4, 17, 6], 'circle-color': ['get', 'c'], 'circle-opacity': ['get', 'o'],
+    'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.5, 'circle-pitch-alignment': 'map' } });
+  gm.on('click', 'dots', (e) => { const f = e.features?.[0]; if (f) select(f.properties.id, true); });
+  gm.on('mouseenter', 'dots', (e) => { gm.getCanvas().style.cursor = 'pointer'; gm.getCanvas().title = e.features?.[0]?.properties.n || ''; });
+  gm.on('mouseleave', 'dots', () => { gm.getCanvas().style.cursor = ''; gm.getCanvas().title = ''; });
+  applyLayers();
+}
+const glReady = () => map && map.gm.getLayer && map.gm.getLayer('dots');
+// 3D: tilt and turn the map a little so buildings stand up and their shadows read like the street you are in.
+function toggleTilt() {
+  const on = map.gm.getPitch() < 10;
+  map.gm.easeTo({ pitch: on ? 60 : 0, bearing: on ? -17 : 0, duration: 900 });
+  track('tilt', on ? '3d' : '2d');
+}
+function syncTiltBtn() {
+  const b = $('#tiltBtn'); if (!b) return;
+  const on = map.gm.getPitch() >= 10;
+  b.setAttribute('aria-pressed', String(on));
+  b.querySelector('span').textContent = on ? '2D' : '3D';
 }
 function pinIcon(it, sel) {
-  return L.divIcon({
-    className: '', iconSize: [30, 30], iconAnchor: [15, 30],
-    html: `<div class="pin${sel ? ' sel' : ''}" style="background:${cssVar(STATUS_VAR[it.st.k])}">${svg(it.cat)}</div>`,
+  const br = brandOf(it.tags);
+  const inner = br ? `<span class="blogo" style="background:${br.bg};color:${br.fg}">${esc(br.t)}</span>` : svg(it.cat);
+  return MK.divIcon({
+    iconSize: [34, 40], iconAnchor: [17, 40],
+    html: `<div class="pin${sel ? ' sel' : ''}${br ? ' branded' : ''}" style="--pc:${cssVar(STATUS_VAR[it.st.k])}">${inner}</div>`,
   });
 }
+const PINS = new Map(); // id -> { m: marker, key }
 function drawMarkers(openL, unkL, closedL) {
-  pinLayer.clearLayers(); dotLayer.clearLayers(); markers.clear();
-  const z = map.getZoom();
-  for (const it of openL.slice(0, 250)) {
-    const m = L.marker([it.lat, it.lon], { icon: pinIcon(it, it.id === S.selected), keyboard: false, riseOnHover: true }).addTo(pinLayer);
-    m.bindTooltip(esc(nameOf(it)), { direction: 'top', offset: [0, -28] });
-    m.on('click', () => select(it.id, true));
-    markers.set(it.id, m);
+  const want = new Map();
+  for (const it of openL.slice(0, 250)) want.set(it.id, it);
+  for (const [id, p] of PINS) if (!want.has(id)) { p.m.remove(); PINS.delete(id); }
+  for (const it of want.values()) {
+    const key = it.st.k + (it.id === S.selected ? '*' : '') + S.lang;
+    const p = PINS.get(it.id);
+    if (p) { if (p.key !== key) { p.m.setIcon(pinIcon(it, it.id === S.selected)); p.key = key; } continue; }
+    const m = MK.marker([it.lat, it.lon], { icon: pinIcon(it, it.id === S.selected) });
+    m.bindTooltip(nameOf(it)); m.on('click', () => select(it.id, true));
+    if (LY.shops) m.addTo(map);
+    PINS.set(it.id, { m, key });
   }
-  if (z >= 14) {
-    const dots = [...unkL.slice(0, 300), ...closedL.slice(0, 200)];
-    for (const it of dots) {
-      const m = L.circleMarker([it.lat, it.lon], {
-        radius: 5, weight: 1.5, color: '#fff', fillColor: cssVar(STATUS_VAR[it.st.k]), fillOpacity: it.st.k === 'closed' ? 0.55 : 0.85,
-      }).addTo(dotLayer);
-      m.bindTooltip(esc(nameOf(it)));
-      m.on('click', () => select(it.id, true));
-      markers.set(it.id, m);
-    }
-  }
+  if (!glReady()) return;
+  const z = map.getZoom(), feats = [];
+  if (z >= 14 && LY.shops) for (const it of [...unkL.slice(0, 400), ...closedL.slice(0, 300)])
+    feats.push(MK.point(it.lat, it.lon, { id: it.id, n: nameOf(it), c: cssVar(STATUS_VAR[it.st.k]), o: it.st.k === 'closed' ? 0.6 : 0.9 }));
+  map.setData('dots', feats);
 }
-let ringLayer;
+let ringLabels = null;
 function drawMe() {
   if (!S.me) return;
   if (meMarker) meMarker.setLatLng([S.me.lat, S.me.lon]);
-  else meMarker = L.marker([S.me.lat, S.me.lon], { icon: L.divIcon({ className: '', html: '<div class="me-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false, zIndexOffset: 1000 }).addTo(map);
-  // Walking-distance rings: 5 / 10 / 15 minutes at ~80 m per minute.
-  if (ringLayer) ringLayer.remove();
-  ringLayer = L.layerGroup();
-  if (LY.rings) ringLayer.addTo(map);
-  for (const min of [5, 10, 15]) {
+  else meMarker = MK.marker([S.me.lat, S.me.lon], { icon: MK.divIcon({ html: '<div class="me-dot"></div>', iconSize: [18, 18], iconAnchor: [9, 9] }), interactive: false, zIndexOffset: 1000 }).addTo(map);
+  drawRings();
+}
+// Walking-distance rings: 5 / 10 / 15 minutes at ~80 m per minute.
+function drawRings() {
+  if (ringLabels) ringLabels.remove();
+  ringLabels = MK.group();
+  const feats = [];
+  if (S.me && LY.rings) for (const min of [5, 10, 15]) {
     const r = min * 80;
-    L.circle([S.me.lat, S.me.lon], { radius: r, color: '#2a7fff', weight: 1.5, opacity: 0.55, dashArray: '5 6', fill: min === 5, fillOpacity: 0.05, interactive: false }).addTo(ringLayer);
-    const lat = S.me.lat + r / 111320;
-    L.tooltip({ permanent: true, direction: 'center', className: 'ring-label', interactive: false }).setLatLng([lat, S.me.lon]).setContent(esc(t('ringMin', { m: min }))).addTo(ringLayer);
+    feats.push(MK.poly(MK.circle(S.me.lat, S.me.lon, r), { m: min }));
+    MK.marker([S.me.lat + r / 111320, S.me.lon], { icon: MK.divIcon({ html: `<span class="ring-label">${esc(t('ringMin', { m: min }))}</span>`, iconSize: [60, 20], iconAnchor: [30, 10] }), interactive: false }).addTo(ringLabels);
   }
+  if (S.me && LY.rings) ringLabels.addTo(map);
+  if (glReady()) map.setData('rings', feats);
 }
 
 // ---------- walking route ----------
-let routeLayer = null;
 const RT = { target: null, wantShade: false, seq: 0 };
 function clearRoute() {
-  if (routeLayer) routeLayer.remove();
-  routeLayer = null; RT.target = null;
+  if (glReady()) map.setData('route', []);
+  RT.target = null;
   $('#routeBox').hidden = true;
 }
 async function showRoute(it) {
@@ -448,18 +542,14 @@ async function showRoute(it) {
     return;
   }
   if (seq !== RT.seq) return;
-  if (routeLayer) routeLayer.remove();
-  routeLayer = L.layerGroup().addTo(map);
-  res.routes.forEach((r, i) => {
-    if (i === res.chosen) return;
-    L.polyline(r.coords, { color: cssVar('--unknown'), weight: 5, opacity: 0.45, dashArray: '2 8', lineCap: 'round' }).addTo(routeLayer);
-  });
   const ch = res.routes[res.chosen];
   const shady = res.shade != null;
-  L.polyline(ch.coords, { color: '#ffffff', weight: 10, opacity: 0.9, lineCap: 'round' }).addTo(routeLayer);
-  L.polyline(ch.coords, { color: shady ? '#2f9e5b' : cssVar('--brand'), weight: 6, opacity: 1, lineCap: 'round' }).addTo(routeLayer);
-  const pad = wide() ? [[440, 90], [40, 40]] : [[30, 90], [30, Math.round(window.innerHeight * 0.5) + 20]];
-  map.fitBounds(L.latLngBounds(ch.coords), { paddingTopLeft: pad[0], paddingBottomRight: pad[1], maxZoom: 17 });
+  map.setData('route', [
+    ...res.routes.filter((_, i) => i !== res.chosen).map((r) => MK.line(r.coords, { r: 'alt' })),
+    MK.line(ch.coords, { r: 'main', c: shady ? '#2f9e5b' : cssVar('--brand') }),
+  ]);
+  const pad = wide() ? [[440, 120], [40, 40]] : [[30, 130], [30, Math.round(window.innerHeight * 0.45) + 20]];
+  map.fitBounds(ch.coords, { paddingTopLeft: pad[0], paddingBottomRight: pad[1], maxZoom: 17 });
 
   const mins = Math.max(1, Math.round(ch.duration / 60));
   $('#routeTitle').textContent = `${nameOf(it)} · ${t('routeTitle', { m: mins, d: fmtDist(ch.distance) })}`;
@@ -480,7 +570,8 @@ function setSheet(state) {
   el.dataset.state = state;
   if (wide()) { document.documentElement.style.setProperty('--sheet-peek', '0px'); return; }
   const H = el.offsetHeight, vh = window.innerHeight;
-  const visible = state === 'full' ? H : state === 'half' ? Math.min(H, Math.round(vh * 0.5)) : Math.min(H, 212);
+  const peekH = (() => { const c = $('#cards'); if (!c || !c.offsetHeight) return 212; return Math.round(c.getBoundingClientRect().bottom - el.getBoundingClientRect().top + 10 - (parseFloat(getComputedStyle(el).getPropertyValue('--sheet-offset')) ? 0 : 0)); })();
+  const visible = state === 'full' ? H : state === 'half' ? Math.min(H, Math.round(vh * 0.55)) : Math.min(H, peekH);
   el.style.setProperty('--sheet-offset', H - visible + 'px');
   document.documentElement.style.setProperty('--sheet-peek', Math.min(visible, Math.round(vh * 0.5)) + 'px');
 }
@@ -537,6 +628,7 @@ function applyLang() {
   if (typeof applyTheme === 'function' && $('#themeBtn')?.textContent) applyTheme();
   $('#addOpen').textContent = t('addOpen');
   $('#grab').setAttribute('aria-label', t('expand'));
+  $('#tiltBtn').title = t('tilt3d');
   $('#city').innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
 }
 function renderNotices() {
@@ -601,7 +693,7 @@ function shopHTML(it, now) {
   }
   const walk = it.d < 2500 ? `<b>${esc(t('walk', { m: Math.max(1, Math.round(it.d / 80)) }))}</b>` : '';
   return `<li class="shop${S.selected === it.id ? ' sel' : ''}" data-id="${esc(it.id)}" tabindex="0">
-    <span class="ico c-${it.cat}">${svg(it.cat)}</span>
+    ${brandTile(it)}
     <span class="name">${esc(name)}</span>
     <span class="dist">${walk}${fmtDist(it.d)}</span>
     <span class="meta"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && trustOf(it) === 'osm' ? ' approx' : ''}"${st.oh && trustOf(it) === 'osm' ? ` title="${esc(t('srcOsm'))}"` : ''}>${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>${st.doubt ? `<span class="tag ci-bad">${esc(t(st.doubt.v === 'closed' ? 'doubtClosed' : 'doubtOpen', { m: ciAgo(st.doubt.time) }))}</span>` : ''}${tags.join('')}${kindLine(it, type, name)}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
@@ -635,7 +727,7 @@ function refresh() {
   }
   if (z >= 13) loadCommunity(b);
   S.view = inView;
-  history.replaceState(null, '', `#${c.lat.toFixed(5)},${c.lng.toFixed(5)},${z}`);
+  history.replaceState(null, '', `#${c.lat.toFixed(5)},${c.lng.toFixed(5)},${Math.round(z * 10) / 10}`);
   store.set('lastView', JSON.stringify([c.lat, c.lng, z]));
 
   // category chips with open counts
@@ -651,6 +743,10 @@ function refresh() {
   const closedL = inCat.filter((it) => it.st.k === 'closed');
 
   $('#openCount').textContent = z >= 10 ? openL.length : '—';
+  $('#gCount').textContent = z >= 10 ? openL.length : '—';
+  $('#gText').textContent = `${t('openNear')} · ${I18N[S.lang].cats[S.cat]}`;
+  $('#cards').innerHTML = z >= 10 && !S.error ? cardsHTML(openL, now) : '';
+  renderAdBanner();
   $('#openUnit').textContent = plural(openL.length);
   $('#whereLine').textContent = z < 10 ? t('zoomIn') : meIn ? t('whereMe') : t('whereMap');
 
@@ -671,7 +767,7 @@ function refresh() {
   if ($('#closedBox').open) $('#closedList').innerHTML = listWithMore(closedL, 'closed', now);
   S.lists = { unknown: unkL, closed: closedL };
   drawMarkers(openL, unkL, closedL);
-  if (typeof drawShopGlows === 'function') drawShopGlows();
+  drawShopGlows();
   renderTimeNote(now);
   $('#kicker').textContent = S.notices.time ? t('kickerAt', { t: fmtTime(now) }) : t('kicker');
 }
@@ -681,7 +777,11 @@ function select(id, fromMap) {
   if (fromMap && it) {
     if (it.st.k === 'unknown') $('#unknownBox').open = true;
     if (it.st.k === 'closed') $('#closedBox').open = true;
-    if (!wide() && sheet().dataset.state === 'peek') setSheet('half');
+    if (!wide() && sheet().dataset.state === 'peek') {
+      const card = document.querySelector(`[data-card="${CSS.escape(id)}"]`);
+      if (card) { refresh(); document.querySelector(`[data-card="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); return; }
+      setSheet('half');
+    }
   }
   refresh();
   if (S.selected && it && PARK.on) fillParkLine(it);
@@ -771,7 +871,7 @@ function addStop() {
 function addPick(latlng) {
   ADD.pin = latlng;
   if (ADD.marker) ADD.marker.setLatLng(latlng);
-  else ADD.marker = L.marker(latlng, { draggable: true, icon: L.divIcon({ className: '', html: '<div class="add-pin"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }) })
+  else ADD.marker = MK.marker(latlng, { draggable: true, icon: MK.divIcon({ html: '<div class="add-pin"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }) })
     .on('dragend', (e) => { ADD.pin = e.target.getLatLng(); }).addTo(map);
   $('#addHint').textContent = t('addHintForm');
   $('#addFields').hidden = false;
@@ -942,7 +1042,7 @@ function pkPopupHTML(p) {
 }
 function pkIcon(p) {
   const r = pkLatest(pid(p));
-  return L.divIcon({ className: '', html: `<div class="p-pin${r ? ' pk-' + r.v : ''}">P</div>`, iconSize: [22, 22], iconAnchor: [11, 11] });
+  return MK.divIcon({ html: `<div class="p-pin${r ? ' pk-' + r.v : ''}">P</div>`, iconSize: [22, 22], iconAnchor: [11, 11] });
 }
 async function drawParking() {
   if (PARK.layer) { PARK.layer.remove(); PARK.layer = null; }
@@ -955,9 +1055,9 @@ async function drawParking() {
   ]);
   if (!PARK.on) return;
   if (PARK.layer) PARK.layer.remove();
-  PARK.layer = L.layerGroup().addTo(map);
+  PARK.layer = MK.group().addTo(map);
   for (const p of list.slice(0, 300)) {
-    L.marker([p.lat, p.lon], { icon: pkIcon(p), keyboard: false })
+    MK.marker([p.lat, p.lon], { icon: pkIcon(p) })
       .bindPopup(() => pkPopupHTML(p), { maxWidth: 260 })
       .addTo(PARK.layer);
   }
@@ -996,7 +1096,7 @@ async function fillParkLine(it) {
 }
 function showParkSpot(lat, lon) {
   if (PARK.nearMarker) PARK.nearMarker.remove();
-  PARK.nearMarker = L.marker([lat, lon], { icon: L.divIcon({ className: '', html: '<div class="p-pin near">P</div>', iconSize: [22, 22], iconAnchor: [11, 11] }) }).addTo(map);
+  PARK.nearMarker = MK.marker([lat, lon], { icon: MK.divIcon({ html: '<div class="p-pin near">P</div>', iconSize: [22, 22], iconAnchor: [11, 11] }) }).addTo(map);
   map.panTo([lat, lon]);
   track('parking-show', 'parking near shop');
 }
@@ -1004,7 +1104,7 @@ function showParkSpot(lat, lon) {
 // ---------- shade layer: building shadows for a chosen time of day ----------
 // Shadow of each building = its footprint swept away from the sun by height / tan(sun altitude).
 // Drawn opaque on an off-screen canvas, then shown at fixed opacity so overlapping shadows don't get darker.
-const SH = { on: false, time: null, canvas: null, seq: 0, timer: null, live: true };
+const SH = { on: false, time: null, seq: 0, live: true, proj: null, projKey: null };
 function shadeMinutes(d) { return d.getHours() * 60 + d.getMinutes(); }
 function shadeSetTime(min) {
   const d = new Date(); d.setHours(Math.floor(min / 60), min % 60, 0, 0);
@@ -1017,13 +1117,9 @@ function shadeSetTime(min) {
 function shadeToggle(on) {
   SH.on = on;
   $('#shadeBar').hidden = !on;
-  if (!on) { if (SH.canvas) { SH.canvas.remove(); SH.canvas = null; } return; }
+  if (!on) { if (glReady()) map.setData('shade', []); return; }
   if (!SH.time) shadeNowClick(false);
   $('#shadeNow').textContent = t('shadeNow');
-  if (!SH.canvas) {
-    SH.canvas = L.DomUtil.create('canvas', 'shade-canvas leaflet-zoom-hide');
-    map.getPanes().overlayPane.appendChild(SH.canvas);
-  }
   drawShade();
 }
 // "Now" follows the real clock (updated every minute) until the person drags the slider.
@@ -1043,55 +1139,35 @@ function hull(pts) {
   return lo.slice(0, -1).concat(up.slice(0, -1));
 }
 async function drawShade() {
-  if (!SH.on || !SH.canvas) return;
+  if (!SH.on || !glReady()) return;
   const seq = ++SH.seq;
-  const size = map.getSize(), cv = SH.canvas, ctx = cv.getContext('2d');
-  L.DomUtil.setPosition(cv, map.containerPointToLayerPoint([0, 0]));
-  const dpr = 1; // soft shadows don't need retina pixels; 4x less work on phones
-  if (cv.width !== size.x * dpr || cv.height !== size.y * dpr) { cv.width = size.x * dpr; cv.height = size.y * dpr; cv.style.width = size.x + 'px'; cv.style.height = size.y + 'px'; }
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, size.x, size.y);
-  cv.style.opacity = '1';
-  if (map.getZoom() < 15) { S.notices.loc = { cls: 'info', text: t('shadeZoom') }; renderNotices(); return; }
+  const clearNote = () => { if (S.notices.loc && (S.notices.loc.text === t('shadeNight') || S.notices.loc.text === t('shadeZoom'))) { S.notices.loc = null; renderNotices(); } };
+  if (map.getZoom() < 15) { map.setData('shade', []); S.notices.loc = { cls: 'info', text: t('shadeZoom') }; renderNotices(); return; }
   const c = map.getCenter();
   const sun = SunCalc.getPosition(SH.time || new Date(), c.lat, c.lng);
-  if (sun.altitude <= 0.02) { S.notices.loc = { cls: 'info', text: t('shadeNight') }; renderNotices(); return; }
-  // Buildings projected to screen pixels once per map position; the slider then only changes the offset.
-  const key = map.getZoom() + '|' + c.lat.toFixed(6) + '|' + c.lng.toFixed(6) + '|' + size.x + 'x' + size.y;
+  if (sun.altitude <= 0.02) { map.setData('shade', []); S.notices.loc = { cls: 'info', text: t('shadeNight') }; renderNotices(); return; }
+  // Footprints in local metres around the view centre, prepared once per view; the time only changes the offset.
+  const b = map.getBounds().pad(0.2);
+  const key = b.toBBoxString();
   if (SH.projKey !== key) {
-    const b = map.getBounds().pad(0.25);
     const blds = await Route.buildingsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
     if (seq !== SH.seq || !blds) return;
-    const p0 = map.latLngToContainerPoint(c), pN = map.latLngToContainerPoint([c.lat + 0.001, c.lng]);
-    const pxPerM = Math.abs(pN.y - p0.y) / 111.32;
-    const marg = Math.min(400, 120 / Math.tan(0.1)) * pxPerM;
-    const proj = [];
-    for (const bl of blds) {
-      const pts = bl.poly.map(([la, lo]) => { const q = map.latLngToContainerPoint([la, lo]); return [q.x, q.y]; });
-      const x = pts[0][0], y = pts[0][1];
-      if (x < -marg || y < -marg || x > size.x + marg || y > size.y + marg) continue;
-      proj.push({ pts, h: bl.h });
-    }
-    SH.proj = proj; SH.pxPerM = pxPerM; SH.projKey = key;
+    const lat0 = c.lat, lon0 = c.lng, ky = 111320, kx = 111320 * Math.cos(lat0 * Math.PI / 180);
+    SH.proj = { lat0, lon0, kx, ky, list: blds.map((bl) => ({ h: bl.h, pts: bl.poly.map(([la, lo]) => [(lo - lon0) * kx, (la - lat0) * ky]) })) };
+    SH.projKey = key;
   }
-  // Shadow direction in screen pixels (x east, y down). SunCalc azimuth: 0 = south, + toward west.
-  const tanAlt = Math.tan(sun.altitude), k = SH.pxPerM;
-  const ux = Math.sin(sun.azimuth), uy = -Math.cos(sun.azimuth);
-  ctx.fillStyle = 'rgba(20, 32, 84, 0.5)';
-  ctx.beginPath();
-  for (const { pts, h } of SH.proj) {
-    const len = Math.min(h / tanAlt, 400) * k, dx = ux * len, dy = uy * len;
+  const { lat0, lon0, kx, ky, list } = SH.proj;
+  const tanAlt = Math.tan(sun.altitude);
+  const ux = Math.sin(sun.azimuth), uy = Math.cos(sun.azimuth); // SunCalc azimuth: 0 = south, + toward west; the shadow points away from the sun (east, north)
+  const feats = [];
+  for (const { h, pts } of list) {
+    const len = Math.min(h / tanAlt, 160), dx = ux * len, dy = uy * len; // very low sun: cap the length so the map stays readable
     const hp = hull(pts.concat(pts.map(([x, y]) => [x + dx, y + dy])));
-    ctx.moveTo(hp[0][0], hp[0][1]); for (let i = 1; i < hp.length; i++) ctx.lineTo(hp[i][0], hp[i][1]); ctx.closePath();
+    const ring = hp.map(([x, y]) => [lon0 + x / kx, lat0 + y / ky]); ring.push(ring[0]);
+    feats.push(MK.poly(ring));
   }
-  ctx.fill('nonzero');
-  // Cut the buildings themselves out, so the shadow reads as the dark patch next to each house.
-  ctx.globalCompositeOperation = 'destination-out';
-  ctx.beginPath();
-  for (const { pts } of SH.proj) { ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); }
-  ctx.fill('nonzero');
-  ctx.globalCompositeOperation = 'source-over';
-  if (S.notices.loc && (S.notices.loc.text === t('shadeNight') || S.notices.loc.text === t('shadeZoom'))) { S.notices.loc = null; renderNotices(); }
+  map.setData('shade', feats);
+  clearNote();
 }
 function initShade() {
   $('#shadeTime').addEventListener('input', (e) => {
@@ -1101,8 +1177,7 @@ function initShade() {
   });
   $('#shadeTime').addEventListener('change', () => { track('shade-time', fmtTime(SH.time)); if (RT.target) showRoute(RT.target); });
   $('#shadeNow').addEventListener('click', () => { shadeNowClick(); if (RT.target) showRoute(RT.target); });
-  map.on('moveend zoomend resize', () => { if (SH.on) drawShade(); });
-  map.on('movestart zoomstart', () => { if (SH.canvas) SH.canvas.style.opacity = '0'; });
+  map.on('moveend', () => { if (SH.on) drawShade(); });
   setInterval(() => { if (SH.on && SH.live) shadeNowClick(); }, 60000);
 }
 
@@ -1142,8 +1217,7 @@ function initTheme() {
   });
   darkMQ.addEventListener?.('change', () => { if (THEME === 'auto') applyTheme(); });
   setInterval(() => { if (THEME === 'auto') applyTheme(); }, 5 * 60000); // dusk and dawn arrive on their own
-  map.on('moveend zoomend resize', drawLights);
-  map.on('movestart zoomstart', () => { if (LT.canvas) LT.canvas.style.opacity = '0'; });
+  map.on('moveend', drawLights);
   applyTheme();
 }
 
@@ -1177,8 +1251,8 @@ function nightPaint(l) {
   return null;
 }
 function setGLNight(on) {
-  const gm = S.gl?.getMaplibreMap?.();
-  if (!gm || !gm.isStyleLoaded()) return;
+  const gm = map?.gm;
+  if (!glReady()) return;
   if (!GLN.saved) GLN.saved = new Map();
   for (const l of gm.getStyle().layers) {
     const np = nightPaint(l); if (!np) continue;
@@ -1192,7 +1266,7 @@ function setGLNight(on) {
 
 // ---------- night lights: warm street lights along the road network + glowing open shops ----------
 // Real street-lamp positions are not in the map data, so lights follow the streets at an even on-screen spacing.
-const LT = { canvas: null, seq: 0, shopSprite: null };
+const LT = { seq: 0, lampKey: null };
 function glowSprite(r, rgb, core) {
   const c = document.createElement('canvas'); c.width = c.height = r * 2;
   const g = c.getContext('2d'), grad = g.createRadialGradient(r, r, 0, r, r, r);
@@ -1203,8 +1277,8 @@ function glowSprite(r, rgb, core) {
 }
 // Lamps every ~25-120 m along the streets (closer when zoomed in), drawn by the vector map below street names.
 async function drawLamps(on, seq) {
-  const gm = S.gl?.getMaplibreMap?.();
-  if (!gm || !gm.isStyleLoaded()) return;
+  const gm = map?.gm;
+  if (!glReady()) return;
   if (!gm.getSource('lamps')) {
     gm.addSource('lamps', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
     const firstLabel = gm.getStyle().layers.find((l) => l.type === 'symbol')?.id;
@@ -1240,48 +1314,25 @@ async function drawLamps(on, seq) {
   LT.lampKey = key;
 }
 async function drawLights() {
+  if (!glReady()) return;
   const night = document.documentElement.classList.contains('night-map');
-  if (!night || !map) { if (LT.canvas) { LT.canvas.remove(); LT.canvas = null; } drawLamps(false, ++LT.seq); return; }
-  if (!LT.canvas) {
-    LT.canvas = L.DomUtil.create('canvas', 'lights-canvas leaflet-zoom-hide');
-    map.getPanes().overlayPane.appendChild(LT.canvas);
-    LT.shopSprite = glowSprite(40, '255, 214, 140', 0.5);
-  }
-  const seq = ++LT.seq, cv = LT.canvas, ctx = cv.getContext('2d'), size = map.getSize();
-  L.DomUtil.setPosition(cv, map.containerPointToLayerPoint([0, 0]));
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  cv.width = size.x * dpr; cv.height = size.y * dpr; cv.style.width = size.x + 'px'; cv.style.height = size.y + 'px';
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, size.x, size.y);
-  cv.style.opacity = '1';
-  ctx.globalCompositeOperation = 'lighter';
-  const z = map.getZoom();
-  await drawLamps(night && z >= 13, seq);
-  if (seq !== LT.seq) return;
+  const seq = ++LT.seq;
+  await drawLamps(night && map.getZoom() >= 13, seq);
   drawShopGlows();
 }
+// Open shops glow at night: the night version of "here it's open".
 function drawShopGlows() {
-  const cv = LT.canvas; if (!cv) return;
-  const ctx = cv.getContext('2d'), size = map.getSize();
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, size.x, size.y);
-  ctx.globalCompositeOperation = 'lighter';
-  // Open shops glow: the night version of "here it's open".
-  for (const it of S.view || []) {
-    if (!isOpen(it.st?.k)) continue;
-    const p = map.latLngToContainerPoint([it.lat, it.lon]);
-    if (p.x < -60 || p.y < -60 || p.x > size.x + 60 || p.y > size.y + 60) continue;
-    ctx.drawImage(LT.shopSprite, p.x - 40, p.y - 40);
-  }
-  ctx.globalCompositeOperation = 'source-over';
+  if (!glReady()) return;
+  const night = document.documentElement.classList.contains('night-map');
+  map.setData('glows', night ? (S.view || []).filter((it) => isOpen(it.st?.k)).slice(0, 300).map((it) => MK.point(it.lat, it.lon)) : []);
 }
 
 // ---------- layers menu: what to draw on the map (remembered per device) ----------
 const LY = Object.assign({ shops: true, parking: false, rings: true, shade: false }, (() => { try { return JSON.parse(store.get('layers') || '{}'); } catch { return {}; } })());
 function applyLayers() {
-  for (const lyr of [pinLayer, dotLayer]) { if (LY.shops) lyr.addTo(map); else lyr.remove(); }
-  if (ringLayer) { if (LY.rings) ringLayer.addTo(map); else ringLayer.remove(); }
+  for (const p of PINS.values()) { if (LY.shops) p.m.addTo(map); else p.m.remove(); }
+  if (glReady()) map.gm.setLayoutProperty('dots', 'visibility', LY.shops ? 'visible' : 'none');
+  drawRings();
   PARK.on = LY.parking;
   if (!PARK.on && PARK.nearMarker) { PARK.nearMarker.remove(); PARK.nearMarker = null; }
   drawParking();
@@ -1338,7 +1389,7 @@ function track(path, title) {
 // ---------- wire up ----------
 async function init() {
   applyLang();
-  const m = location.hash.match(/^#(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,(\d+))?$/);
+  const m = location.hash.match(/^#(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,(\d+\.?\d*))?$/);
   let last = null; try { last = JSON.parse(store.get('lastView') || 'null'); } catch {}
   const start = m ? [+m[1], +m[2], +(m[3] || 16)] : last || [32.0853, 34.7818, 15];
   initMap([start[0], start[1]], start[2]);
@@ -1347,6 +1398,19 @@ async function init() {
 
   $('#locate').addEventListener('click', () => { track('click-locate', 'near me'); locate(false); });
   $('#routeClose').addEventListener('click', clearRoute);
+  $('#answerBtn').addEventListener('click', () => { setSheet(sheet().dataset.state === 'peek' ? 'half' : 'peek'); track('answer-bar', 'toggle list'); });
+  $('#tiltBtn').addEventListener('click', toggleTilt);
+  $('#cards').addEventListener('click', (e) => {
+    const w = e.target.closest('[data-walk]');
+    if (w) { const it = S.view.find((x) => x.id === w.dataset.walk); if (it) { track('card-go', it.cat); showRoute(it); } return; }
+    if (e.target.closest('[data-zoomout]')) { map.zoomOut(2); return; }
+    if (e.target.closest('a')) { track('ad-click', 'card'); return; }
+    const c = e.target.closest('[data-card]'); if (!c) return;
+    S.selected = c.dataset.card; setSheet('half'); refresh();
+    const it = S.view.find((x) => x.id === S.selected); if (it) map.panTo([it.lat, it.lon]);
+    setTimeout(() => document.querySelector(`.shop[data-id="${CSS.escape(S.selected)}"]`)?.scrollIntoView({ block: 'nearest' }), 320);
+  });
+  document.addEventListener('click', (e) => { if (e.target.closest('[data-ad-close]')) { try { sessionStorage.setItem('adClosed', '1'); } catch {} renderAdBanner(); setSheet(sheet().dataset.state); } });
   initShade();
   initLayers();
   initTheme();

@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css">
-<link rel="stylesheet" href="style.css?v=20261118l">
+<link rel="stylesheet" href="style.css?v=20261118o">
 <script data-goatcounter="https://open-nearby.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -49,12 +49,19 @@
   </div>
 </header>
 
+<div class="shadebar" id="shadeBar" hidden>
+  <span class="sb-sun" aria-hidden="true">☀</span>
+  <input type="range" id="shadeTime" min="360" max="1200" step="15" aria-label="Time">
+  <span class="sb-time" id="shadeTimeL"></span>
+  <button type="button" class="sb-now" id="shadeNow"></button>
+</div>
 <div class="mapctl">
   <div class="layers-pop" id="layersPop" hidden>
     <p class="lp-title" id="lpTitle"></p>
     <label><input type="checkbox" id="lyShops"> <span id="lyShopsL"></span></label>
     <label><input type="checkbox" id="lyParking"> <span id="lyParkingL"></span></label>
     <label><input type="checkbox" id="lyRings"> <span id="lyRingsL"></span></label>
+    <label><input type="checkbox" id="lyShade"> <span id="lyShadeL"></span></label>
   </div>
   <button type="button" id="layersBtn" class="fab" aria-expanded="false" aria-controls="layersPop" aria-label="Layers">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 8 12 13l9.5-5zM2.5 12.2 12 17.2l9.5-5M2.5 16.2 12 21.2l9.5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
@@ -128,7 +135,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.3/leaflet-maplibre-gl.js"></script>
 <script src="vendor/suncalc.js"></script>
 <script src="vendor/opening_hours.js"></script>
-<script src="route.js?v=20261118l"></script>
-<script src="app.js?v=20261118l"></script>
+<script src="route.js?v=20261118o"></script>
+<script src="app.js?v=20261118o"></script>
 </body>
 </html>

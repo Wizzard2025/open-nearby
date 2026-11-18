@@ -312,3 +312,15 @@ button, select, input { font: inherit; color: inherit; }
 .logo-tile img { display: block; height: 66px; width: auto;
   filter: drop-shadow(1.2px 0 0 #fff) drop-shadow(-1.2px 0 0 #fff) drop-shadow(0 1.2px 0 #fff) drop-shadow(0 -1.2px 0 #fff) drop-shadow(0 2px 6px rgb(0 0 0 / 0.45)); }
 @media (max-width: 420px) { .logo-tile img { height: 54px; } .logo-tile { margin: -8px 0 -10px; } }
+
+/* shade layer + time bar */
+.shade-canvas { pointer-events: none; mix-blend-mode: multiply; }
+.shadebar { position: fixed; z-index: 1000; top: calc(78px + env(safe-area-inset-top, 0px)); left: 50%; transform: translateX(-50%);
+  width: min(420px, calc(100% - 24px)); display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 14px;
+  background: var(--surface); color: var(--ink); box-shadow: var(--shadow); }
+.shadebar input[type=range] { flex: 1; accent-color: #f2a93b; min-width: 0; }
+.sb-sun { font-size: 1.1rem; }
+.sb-time { font-weight: 700; font-variant-numeric: tabular-nums; min-width: 3.2em; text-align: center; }
+.sb-now { border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 4px 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
+.sb-note { font-size: 0.78rem; color: var(--muted); }
+@media (min-width: 860px) { .shadebar { left: calc(50% + 215px); } }

@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    lyShade: '☀ Тень от зданий', shadeNow: 'Сейчас', shadeNight: 'Солнце село — тени нет', shadeZoom: 'Приблизьте карту, чтобы увидеть тень',
     layers: 'Что показывать', lyShops: '🛒 Магазины на карте', lyParking: '🅿 Парковки', lyRings: '⭕ Кольца «минут пешком»',
     pkTitle: 'Парковка', pk_free: 'есть места', pk_busy: 'почти полно', pk_full: 'мест нет', pk_gone: 'парковки нет', pkNoReports: 'Отметок пока нет.', pkAsk: 'Вы здесь? Как сейчас:', pkNeedLoc: 'Чтобы отметить парковку, включите геолокацию ➤', pkFar: 'Отметить парковку можно только рядом (до 500 м).',
     ciAsk: 'Вы здесь? Помогите другим:', ciOpen: '✓ Открыто', ciClosed: '✗ Закрыто', ciOkTag: '✓ подтвердили {m}', ciBadTag: '✗ сообщили: закрыто {m}', ciAgo: '{n} мин назад', ciNow: 'только что', ciThanks: 'Спасибо! Ваша отметка видна всем.', ciFar: 'Отметить можно только рядом с магазином (до 300 м). Подойдите ближе.', ciNeedLoc: 'Чтобы отметить, включите геолокацию ➤', ciTooSoon: 'Вы уже отмечали этот магазин недавно.', ciConfirmedOpen: 'Открыто · подтвердили {m}',
@@ -51,6 +52,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    lyShade: '☀ צל מבניינים', shadeNow: 'עכשיו', shadeNight: 'השמש שקעה — אין צל', shadeZoom: 'הגדילו את המפה כדי לראות צל',
     layers: 'מה להציג', lyShops: '🛒 חנויות במפה', lyParking: '🅿 חניות', lyRings: '⭕ טבעות «דקות הליכה»',
     pkTitle: 'חניה', pk_free: 'יש מקום', pk_busy: 'כמעט מלא', pk_full: 'אין מקום', pk_gone: 'אין כאן חניה', pkNoReports: 'עדיין אין דיווחים.', pkAsk: 'אתם כאן? מה המצב:', pkNeedLoc: 'כדי לדווח על חניה, הפעילו מיקום ➤', pkFar: 'אפשר לדווח רק מקרוב (עד 500 מ׳).',
     ciAsk: 'אתם כאן? עזרו לאחרים:', ciOpen: '✓ פתוח', ciClosed: '✗ סגור', ciOkTag: '✓ אושר {m}', ciBadTag: '✗ דווח: סגור {m}', ciAgo: 'לפני {n} דק׳', ciNow: 'עכשיו', ciThanks: 'תודה! הסימון שלכם גלוי לכולם.', ciFar: 'אפשר לסמן רק ליד החנות (עד 300 מ׳). התקרבו.', ciNeedLoc: 'כדי לסמן, הפעילו מיקום ➤', ciTooSoon: 'כבר סימנתם את החנות הזו לא מזמן.', ciConfirmedOpen: 'פתוח · אושר {m}',
@@ -78,6 +80,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    lyShade: '☀ Shade from buildings', shadeNow: 'Now', shadeNight: 'The sun has set — no shade', shadeZoom: 'Zoom in to see shade',
     layers: 'Show on map', lyShops: '🛒 Shops on the map', lyParking: '🅿 Parking', lyRings: '⭕ Walking-time rings',
     pkTitle: 'Parking', pk_free: 'spaces free', pk_busy: 'almost full', pk_full: 'full', pk_gone: 'no parking here', pkNoReports: 'No reports yet.', pkAsk: 'Here now? How is it:', pkNeedLoc: 'Turn on location ➤ to report parking', pkFar: 'You can only report parking nearby (within 500 m).',
     ciAsk: 'Here now? Help others:', ciOpen: '✓ Open', ciClosed: '✗ Closed', ciOkTag: '✓ confirmed {m}', ciBadTag: '✗ reported closed {m}', ciAgo: '{n} min ago', ciNow: 'just now', ciThanks: 'Thanks! Everyone can see your check-in.', ciFar: 'You can only check in near the shop (within 300 m). Get a bit closer.', ciNeedLoc: 'Turn on location ➤ to check in', ciTooSoon: 'You checked in here recently.', ciConfirmedOpen: 'Open · confirmed {m}',
@@ -371,7 +374,8 @@ async function showRoute(it) {
     const atQ = new URLSearchParams(location.search).get('at');
     let at;
     if (atQ && /^\d{1,2}(:\d{2})?$/.test(atQ)) { at = new Date(); const [h, m] = atQ.split(':'); at.setHours(+h, +(m || 0), 0, 0); }
-    const p = Route.plan(from, { lat: it.lat, lon: it.lon }, { wantShade: RT.wantShade, at });
+    if (!at && LY.shade && SH.time) at = SH.time;
+    const p = Route.plan(from, { lat: it.lat, lon: it.lon }, { wantShade: RT.wantShade || LY.shade, at });
     // Draw the plain route quickly; shade (needs building data) may take a few seconds more.
     res = await p;
   } catch {
@@ -898,26 +902,111 @@ function showParkSpot(lat, lon) {
   track('parking-show', 'parking near shop');
 }
 
+// ---------- shade layer: building shadows for a chosen time of day ----------
+// Shadow of each building = its footprint swept away from the sun by height / tan(sun altitude).
+// Drawn opaque on an off-screen canvas, then shown at fixed opacity so overlapping shadows don't get darker.
+const SH = { on: false, time: null, canvas: null, seq: 0, timer: null };
+function shadeMinutes(d) { return d.getHours() * 60 + d.getMinutes(); }
+function shadeSetTime(min) {
+  const d = new Date(); d.setHours(Math.floor(min / 60), min % 60, 0, 0);
+  SH.time = d;
+  $('#shadeTimeL').textContent = fmtTime(d);
+}
+function shadeToggle(on) {
+  SH.on = on;
+  $('#shadeBar').hidden = !on;
+  if (!on) { if (SH.canvas) { SH.canvas.remove(); SH.canvas = null; } return; }
+  if (!SH.time) shadeNowClick(false);
+  $('#shadeNow').textContent = t('shadeNow');
+  if (!SH.canvas) {
+    SH.canvas = L.DomUtil.create('canvas', 'shade-canvas leaflet-zoom-hide');
+    map.getPanes().overlayPane.appendChild(SH.canvas);
+  }
+  drawShade();
+}
+function shadeNowClick(redraw = true) {
+  const n = new Date();
+  const min = Math.min(1200, Math.max(360, Math.round(shadeMinutes(n) / 15) * 15));
+  $('#shadeTime').value = min; shadeSetTime(min);
+  if (redraw) drawShade();
+}
+async function drawShade() {
+  if (!SH.on || !SH.canvas) return;
+  const seq = ++SH.seq;
+  const size = map.getSize(), cv = SH.canvas, ctx = cv.getContext('2d');
+  const topLeft = map.containerPointToLayerPoint([0, 0]);
+  L.DomUtil.setPosition(cv, topLeft);
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = size.x * dpr; cv.height = size.y * dpr; cv.style.width = size.x + 'px'; cv.style.height = size.y + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, size.x, size.y);
+  if (map.getZoom() < 15) { S.notices.loc = { cls: 'info', text: t('shadeZoom') }; renderNotices(); return; }
+  const c = map.getCenter();
+  const sun = SunCalc.getPosition(SH.time || new Date(), c.lat, c.lng);
+  if (sun.altitude <= 0.02) { S.notices.loc = { cls: 'info', text: t('shadeNight') }; renderNotices(); return; }
+  const b = map.getBounds().pad(0.1);
+  const blds = await Route.buildingsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
+  if (seq !== SH.seq || !blds) return;
+  // Shadow direction (away from the sun) in metres east/north, then converted to degrees.
+  const ax = Math.sin(sun.azimuth), ay = Math.cos(sun.azimuth); // SunCalc azimuth: 0 = south, + toward west
+  const tanAlt = Math.tan(sun.altitude);
+  const mPerDegLat = 111320, mPerDegLon = 111320 * Math.cos(c.lat * Math.PI / 180);
+  const P = (lat, lon) => map.latLngToContainerPoint([lat, lon]);
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  const vb = map.getBounds(), maxLen = Math.min(120 / tanAlt, 400) / 111320;
+  const S0 = vb.getSouth() - maxLen, N0 = vb.getNorth() + maxLen, W0 = vb.getWest() - maxLen * 1.3, E0 = vb.getEast() + maxLen * 1.3;
+  for (const bl of blds) {
+    const [la0, lo0] = bl.poly[0];
+    if (la0 < S0 || la0 > N0 || lo0 < W0 || lo0 > E0) continue; // only what can cast shade into view
+    const len = Math.min(bl.h / tanAlt, 400);
+    const dLat = (ay * len) / mPerDegLat, dLon = (ax * len) / mPerDegLon;
+    const pts = bl.poly.map(([la, lo]) => P(la, lo));
+    const sh = bl.poly.map(([la, lo]) => P(la + dLat, lo + dLon));
+    // footprint, its shifted copy, and one quad per edge = the swept shadow
+    ctx.moveTo(pts[0].x, pts[0].y); for (const q of pts) ctx.lineTo(q.x, q.y); ctx.closePath();
+    ctx.moveTo(sh[0].x, sh[0].y); for (const q of sh) ctx.lineTo(q.x, q.y); ctx.closePath();
+    for (let i = 0; i < pts.length; i++) {
+      const j = (i + 1) % pts.length;
+      ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.lineTo(sh[j].x, sh[j].y); ctx.lineTo(sh[i].x, sh[i].y); ctx.closePath();
+    }
+  }
+  ctx.fill('nonzero');
+  cv.style.opacity = '0.28';
+  if (S.notices.loc && (S.notices.loc.text === t('shadeNight') || S.notices.loc.text === t('shadeZoom'))) { S.notices.loc = null; renderNotices(); }
+}
+function initShade() {
+  $('#shadeTime').addEventListener('input', (e) => {
+    shadeSetTime(+e.target.value);
+    clearTimeout(SH.timer); SH.timer = setTimeout(drawShade, 60);
+  });
+  $('#shadeTime').addEventListener('change', () => { track('shade-time', fmtTime(SH.time)); if (RT.target) showRoute(RT.target); });
+  $('#shadeNow').addEventListener('click', () => { shadeNowClick(); if (RT.target) showRoute(RT.target); });
+  map.on('moveend zoomend resize', () => { if (SH.on) drawShade(); });
+  map.on('movestart zoomstart', () => { if (SH.canvas) SH.canvas.style.opacity = '0'; });
+}
+
 // ---------- layers menu: what to draw on the map (remembered per device) ----------
-const LY = Object.assign({ shops: true, parking: false, rings: true }, (() => { try { return JSON.parse(store.get('layers') || '{}'); } catch { return {}; } })());
+const LY = Object.assign({ shops: true, parking: false, rings: true, shade: false }, (() => { try { return JSON.parse(store.get('layers') || '{}'); } catch { return {}; } })());
 function applyLayers() {
   for (const lyr of [pinLayer, dotLayer]) { if (LY.shops) lyr.addTo(map); else lyr.remove(); }
   if (ringLayer) { if (LY.rings) ringLayer.addTo(map); else ringLayer.remove(); }
   PARK.on = LY.parking;
   if (!PARK.on && PARK.nearMarker) { PARK.nearMarker.remove(); PARK.nearMarker = null; }
   drawParking();
+  shadeToggle(LY.shade);
   store.set('layers', JSON.stringify(LY));
 }
 function initLayers() {
   const pop = $('#layersPop'), btn = $('#layersBtn');
-  const sync = () => { $('#lyShops').checked = LY.shops; $('#lyParking').checked = LY.parking; $('#lyRings').checked = LY.rings; };
+  const sync = () => { $('#lyShops').checked = LY.shops; $('#lyParking').checked = LY.parking; $('#lyRings').checked = LY.rings; $('#lyShade').checked = LY.shade; };
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
     pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden));
-    $('#lpTitle').textContent = t('layers'); $('#lyShopsL').textContent = t('lyShops'); $('#lyParkingL').textContent = t('lyParking'); $('#lyRingsL').textContent = t('lyRings');
+    $('#lpTitle').textContent = t('layers'); $('#lyShopsL').textContent = t('lyShops'); $('#lyParkingL').textContent = t('lyParking'); $('#lyRingsL').textContent = t('lyRings'); $('#lyShadeL').textContent = t('lyShade');
     sync();
   });
-  for (const [id, k] of [['#lyShops', 'shops'], ['#lyParking', 'parking'], ['#lyRings', 'rings']]) {
+  for (const [id, k] of [['#lyShops', 'shops'], ['#lyParking', 'parking'], ['#lyRings', 'rings'], ['#lyShade', 'shade']]) {
     $(id).addEventListener('change', (e) => { LY[k] = e.target.checked; track('layer-' + k, LY[k] ? 'on' : 'off'); applyLayers(); refresh(); });
   }
   document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#layersPop, #layersBtn')) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
@@ -941,6 +1030,7 @@ async function init() {
 
   $('#locate').addEventListener('click', () => { track('click-locate', 'near me'); locate(false); });
   $('#routeClose').addEventListener('click', clearRoute);
+  initShade();
   initLayers();
   map.on('moveend', () => { if (PARK.on) drawParking(); });
   initAdd();

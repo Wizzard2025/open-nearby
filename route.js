@@ -163,7 +163,9 @@ window.Route = (() => {
           const tags = {};
           for (let i = 0; i < F.tags.length; i += 2) tags[L.keys[F.tags[i]]] = L.values[F.tags[i + 1]];
           let h;
-          if (L.name === 'building') h = Number(tags.render_height) || 9;
+          // OpenMapTiles puts a placeholder 4-5 m when a building has no height or levels tagged;
+          // in Israeli towns an untagged building is far more often a 3-storey block, so assume 10 m.
+          if (L.name === 'building') { h = Number(tags.render_height) || 0; if (h <= 5) h = 10; }
           else if (tags.class === 'wood') h = 6; // tree canopy
           else continue;
           for (const ring of rings(F.geom)) res.push({ h: Math.min(h, 150), poly: ring.map((pt) => toLL(L, pt)) });
@@ -296,5 +298,13 @@ window.Route = (() => {
     return out;
   }
 
-  return { plan, weather, isHot, parkingIn };
+  // Buildings for the visible map (shade layer): up to 16 tiles, failed tiles skipped.
+  async function buildingsIn([s, w, n, e]) {
+    const jobs = [];
+    for (let tx = lon2x(w); tx <= lon2x(e); tx++) for (let ty = lat2y(n); ty <= lat2y(s); ty++) jobs.push(loadTile(tx, ty).catch(() => null));
+    if (jobs.length > 16) return null;
+    return (await Promise.all(jobs)).flatMap((p) => (p ? p.obs : []));
+  }
+
+  return { plan, weather, isHot, parkingIn, buildingsIn };
 })();

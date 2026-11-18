@@ -17,19 +17,13 @@ window.DB = (() => {
     if (error) throw error;
     return data.user;
   }
-  const inBox = (q, [s, w, n, e]) => q.gte('lat', s).lte('lat', n).gte('lon', w).lte('lon', e);
-  const ago = (h) => new Date(Date.now() - h * 3600e3).toISOString();
 
   // Everything the community added in a bounding box [s, w, n, e].
-  async function area(box) {
-    const [places, fixes, checkins, parking] = await Promise.all([
-      inBox(sb.from('places').select('id,lat,lon,name,cat,opening_hours,phone'), box).limit(500),
-      inBox(sb.from('hours_fixes').select('shop_id,opening_hours,created_at'), box).gte('created_at', ago(24 * 180)).order('created_at', { ascending: false }).limit(500),
-      inBox(sb.from('checkins').select('id,shop_id,status,created_at'), box).gte('created_at', ago(3)).order('created_at', { ascending: false }).limit(1000),
-      inBox(sb.from('parking_reports').select('id,parking_id,status,created_at'), box).gte('created_at', ago(12)).order('created_at', { ascending: false }).limit(1000),
-    ]);
-    for (const r of [places, fixes, checkins, parking]) if (r.error) throw r.error;
-    return { places: places.data, fixes: fixes.data, checkins: checkins.data, parking: parking.data };
+  // One database call (function community_area) returns all four kinds of data.
+  async function area([s, w, n, e]) {
+    const { data, error } = await sb.rpc('community_area', { s, w, n, e });
+    if (error) throw error;
+    return { places: data.places || [], fixes: data.fixes || [], checkins: data.checkins || [], parking: data.parking || [] };
   }
 
   // Inserts; database errors 'too_soon' / 'rate_limited' come back as err.code for the UI.

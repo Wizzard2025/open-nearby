@@ -24,6 +24,8 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    kickerAt: 'Открыто в {t}',
+    srcChain: 'Часы с официального сайта сети', srcUser: 'Часы указал посетитель', srcOsm: 'Часы из OpenStreetMap — могут быть устаревшими', doubtClosed: 'посетитель: закрыто ({m})', doubtOpen: 'посетитель: открыто ({m})', showingAt: 'Показываю, что открыто в {t}. Нажмите «Сейчас», чтобы вернуться.',
     kosher: 'кошерно', takeaway: 'с собой', delivery: 'доставка', privAtm: 'частный банкомат, обычно с комиссией', ownerOf: '{o}',
     fixOpen: 'Неверные часы? Исправить', fixTitle: 'Как работает этот магазин?', fixPh: 'например: 7:00-23:00 или Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'Сохранить часы', fixThanks: 'Спасибо! Новые часы видны всем.', fixBad: 'Не понял часы. Напишите, например, 7:00-23:00 или выберите 24/7.', fixedTag: 'часы исправлены пользователем', tooMany: 'Слишком много отметок за час. Попробуйте позже.', acc: 'Вход', accTitle: 'Вход (необязательно)', accWhy: 'Ваши отметки и исправления уже работают и без входа. С входом они сохранятся за вами на всех устройствах.', accEmail: 'Ваш email', accSend: 'Прислать ссылку для входа', accSent: 'Готово! Откройте письмо и нажмите на ссылку.', accIn: 'Вы вошли как {e}', accOut: 'Выйти',
     atmDeposit: 'можно внести',
@@ -57,6 +59,8 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    kickerAt: 'פתוח ב-{t}',
+    srcChain: 'שעות מהאתר הרשמי של הרשת', srcUser: 'שעות שעדכן מבקר', srcOsm: 'שעות מ-OpenStreetMap — ייתכן שאינן מעודכנות', doubtClosed: 'מבקר: סגור ({m})', doubtOpen: 'מבקר: פתוח ({m})', showingAt: 'מוצג מה פתוח ב-{t}. לחצו «עכשיו» כדי לחזור.',
     kosher: 'כשר', takeaway: 'טייק אווי', delivery: 'משלוחים', privAtm: 'כספומט פרטי, בדרך כלל בעמלה', ownerOf: '{o}',
     fixOpen: 'שעות לא נכונות? לתקן', fixTitle: 'מתי החנות פתוחה?', fixPh: 'למשל: 7:00-23:00 או Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'שמירת שעות', fixThanks: 'תודה! השעות החדשות גלויות לכולם.', fixBad: 'לא הצלחנו להבין את השעות. כתבו למשל 7:00-23:00 או בחרו 24/7.', fixedTag: 'שעות תוקנו על ידי משתמש', tooMany: 'יותר מדי סימונים בשעה האחרונה. נסו מאוחר יותר.', acc: 'כניסה', accTitle: 'כניסה (לא חובה)', accWhy: 'הסימונים והתיקונים שלכם עובדים גם בלי כניסה. עם כניסה הם יישמרו אצלכם בכל המכשירים.', accEmail: 'האימייל שלכם', accSend: 'שלחו לי קישור כניסה', accSent: 'נשלח! פתחו את המייל ולחצו על הקישור.', accIn: 'מחוברים בתור {e}', accOut: 'יציאה',
     atmDeposit: 'אפשר להפקיד',
@@ -90,6 +94,8 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    kickerAt: 'Open at {t}',
+    srcChain: "Hours from the chain's official site", srcUser: 'Hours from a visitor', srcOsm: 'Hours from OpenStreetMap — may be out of date', doubtClosed: 'visitor: closed ({m})', doubtOpen: 'visitor: open ({m})', showingAt: "Showing what's open at {t}. Tap Now to go back.",
     kosher: 'kosher', takeaway: 'takeaway', delivery: 'delivery', privAtm: 'private ATM, usually charges a fee', ownerOf: '{o}',
     fixOpen: 'Wrong hours? Fix them', fixTitle: 'When is this shop open?', fixPh: 'e.g. 7:00-23:00 or Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'Save hours', fixThanks: 'Thanks! Everyone sees the new hours now.', fixBad: "Couldn't read those hours. Try 7:00-23:00 or pick 24/7.", fixedTag: 'hours fixed by a user', tooMany: 'Too many updates in the last hour. Try again later.', acc: 'Sign in', accTitle: 'Sign in (optional)', accWhy: 'Your check-ins and fixes already work without signing in. Signing in keeps them yours on every device.', accEmail: 'Your email', accSend: 'Email me a sign-in link', accSent: 'Sent! Open the email and tap the link.', accIn: 'Signed in as {e}', accOut: 'Sign out',
     atmDeposit: 'deposits',
@@ -338,7 +344,8 @@ async function loadHebcal(lat, lon) {
 // ---------- map ----------
 let map, pinLayer, dotLayer, meMarker;
 const markers = new Map();
-const cssVar = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const CSSV = new Map();
+const cssVar = (n) => { if (!CSSV.has(n)) CSSV.set(n, getComputedStyle(document.documentElement).getPropertyValue(n).trim()); return CSSV.get(n); };
 const STATUS_VAR = { open: '--open', open24: '--open', soon: '--soon', closed: '--closed', unknown: '--unknown', ciopen: '--open' };
 // Base map: OpenFreeMap vector style without shop/parking icons (free, no key, commercial use allowed).
 // Falls back to OpenStreetMap raster tiles if WebGL or the style is unavailable.
@@ -533,7 +540,7 @@ function applyLang() {
   $('#city').innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
 }
 function renderNotices() {
-  const arr = [...(S.notices.loc ? [S.notices.loc] : []), ...S.notices.hebcal];
+  const arr = [...(S.notices.time ? [S.notices.time] : []), ...(S.notices.loc ? [S.notices.loc] : []), ...S.notices.hebcal];
   $('#notices').innerHTML = arr.map((n) => `<p class="notice ${n.cls}">${esc(n.text)}</p>`).join('');
 }
 // "Fast food · falafel" / "ATM · Bank Leumi" / "Gas station · Paz": what the place is and whose, in one line.
@@ -544,6 +551,18 @@ function kindLine(it, type, name) {
   if (own && own.name && own.name !== name && !name.includes(own.name)) parts.push(own.name);
   const txt = parts.filter(Boolean).filter((x) => x !== name).join(' · ');
   return txt ? `<span class="kind">${esc(txt)}</span>` : '';
+}
+// Where the hours come from: the chain's own site (reliable), a visitor (recent), or OpenStreetMap (can be old).
+function trustOf(it) {
+  const src = it.tags['source:hours'];
+  if (it.fixed || src === 'user') return 'user';
+  return src ? 'chain' : 'osm';
+}
+// When the slider is not at "now", say clearly which time the list is showing.
+function renderTimeNote(at) {
+  const old = S.notices.time;
+  S.notices.time = SH.on && !SH.live && SH.time ? { cls: 'info', text: t('showingAt', { t: fmtTime(at) }) } : null;
+  if ((old && old.text) !== (S.notices.time && S.notices.time.text)) renderNotices();
 }
 function shopHTML(it, now) {
   const tg = it.tags, st = it.st;
@@ -567,7 +586,7 @@ function shopHTML(it, now) {
   const more = [];
   if (S.selected === it.id) {
     if (st.oh && st.k !== 'open24') more.push(weekTable(st.oh, now));
-    if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p>`);
+    if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p><p class="src src-${trustOf(it)}">${esc(t({ chain: 'srcChain', user: 'srcUser', osm: 'srcOsm' }[trustOf(it)]))}</p>`);
     more.push(fixFormHTML(it));
     const acts = [
       `<button type="button" class="walk" data-walk="${esc(it.id)}">🚶 ${esc(t('walkBtn'))}</button>`,
@@ -585,7 +604,7 @@ function shopHTML(it, now) {
     <span class="ico c-${it.cat}">${svg(it.cat)}</span>
     <span class="name">${esc(name)}</span>
     <span class="dist">${walk}${fmtDist(it.d)}</span>
-    <span class="meta"><span class="pill ${st.k}">${esc(statusText(st, now))}</span>${tags.join('')}${kindLine(it, type, name)}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
+    <span class="meta"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && trustOf(it) === 'osm' ? ' approx' : ''}"${st.oh && trustOf(it) === 'osm' ? ` title="${esc(t('srcOsm'))}"` : ''}>${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>${st.doubt ? `<span class="tag ci-bad">${esc(t(st.doubt.v === 'closed' ? 'doubtClosed' : 'doubtOpen', { m: ciAgo(st.doubt.time) }))}</span>` : ''}${tags.join('')}${kindLine(it, type, name)}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
     <div class="more">${more.join('')}</div>
   </li>`;
 }
@@ -597,7 +616,7 @@ function listWithMore(items, key, now) {
 }
 function refresh() {
   if (!S.loaded) return;
-  const now = new Date();
+  const now = sceneTime();
   const b = map.getBounds(), z = map.getZoom();
   const c = map.getCenter();
   const meIn = S.me && b.contains([S.me.lat, S.me.lon]);
@@ -611,6 +630,8 @@ function refresh() {
     it.st = statusOf(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon);
     const ci = ciLatest(it.id);
     if (ci && ci.v === 'open' && it.st.k === 'unknown' && Date.now() / 1000 - ci.time < 3600) it.st = { k: 'ciopen', ci };
+    // A visitor in the last 2 hours said the opposite of the hours: show it as doubtful, never hide it.
+    else if (ci && SH.live !== false && Date.now() / 1000 - ci.time < 7200 && it.st.k !== 'unknown' && (ci.v === 'closed') === isOpen(it.st.k)) it.st.doubt = ci;
   }
   if (z >= 13) loadCommunity(b);
   S.view = inView;
@@ -650,7 +671,9 @@ function refresh() {
   if ($('#closedBox').open) $('#closedList').innerHTML = listWithMore(closedL, 'closed', now);
   S.lists = { unknown: unkL, closed: closedL };
   drawMarkers(openL, unkL, closedL);
-  if (typeof drawLights === 'function' && LT.canvas) drawLights();
+  if (typeof drawShopGlows === 'function') drawShopGlows();
+  renderTimeNote(now);
+  $('#kicker').textContent = S.notices.time ? t('kickerAt', { t: fmtTime(now) }) : t('kicker');
 }
 function select(id, fromMap) {
   S.selected = S.selected === id && !fromMap ? null : id;
@@ -824,22 +847,20 @@ async function loadCommunity(bounds) {
   for (let la = Math.floor(bounds.getSouth() / CT); la <= Math.floor(bounds.getNorth() / CT); la++)
     for (let lo = Math.floor(bounds.getWest() / CT); lo <= Math.floor(bounds.getEast() / CT); lo++) keys.push([la, lo]);
   if (keys.length > 9) return false;
-  let got = false;
-  await Promise.all(keys.map(async ([la, lo]) => {
-    const k = la + ',' + lo, last = comTiles.get(k);
-    if (last && Date.now() - last < 120000) return;
-    comTiles.set(k, Date.now());
-    try {
-      const d = await DB.area([la * CT, lo * CT, (la + 1) * CT, (lo + 1) * CT]);
-      for (const r of d.places) { const s = placeToShop(r); if (!USER_SHOPS.some((x) => x.id === s.id)) USER_SHOPS.push(s); }
-      for (const r of d.fixes) { const cur = FIX.get(r.shop_id); if (!cur || toSec(r.created_at) > cur.time) FIX.set(r.shop_id, { oh: r.opening_hours, time: toSec(r.created_at) }); }
-      for (const r of d.checkins) ciPut(r.shop_id, r.status, toSec(r.created_at), 'c' + r.id);
-      for (const r of d.parking) pkPut(r.parking_id, r.status, toSec(r.created_at), 'k' + r.id);
-      got = true;
-    } catch { comTiles.delete(k); }
-  }));
-  if (got) refreshSoon();
-  return got;
+  // Only tiles not read in the last 2 minutes, fetched together in one call.
+  const stale = keys.filter(([la, lo]) => { const last = comTiles.get(la + ',' + lo); return !last || Date.now() - last > 120000; });
+  if (!stale.length) return false;
+  for (const [la, lo] of stale) comTiles.set(la + ',' + lo, Date.now());
+  const las = stale.map((k) => k[0]), los = stale.map((k) => k[1]);
+  try {
+    const d = await DB.area([Math.min(...las) * CT, Math.min(...los) * CT, (Math.max(...las) + 1) * CT, (Math.max(...los) + 1) * CT]);
+    for (const r of d.places) { const s = placeToShop(r); if (!USER_SHOPS.some((x) => x.id === s.id)) USER_SHOPS.push(s); }
+    for (const r of d.fixes) { const cur = FIX.get(r.shop_id); if (!cur || toSec(r.created_at) > cur.time) FIX.set(r.shop_id, { oh: r.opening_hours, time: toSec(r.created_at) }); }
+    for (const r of d.checkins) ciPut(r.shop_id, r.status, toSec(r.created_at), 'c' + r.id);
+    for (const r of d.parking) pkPut(r.parking_id, r.status, toSec(r.created_at), 'k' + r.id);
+    if (d.places.length || d.fixes.length || d.checkins.length || d.parking.length) refreshSoon();
+    return true;
+  } catch { for (const [la, lo] of stale) comTiles.delete(la + ',' + lo); return false; }
 }
 let refreshTimer = null;
 function refreshSoon() { clearTimeout(refreshTimer); refreshTimer = setTimeout(refresh, 50); }
@@ -1010,16 +1031,24 @@ function shadeNowClick(redraw = true) {
   SH.live = true;
   const min = shadeMinutes(new Date());
   $('#shadeTime').value = min; shadeSetTime(min);
-  if (redraw) { drawShade(); applyTheme(); }
+  if (redraw) { drawShade(); applyTheme(); refreshSoon(); }
+}
+// Convex hull of a building and its copy moved along the shadow: one small polygon per building.
+function hull(pts) {
+  pts.sort((p, q) => p[0] - q[0] || p[1] - q[1]);
+  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lo = [], up = [];
+  for (const p of pts) { while (lo.length >= 2 && cross(lo[lo.length - 2], lo[lo.length - 1], p) <= 0) lo.pop(); lo.push(p); }
+  for (let i = pts.length - 1; i >= 0; i--) { const p = pts[i]; while (up.length >= 2 && cross(up[up.length - 2], up[up.length - 1], p) <= 0) up.pop(); up.push(p); }
+  return lo.slice(0, -1).concat(up.slice(0, -1));
 }
 async function drawShade() {
   if (!SH.on || !SH.canvas) return;
   const seq = ++SH.seq;
   const size = map.getSize(), cv = SH.canvas, ctx = cv.getContext('2d');
-  const topLeft = map.containerPointToLayerPoint([0, 0]);
-  L.DomUtil.setPosition(cv, topLeft);
-  const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  cv.width = size.x * dpr; cv.height = size.y * dpr; cv.style.width = size.x + 'px'; cv.style.height = size.y + 'px';
+  L.DomUtil.setPosition(cv, map.containerPointToLayerPoint([0, 0]));
+  const dpr = 1; // soft shadows don't need retina pixels; 4x less work on phones
+  if (cv.width !== size.x * dpr || cv.height !== size.y * dpr) { cv.width = size.x * dpr; cv.height = size.y * dpr; cv.style.width = size.x + 'px'; cv.style.height = size.y + 'px'; }
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, size.x, size.y);
   cv.style.opacity = '1';
@@ -1027,41 +1056,39 @@ async function drawShade() {
   const c = map.getCenter();
   const sun = SunCalc.getPosition(SH.time || new Date(), c.lat, c.lng);
   if (sun.altitude <= 0.02) { S.notices.loc = { cls: 'info', text: t('shadeNight') }; renderNotices(); return; }
-  const b = map.getBounds().pad(0.1);
-  const blds = await Route.buildingsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
-  if (seq !== SH.seq || !blds) return;
-  // Shadow direction (away from the sun) in metres east/north, then converted to degrees.
-  const ax = Math.sin(sun.azimuth), ay = Math.cos(sun.azimuth); // SunCalc azimuth: 0 = south, + toward west
-  const tanAlt = Math.tan(sun.altitude);
-  const mPerDegLat = 111320, mPerDegLon = 111320 * Math.cos(c.lat * Math.PI / 180);
-  const P = (lat, lon) => map.latLngToContainerPoint([lat, lon]);
+  // Buildings projected to screen pixels once per map position; the slider then only changes the offset.
+  const key = map.getZoom() + '|' + c.lat.toFixed(6) + '|' + c.lng.toFixed(6) + '|' + size.x + 'x' + size.y;
+  if (SH.projKey !== key) {
+    const b = map.getBounds().pad(0.25);
+    const blds = await Route.buildingsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
+    if (seq !== SH.seq || !blds) return;
+    const p0 = map.latLngToContainerPoint(c), pN = map.latLngToContainerPoint([c.lat + 0.001, c.lng]);
+    const pxPerM = Math.abs(pN.y - p0.y) / 111.32;
+    const marg = Math.min(400, 120 / Math.tan(0.1)) * pxPerM;
+    const proj = [];
+    for (const bl of blds) {
+      const pts = bl.poly.map(([la, lo]) => { const q = map.latLngToContainerPoint([la, lo]); return [q.x, q.y]; });
+      const x = pts[0][0], y = pts[0][1];
+      if (x < -marg || y < -marg || x > size.x + marg || y > size.y + marg) continue;
+      proj.push({ pts, h: bl.h });
+    }
+    SH.proj = proj; SH.pxPerM = pxPerM; SH.projKey = key;
+  }
+  // Shadow direction in screen pixels (x east, y down). SunCalc azimuth: 0 = south, + toward west.
+  const tanAlt = Math.tan(sun.altitude), k = SH.pxPerM;
+  const ux = Math.sin(sun.azimuth), uy = -Math.cos(sun.azimuth);
   ctx.fillStyle = 'rgba(20, 32, 84, 0.5)';
   ctx.beginPath();
-  const vb = map.getBounds(), maxLen = Math.min(120 / tanAlt, 400) / 111320;
-  const S0 = vb.getSouth() - maxLen, N0 = vb.getNorth() + maxLen, W0 = vb.getWest() - maxLen * 1.3, E0 = vb.getEast() + maxLen * 1.3;
-  for (const bl of blds) {
-    const [la0, lo0] = bl.poly[0];
-    if (la0 < S0 || la0 > N0 || lo0 < W0 || lo0 > E0) continue; // only what can cast shade into view
-    const len = Math.min(bl.h / tanAlt, 400);
-    const dLat = (ay * len) / mPerDegLat, dLon = (ax * len) / mPerDegLon;
-    const pts = bl.poly.map(([la, lo]) => P(la, lo));
-    const sh = bl.poly.map(([la, lo]) => P(la + dLat, lo + dLon));
-    // footprint, its shifted copy, and one quad per edge = the swept shadow
-    ctx.moveTo(pts[0].x, pts[0].y); for (const q of pts) ctx.lineTo(q.x, q.y); ctx.closePath();
-    ctx.moveTo(sh[0].x, sh[0].y); for (const q of sh) ctx.lineTo(q.x, q.y); ctx.closePath();
-    for (let i = 0; i < pts.length; i++) {
-      const j = (i + 1) % pts.length;
-      ctx.moveTo(pts[i].x, pts[i].y); ctx.lineTo(pts[j].x, pts[j].y); ctx.lineTo(sh[j].x, sh[j].y); ctx.lineTo(sh[i].x, sh[i].y); ctx.closePath();
-    }
+  for (const { pts, h } of SH.proj) {
+    const len = Math.min(h / tanAlt, 400) * k, dx = ux * len, dy = uy * len;
+    const hp = hull(pts.concat(pts.map(([x, y]) => [x + dx, y + dy])));
+    ctx.moveTo(hp[0][0], hp[0][1]); for (let i = 1; i < hp.length; i++) ctx.lineTo(hp[i][0], hp[i][1]); ctx.closePath();
   }
   ctx.fill('nonzero');
   // Cut the buildings themselves out, so the shadow reads as the dark patch next to each house.
   ctx.globalCompositeOperation = 'destination-out';
   ctx.beginPath();
-  for (const bl of blds) {
-    const pts = bl.poly.map(([la, lo]) => P(la, lo));
-    ctx.moveTo(pts[0].x, pts[0].y); for (const q of pts) ctx.lineTo(q.x, q.y); ctx.closePath();
-  }
+  for (const { pts } of SH.proj) { ctx.moveTo(pts[0][0], pts[0][1]); for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]); ctx.closePath(); }
   ctx.fill('nonzero');
   ctx.globalCompositeOperation = 'source-over';
   if (S.notices.loc && (S.notices.loc.text === t('shadeNight') || S.notices.loc.text === t('shadeZoom'))) { S.notices.loc = null; renderNotices(); }
@@ -1070,7 +1097,7 @@ function initShade() {
   $('#shadeTime').addEventListener('input', (e) => {
     SH.live = false;
     shadeSetTime(+e.target.value);
-    clearTimeout(SH.timer); SH.timer = setTimeout(() => { drawShade(); applyTheme(); }, 60);
+    if (!SH.raf) SH.raf = requestAnimationFrame(() => { SH.raf = 0; drawShade(); applyTheme(); refreshSoon(); });
   });
   $('#shadeTime').addEventListener('change', () => { track('shade-time', fmtTime(SH.time)); if (RT.target) showRoute(RT.target); });
   $('#shadeNow').addEventListener('click', () => { shadeNowClick(); if (RT.target) showRoute(RT.target); });
@@ -1087,6 +1114,7 @@ function applyTheme() {
   const root = document.documentElement;
   if (THEME === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', THEME);
   const dark = THEME === 'dark' || (THEME === 'auto' && sunIsDown()); // in auto the map follows the sun where it is, not the phone's dark mode
+  CSSV.clear();
   const changed = root.classList.contains('night-map') !== dark;
   root.classList.toggle('night-map', dark);
   if (changed) setGLNight(dark);
@@ -1188,8 +1216,10 @@ async function drawLamps(on, seq) {
       'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 0.9, 16, 1.8, 19, 3.2] } }, firstLabel);
   }
   const src = gm.getSource('lamps');
-  if (!on) { src.setData({ type: 'FeatureCollection', features: [] }); return; }
+  if (!on) { if (LT.lampKey) { src.setData({ type: 'FeatureCollection', features: [] }); LT.lampKey = null; } return; }
   const z = map.getZoom(), b = map.getBounds().pad(0.05);
+  const key = Math.round(z) + '|' + b.toBBoxString();
+  if (LT.lampKey === key) return;
   const roads = await Route.roadsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
   if (seq !== LT.seq || !roads) return;
   const gapM = z >= 16 ? 30 : z >= 15 ? 45 : z >= 14 ? 70 : 120; // real city lamps stand ~25-35 m apart
@@ -1207,6 +1237,7 @@ async function drawLamps(on, seq) {
     }
   }
   src.setData({ type: 'FeatureCollection', features: feats });
+  LT.lampKey = key;
 }
 async function drawLights() {
   const night = document.documentElement.classList.contains('night-map');
@@ -1227,6 +1258,15 @@ async function drawLights() {
   const z = map.getZoom();
   await drawLamps(night && z >= 13, seq);
   if (seq !== LT.seq) return;
+  drawShopGlows();
+}
+function drawShopGlows() {
+  const cv = LT.canvas; if (!cv) return;
+  const ctx = cv.getContext('2d'), size = map.getSize();
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, size.x, size.y);
+  ctx.globalCompositeOperation = 'lighter';
   // Open shops glow: the night version of "here it's open".
   for (const it of S.view || []) {
     if (!isOpen(it.st?.k)) continue;

@@ -357,3 +357,11 @@ html.night-map .leaflet-container { background: #0a1220; }
 /* what the place is and whose */
 .kind { font-weight: 600; color: var(--ink); opacity: 0.8; }
 .tag.warn { background: color-mix(in srgb, #f2a93b 22%, transparent); color: inherit; }
+
+/* trust of the shown hours */
+.pill.approx { outline: 1.5px dashed color-mix(in srgb, currentColor 45%, transparent); outline-offset: 1px; }
+.pill.doubt { background: color-mix(in srgb, #f2a93b 30%, transparent) !important; color: inherit; }
+.src { margin: 0; font-size: 0.8rem; color: var(--muted); }
+.src-chain::before { content: '✓ '; color: var(--open); font-weight: 700; }
+.src-osm::before { content: '≈ '; font-weight: 700; }
+.src-user::before { content: '👤 '; }

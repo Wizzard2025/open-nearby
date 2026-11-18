@@ -324,3 +324,12 @@ button, select, input { font: inherit; color: inherit; }
 .sb-now { border: 1px solid var(--line); background: var(--surface-2); border-radius: 999px; padding: 4px 10px; font-weight: 600; font-size: 0.8rem; cursor: pointer; }
 .sb-note { font-size: 0.78rem; color: var(--muted); }
 @media (min-width: 860px) { .shadebar { left: calc(50% + 215px); } }
+
+/* theme switch (auto / light / dark) and night map */
+.themebtn { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
+  background: rgb(255 255 255 / 0.08); color: var(--header-ink); font-size: 1rem; line-height: 1; }
+.themebtn:hover { background: rgb(255 255 255 / 0.16); }
+.brand { flex: 1; }
+/* Night map: invert the light base map and rotate hues back, so streets stay readable and water stays blue-ish. */
+html.night-map .leaflet-tile-pane { filter: invert(1) hue-rotate(180deg) brightness(0.92) contrast(0.92) saturate(0.7); }
+html.night-map .shade-canvas { mix-blend-mode: normal; }

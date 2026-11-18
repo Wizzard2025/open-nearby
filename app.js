@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    themeAuto: 'Тема: как на устройстве', themeLight: 'Тема: светлая', themeDark: 'Тема: тёмная (ночь)',
     lyShade: '☀ Тень от зданий', shadeNow: 'Сейчас', shadeNight: 'Солнце село — тени нет', shadeZoom: 'Приблизьте карту, чтобы увидеть тень',
     layers: 'Что показывать', lyShops: '🛒 Магазины на карте', lyParking: '🅿 Парковки', lyRings: '⭕ Кольца «минут пешком»',
     pkTitle: 'Парковка', pk_free: 'есть места', pk_busy: 'почти полно', pk_full: 'мест нет', pk_gone: 'парковки нет', pkNoReports: 'Отметок пока нет.', pkAsk: 'Вы здесь? Как сейчас:', pkNeedLoc: 'Чтобы отметить парковку, включите геолокацию ➤', pkFar: 'Отметить парковку можно только рядом (до 500 м).',
@@ -52,6 +53,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    themeAuto: 'ערכת נושא: כמו במכשיר', themeLight: 'ערכת נושא: בהירה', themeDark: 'ערכת נושא: כהה (לילה)',
     lyShade: '☀ צל מבניינים', shadeNow: 'עכשיו', shadeNight: 'השמש שקעה — אין צל', shadeZoom: 'הגדילו את המפה כדי לראות צל',
     layers: 'מה להציג', lyShops: '🛒 חנויות במפה', lyParking: '🅿 חניות', lyRings: '⭕ טבעות «דקות הליכה»',
     pkTitle: 'חניה', pk_free: 'יש מקום', pk_busy: 'כמעט מלא', pk_full: 'אין מקום', pk_gone: 'אין כאן חניה', pkNoReports: 'עדיין אין דיווחים.', pkAsk: 'אתם כאן? מה המצב:', pkNeedLoc: 'כדי לדווח על חניה, הפעילו מיקום ➤', pkFar: 'אפשר לדווח רק מקרוב (עד 500 מ׳).',
@@ -80,6 +82,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    themeAuto: 'Theme: same as device', themeLight: 'Theme: light', themeDark: 'Theme: dark (night)',
     lyShade: '☀ Shade from buildings', shadeNow: 'Now', shadeNight: 'The sun has set — no shade', shadeZoom: 'Zoom in to see shade',
     layers: 'Show on map', lyShops: '🛒 Shops on the map', lyParking: '🅿 Parking', lyRings: '⭕ Walking-time rings',
     pkTitle: 'Parking', pk_free: 'spaces free', pk_busy: 'almost full', pk_full: 'full', pk_gone: 'no parking here', pkNoReports: 'No reports yet.', pkAsk: 'Here now? How is it:', pkNeedLoc: 'Turn on location ➤ to report parking', pkFar: 'You can only report parking nearby (within 500 m).',
@@ -468,6 +471,7 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   $('#kicker').textContent = t('kicker');
+  if (typeof applyTheme === 'function' && $('#themeBtn')?.textContent) applyTheme();
   $('#addOpen').textContent = t('addOpen');
   $('#grab').setAttribute('aria-label', t('expand'));
   $('#city').innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
@@ -986,6 +990,31 @@ function initShade() {
   map.on('movestart zoomstart', () => { if (SH.canvas) SH.canvas.style.opacity = '0'; });
 }
 
+// ---------- theme: auto (follows the device) / light / dark; dark also darkens the map ----------
+const THEME_ICON = { auto: '◐', light: '☀', dark: '☾' };
+let THEME = (() => { try { const v = localStorage.getItem('theme'); return v === 'light' || v === 'dark' ? v : 'auto'; } catch { return 'auto'; } })();
+const darkMQ = matchMedia('(prefers-color-scheme: dark)');
+function applyTheme() {
+  const root = document.documentElement;
+  if (THEME === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', THEME);
+  const dark = THEME === 'dark' || (THEME === 'auto' && darkMQ.matches);
+  root.classList.toggle('night-map', dark);
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a0f13' : '#0e141a');
+  const b = $('#themeBtn');
+  if (b) { b.textContent = THEME_ICON[THEME]; const label = t({ auto: 'themeAuto', light: 'themeLight', dark: 'themeDark' }[THEME]); b.title = label; b.setAttribute('aria-label', label); }
+  if (typeof drawMarkers === 'function' && S.loaded) refresh(); // marker colours come from CSS variables
+}
+function initTheme() {
+  $('#themeBtn').addEventListener('click', () => {
+    THEME = { auto: 'light', light: 'dark', dark: 'auto' }[THEME];
+    try { localStorage.setItem('theme', THEME); } catch {}
+    track('theme', THEME);
+    applyTheme();
+  });
+  darkMQ.addEventListener?.('change', () => { if (THEME === 'auto') applyTheme(); });
+  applyTheme();
+}
+
 // ---------- layers menu: what to draw on the map (remembered per device) ----------
 const LY = Object.assign({ shops: true, parking: false, rings: true, shade: false }, (() => { try { return JSON.parse(store.get('layers') || '{}'); } catch { return {}; } })());
 function applyLayers() {
@@ -1032,6 +1061,7 @@ async function init() {
   $('#routeClose').addEventListener('click', clearRoute);
   initShade();
   initLayers();
+  initTheme();
   map.on('moveend', () => { if (PARK.on) drawParking(); });
   initAdd();
   document.addEventListener('click', (e) => {

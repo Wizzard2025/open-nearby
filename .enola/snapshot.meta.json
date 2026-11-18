@@ -1,0 +1,459 @@
+{
+  "repo_path": "C:\\Users\\GoldMark\\New folder (2)\\open-nearby",
+  "repo_label": "open-nearby",
+  "generated_at": "2026-11-18T04:17:39Z",
+  "duration": "355.1844ms",
+  "extractors": [
+    "mdintent",
+    "python"
+  ],
+  "explainers": [
+    "cycles",
+    "layers",
+    "crossrepo",
+    "coverage",
+    "unused-routes",
+    "domain",
+    "query-loops",
+    "dead-methods",
+    "entry-points",
+    "messaging-coverage",
+    "god-class",
+    "hotspots",
+    "dependency-depth",
+    "exported-surface",
+    "complexity-outliers",
+    "intent",
+    "constraints",
+    "vendored-candidates",
+    "import-closure",
+    "package-metrics",
+    "dead-code",
+    "performance"
+  ],
+  "renderers": [
+    "llm_context"
+  ],
+  "file_hashes": [
+    {
+      "path": "data/chains/ramilevy.json",
+      "hash": "69a3eba95cb80b81be2c9d306759e1692551688d5f70526cf06c8613dff8da4d",
+      "mod_time": "2026-11-18T04:05:46Z"
+    },
+    {
+      "path": "community.js",
+      "hash": "c00998bf37de1f65fe88acb9b51e97c0d46542e0060ea87e1bb4eb22590c6cec",
+      "mod_time": "2026-11-18T04:14:23Z"
+    },
+    {
+      "path": "img/icon-512.png",
+      "hash": "39bfa1665f599650f48bf5d56a0b15276c27171113cc3e2c6507213d6e46ead5",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "style.css",
+      "hash": "1bbc7487666058000156ab0b6b01333494d1bde0c6d6fbcafa7209008ed60cfc",
+      "mod_time": "2026-11-18T04:17:38Z"
+    },
+    {
+      "path": "brand/ads/banner-728x90-ru.png",
+      "hash": "d1c6171f94562c12a470e2d5a697573db140bc198fdfce53d56f4d866aef489c",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/ads/story-1080x1920-ru.png",
+      "hash": "def17d73cafc0b275fe5d107f6bf1c671ec4cd383e7341da6fa8e83c703f479b",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "marketing/ad-square-he.png",
+      "hash": "96f9645d504274a7670d1b7a54e5442a1d4a7af73cd39991ba567f70b82a9c5f",
+      "mod_time": "2026-11-17T20:30:00Z"
+    },
+    {
+      "path": "marketing/app-shot-he.png",
+      "hash": "94beebaac538af3a35d4f9f2b0e5209e24ce9b900e77dd609488872fa1e8340a",
+      "mod_time": "2026-11-17T23:51:39Z"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "hash": "5d8d793127292328ec11c89122e18ab974c4afb376f799a75ad83ea014d9132f",
+      "mod_time": "2026-11-17T19:30:10Z"
+    },
+    {
+      "path": "brand/ads/banner-728x90-he.png",
+      "hash": "1faa1a223fc44b4946dfdc7e34640df75072312058d791876fdd980ab9582f95",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "data/geocache.json",
+      "hash": "d1a94970a1ce38f52afaacd9e414bed4bcd6d04971a69ba139ad8f66d8186022",
+      "mod_time": "2026-11-17T19:48:42Z"
+    },
+    {
+      "path": "brand/ads/banner-300x250-en.png",
+      "hash": "323c739f48038af5b9280c3c21e87c1ac6de60f8cfc047749e59735fcb8c6986",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/ads/post-1080x1080-en.png",
+      "hash": "d5dbce726052e22a591e516726717cff3fe9ce69e37f3acfcaa37e1b5fa84616",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/icons/icon.svg",
+      "hash": "54313bb95d6da483d51b39fd88c79b4af7d3ee83cf7c9049ccaa83aa856c6637",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/logo/user-logo-sloth.png",
+      "hash": "d54b63aaa1957f26e78ad20c3f7af722087bed6ec2a1853bc187a6fb6f6ac19c",
+      "mod_time": "2026-11-17T23:51:39Z"
+    },
+    {
+      "path": "data/chains/shufersal.json",
+      "hash": "39a5e85099fb338fd6e591390586d80303ba9001b4745b122a85ee2031bf9b91",
+      "mod_time": "2026-11-18T04:05:19Z"
+    },
+    {
+      "path": "img/icon.svg",
+      "hash": "54313bb95d6da483d51b39fd88c79b4af7d3ee83cf7c9049ccaa83aa856c6637",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "img/og-ru.png",
+      "hash": "25b752a84194fa555471c0681666efe284cad3fe4e2f7a9fbed357183906ac35",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "marketing/ad-story-he.png",
+      "hash": "b4fb9518afc81b8fdb1efb8229b68996755faae5fd7a7599ce1591f18a71ac03",
+      "mod_time": "2026-11-17T20:30:04Z"
+    },
+    {
+      "path": "brand/_src",
+      "hash": "bb6a37d05c356b040d036d7d40134928c455e758d7ed5615f54eb9325efbf774",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/ads/banner-300x250-ru.png",
+      "hash": "5a8e1f6f3f44b08a0f9ab0c7fa76e6cb747a41a3ea681dfe710eddb7ae1af0f2",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "data/chains/manual.json",
+      "hash": "bdc8199229cd58f813714d08e70e0bd87f76ebeeac4ea5342e532555c5f79d67",
+      "mod_time": "2026-11-18T04:05:47Z"
+    },
+    {
+      "path": "README.md",
+      "hash": "e67e217703f96bee0cc3277b103855e7caae733b2852f83cae30a28b76232a98",
+      "mod_time": "2026-11-17T23:54:40Z"
+    },
+    {
+      "path": "brand/icons/favicon-64.png",
+      "hash": "80cdcd25b94367395ff7553bfee6985ae8f8ac2ace1dd5f237439cbbdf6f46ca",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "img/icon-maskable-192.png",
+      "hash": "b91b77bdc8e96e8a72362d20e9df748c0beb8bf76caef71a8be6350512c4e54b",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "marketing/creative.html",
+      "hash": "db7b75c792236c9a99f869158bd120f5c820d838af37a77e25eb93bf235bc16a",
+      "mod_time": "2026-11-17T23:54:40Z"
+    },
+    {
+      "path": "tools/update_data.py",
+      "hash": "6d371092e3a17b7a8c22189b93cadef91ba04cb7185352d4bec1fce2b3a98d5a",
+      "mod_time": "2026-11-18T04:04:21Z"
+    },
+    {
+      "path": ".claude/launch.json",
+      "hash": "435632dadd229e46b00ed116b08b89390f405cd2e1926d976404aed83101c7d8",
+      "mod_time": "2026-11-17T19:42:09Z"
+    },
+    {
+      "path": "brand/ads/og-1200x630-en.png",
+      "hash": "9814f5a48ca254befccf142dadedbca52cbaa049cfc3f49a548255d6d8e17ed1",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "img/apple-touch-icon.png",
+      "hash": "61e41a528690ebcd1163cf5a7e43685b9dfa85b43b77eff790b70b38fce74381",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "img/favicon-64.png",
+      "hash": "80cdcd25b94367395ff7553bfee6985ae8f8ac2ace1dd5f237439cbbdf6f46ca",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "manifest.webmanifest",
+      "hash": "b7c9ef48b542c4787638b59082eba30e7e6a4de46b4c8e726a0be6613360ec54",
+      "mod_time": "2026-11-17T23:54:40Z"
+    },
+    {
+      "path": "tools/chains.py",
+      "hash": "2f835764bd3e64c27b71ac74bd18ea0336d64ec78858d3373733b6d9adde09c9",
+      "mod_time": "2026-11-17T21:05:15Z"
+    },
+    {
+      "path": "brand/ads/og-1200x630-he.png",
+      "hash": "510a5983e37e9ba6544ab9030708d1333842909d8bcd54a5e74b5fe302adad34",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/ads/og-1200x630-ru.png",
+      "hash": "daf8fbdfea9e7cc4a4693f6d50d798b794a27ec04567cdce4c14b223c6ef9f4a",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "img/og.png",
+      "hash": "25b752a84194fa555471c0681666efe284cad3fe4e2f7a9fbed357183906ac35",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "marketing/ad-wide-he.png",
+      "hash": "a110cba37d71e4141f0e314a91328f97f35db10b57136709ad7409adb7164de1",
+      "mod_time": "2026-11-17T20:30:07Z"
+    },
+    {
+      "path": "brand/ads/post-1080x1080-ru.png",
+      "hash": "0d26de7222f537224f3b8f4594d1a13ad3560e8d3e5cd6531319d8bc01edb89b",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/icons/apple-touch-icon.png",
+      "hash": "61e41a528690ebcd1163cf5a7e43685b9dfa85b43b77eff790b70b38fce74381",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "marketing/ADS.md",
+      "hash": "e98f936775032fff599b2fb8b08b6cf0d3fcaf57812c65fd506eee2996cc2797",
+      "mod_time": "2026-11-17T23:54:40Z"
+    },
+    {
+      "path": "marketing/ad-square-ru.png",
+      "hash": "11284ec76852595fc51fdd6d6f1e7d5d819769de2e0e98d9f00cbaf497567d7e",
+      "mod_time": "2026-11-17T20:29:58Z"
+    },
+    {
+      "path": "marketing/ad-story-ru.png",
+      "hash": "14dfa808b412c9fb3498d1bdada667f0a04b61da66690705c79023a5bc0fce8f",
+      "mod_time": "2026-11-17T20:30:02Z"
+    },
+    {
+      "path": "marketing/icon.html",
+      "hash": "cb81fceb08d6f1677170cad5306ccac59360ac165915ec1f5f14a62459f8bd63",
+      "mod_time": "2026-11-17T23:54:40Z"
+    },
+    {
+      "path": "brand/ads/banner-300x250-he.png",
+      "hash": "fa035acd4960c05d1db483172eb875f4ab9a5db52a46d48a5c906e22363a653c",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/ads/post-1080x1080-he.png",
+      "hash": "22f1c697aea5770e184b88cfbdcfc3e81e6bbf96f45fde4ba699c56bd6f996ff",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/icons/icon-192.png",
+      "hash": "96999c08f2146415522e3351fa5250c8b1fc9d3ff430087ebb62b26b431c1202",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "data/chains/osherad.json",
+      "hash": "e12e29b1c317a0a75e817817937b532b21da4fe9a6af8c43c063587196d101c8",
+      "mod_time": "2026-11-18T04:05:47Z"
+    },
+    {
+      "path": "img/icon-maskable-512.png",
+      "hash": "03a588403529f499051aea64b35bc9b53e0e97b3cad5fc2021ac0f1b5b1cdddc",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "img/og-en.png",
+      "hash": "25b752a84194fa555471c0681666efe284cad3fe4e2f7a9fbed357183906ac35",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "marketing/ad-wide-ru.png",
+      "hash": "4135ae282f8491cb8084e727da0784139f341f02d81889eba82afeccd4751c8c",
+      "mod_time": "2026-11-17T20:30:06Z"
+    },
+    {
+      "path": "brand/ads/banner-728x90-en.png",
+      "hash": "231922f210c19abb579aad009c184599a442ecb6f0e58572f9c302dd508ef21e",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/ads/story-1080x1920-en.png",
+      "hash": "a990212864164ab8b65e9b279e9ceac3686c971b1924f56192bb165d46634c4c",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "brand/icons/icon-maskable-192.png",
+      "hash": "b91b77bdc8e96e8a72362d20e9df748c0beb8bf76caef71a8be6350512c4e54b",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "data/chains/victory.json",
+      "hash": "fb47ecc1bc56e10ea6cb074a0f7a84fc9e57fb9b9e79f1a15ceb64c0cca47cc2",
+      "mod_time": "2026-11-18T04:05:47Z"
+    },
+    {
+      "path": "img/icon-192.png",
+      "hash": "96999c08f2146415522e3351fa5250c8b1fc9d3ff430087ebb62b26b431c1202",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "img/logo-sloth.png",
+      "hash": "26f9c4fe9fec21dc635649200c43b3b144e4a9eb092dace7096deeebf5577ff8",
+      "mod_time": "2026-11-17T23:51:39Z"
+    },
+    {
+      "path": "img/logo-sloth.webp",
+      "hash": "bcb79b0defd59f8ef3e04b3247e13b929bd57ff5f826a7382582af6c310fe2d7",
+      "mod_time": "2026-11-17T23:51:40Z"
+    },
+    {
+      "path": "marketing/app-shot-ru.png",
+      "hash": "94beebaac538af3a35d4f9f2b0e5209e24ce9b900e77dd609488872fa1e8340a",
+      "mod_time": "2026-11-17T23:51:39Z"
+    },
+    {
+      "path": "data/chains/superpharm.json",
+      "hash": "e05b08be7ab7ca74f19cd07c1f83df8f03f7f3596a08ece6c41b6287a41c9087",
+      "mod_time": "2026-11-18T04:05:46Z"
+    },
+    {
+      "path": "data/manual.json",
+      "hash": "fcd25350c3627b4ca899d676c88dbfe4c44abcae9357e29f3ca900108071f1f8",
+      "mod_time": "2026-11-17T21:05:15Z"
+    },
+    {
+      "path": "index.html",
+      "hash": "09913992dcf9e4240f2dc48088537dc6ea17f216e173f758b8577462f1ae8ed6",
+      "mod_time": "2026-11-18T04:15:33Z"
+    },
+    {
+      "path": "tools/daily_refresh.ps1",
+      "hash": "83341080607959942fc87c5016c32383d242aa4ec942e42ebf20c5dbe31d573c",
+      "mod_time": "2026-11-17T19:34:45Z"
+    },
+    {
+      "path": "brand/index.html",
+      "hash": "c5c8ecbea4bd4c58f1ad81bad4e029544a1c3a793eadfd2d9ef1b13d88d74e3b",
+      "mod_time": "2026-11-17T23:57:01Z"
+    },
+    {
+      "path": "data/osm_raw.json",
+      "hash": "2ed9be9e54767a03f50ff1ba8aaef8e27c1cce32e780da9a3f43f44b64ec7a03",
+      "mod_time": "2026-11-18T04:05:18Z"
+    },
+    {
+      "path": "data/shops.json",
+      "hash": "6bc5eb413248c216e2d00f31cc16bb16801e2b3af7a33ea73a3ac5303c950eb1",
+      "mod_time": "2026-11-18T04:05:48Z"
+    },
+    {
+      "path": ".gitignore",
+      "hash": "1f3422ee7bb52bbd72b38091706ec898d6bd07a1c61c81790b7e92c6f0a90a64",
+      "mod_time": "2026-11-17T19:42:09Z"
+    },
+    {
+      "path": "app.js",
+      "hash": "95776764a451d40d3cd7bc277bf75b11c8270acdfd3a1714c4d840c76902cedd",
+      "mod_time": "2026-11-18T04:15:33Z"
+    },
+    {
+      "path": "brand/ads/story-1080x1920-he.png",
+      "hash": "d04b0d5ff8af35631ee28387d14dcb4fd4f0a5c9c01e365dc58a4d05db31e933",
+      "mod_time": "2026-11-17T23:54:31Z"
+    },
+    {
+      "path": "route.js",
+      "hash": "6fa3cb6d7cf953477503b65dcbb2b7fd39e07cb86b28709101a1c4d838350c21",
+      "mod_time": "2026-11-18T04:02:13Z"
+    },
+    {
+      "path": "img/favicon.ico",
+      "hash": "05cbb6a437b3b57ab9acaedbd83c5f591ef0c69f15ddfca3bf6e1e3bf56cf10d",
+      "mod_time": "2026-11-17T23:51:40Z"
+    }
+  ],
+  "fact_count": 65,
+  "insight_count": 30,
+  "enola_version": "0.4.21",
+  "snapshot_id": "sha256:59775b2bff65c8fa6d6a39edb95901dd39be9d0f946ae66cec02ad6f05cde9bd",
+  "git": {
+    "ref": "main",
+    "commit": "4cf5ffbcf3866d72900ebbd53b33fbe6a097f689",
+    "dirty": true,
+    "remote": "github.com/wizzard2025/open-nearby"
+  },
+  "config_hash": "sha256:73d78ea79f51e19979d4c7d00bd9463ae684ebcb909116abad86675323c32c05",
+  "extractor_version": "v270",
+  "files_seen": 70,
+  "files_parsed": 4,
+  "source_bytes": 41184,
+  "dirs_skipped": 3,
+  "skipped_sample": [
+    ".git/ (glob: **/.git/**)",
+    "tools/__pycache__/ (glob: **/__pycache__/**)",
+    "vendor/ (glob: **/vendor/**)"
+  ],
+  "ignore_glob_hash": "sha256:7523cc6397a498e151125a682d28fbf6df20c6f51f6dfaf18fd8f5239a20d2d8",
+  "heuristic_insights": 30,
+  "coverage": {
+    "services_total": 0,
+    "coverage_gaps": 0,
+    "unresolved_edges": 0,
+    "extractors_reporting": 1,
+    "extraction_unresolved": 7
+  },
+  "census": {
+    "files_walked": 70,
+    "parsed": 4,
+    "excluded_by_ignore": 0,
+    "excluded_by_kind": 59,
+    "excluded_kinds": {
+      "(no extension)": 1,
+      ".css": 1,
+      ".gitignore": 1,
+      ".ico": 1,
+      ".json": 11,
+      ".png": 38,
+      ".ps1": 1,
+      ".svg": 2,
+      ".webmanifest": 1,
+      ".webp": 1,
+      ".yml": 1
+    },
+    "skipped_with_cause": 7,
+    "top_skip_causes": [
+      {
+        "cause": "claimed by typescript, which did not run this snapshot",
+        "count": 7
+      }
+    ]
+  },
+  "output_hashes": {
+    "facts.jsonl": "sha256:ba129eb08f3e9b42842ae726d6bee379dfa2a5603fdf4bfd52ed7df3a72b0d4d",
+    "insights.json": "sha256:fdae8446ad97b0c8ad392ee3faf27111f2c7324078e300fbb350ea99232614a7",
+    "llm_context.md": "sha256:b2718b7390bbcf153145add0985b1f425c2ec08963dc75ed2435bd08fa0cb616"
+  },
+  "unseen": {
+    "files_excluded_by_ignore": 0,
+    "dirs_excluded_by_ignore": 3,
+    "outside_graph": {
+      "imports": 18
+    },
+    "dead_exemptions": 0,
+    "dynamic_feature_classes": 0
+  }
+}

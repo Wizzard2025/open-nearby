@@ -1,0 +1,785 @@
+[
+  {
+    "title": "Call-graph hotspot: tools/chains.hebrew_to_oh (fan-in 4, fan-out 6)",
+    "source": "hotspots",
+    "description": "\"tools/chains.hebrew_to_oh\" is a pinch point: 4 symbols call into it and it calls out to 6 others, so a large share of call chains pass through it (degree-centrality proxy for betweenness). Such chokepoints are high-risk to change and high-value to test.",
+    "confidence": 0.7,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.hebrew_to_oh",
+        "detail": "fan-in 4 × fan-out 6 = score 24",
+        "line": 65,
+        "fact_id": "e2ba98af36c898b9f084da9d2d7ef1e8"
+      },
+      {
+        "symbol": "tools/chains.delek",
+        "detail": "calls into tools/chains.hebrew_to_oh",
+        "fact_id": "09f043b7ee4513a5d392448623634072"
+      },
+      {
+        "symbol": "tools/chains.osherad",
+        "detail": "calls into tools/chains.hebrew_to_oh",
+        "fact_id": "8780b06d4736c164afe5c888c5e5194d"
+      },
+      {
+        "symbol": "tools/chains.ramilevy",
+        "detail": "calls into tools/chains.hebrew_to_oh",
+        "fact_id": "8f69927b5ef55f3551284c8e9150cecd"
+      },
+      {
+        "symbol": "tools/chains.superpharm",
+        "detail": "calls into tools/chains.hebrew_to_oh",
+        "fact_id": "a405823bdc61801d2f1ef21367b44c31"
+      },
+      {
+        "symbol": "tools",
+        "detail": "called by tools/chains.hebrew_to_oh",
+        "fact_id": "cc0f7aae819a72eaedadcbcfa3de2549"
+      },
+      {
+        "symbol": "tools/chains.clean",
+        "detail": "called by tools/chains.hebrew_to_oh",
+        "fact_id": "19aed05bb2fe57b4d18679a8d6c902e2"
+      },
+      {
+        "symbol": "tools/chains.compose",
+        "detail": "called by tools/chains.hebrew_to_oh",
+        "fact_id": "5f2ba8280686feaa45e25bb59e34ef30"
+      },
+      {
+        "symbol": "tools/chains.day_index",
+        "detail": "called by tools/chains.hebrew_to_oh",
+        "fact_id": "2283b809f3003cd31efa0b0eb30dc1cc"
+      },
+      {
+        "symbol": "tools/chains.hhmm",
+        "detail": "called by tools/chains.hebrew_to_oh",
+        "fact_id": "b329e1de1e2e77318d24417518ac2ef9"
+      }
+    ],
+    "suggested_actions": [
+      "Add focused tests around this chokepoint before refactoring",
+      "Consider decomposing it so call paths don't all funnel through one symbol",
+      "Verify it isn't doing orchestration that belongs in callers"
+    ]
+  },
+  {
+    "title": "Large public surface: tools/chains exports 20 of 20 symbols (100%)",
+    "source": "exported-surface",
+    "description": "Module \"tools/chains\" exports 20 of its 20 symbols (100%). A large, near-fully-exported module hides little of its implementation, so consumers can couple to internals and it is hard to change without breaking them. Worth a visibility review — though a deliberate library API may legitimately export most of its surface.",
+    "confidence": 0.6,
+    "evidence": [
+      {
+        "symbol": "tools/chains.clean",
+        "detail": "exported",
+        "fact_id": "19aed05bb2fe57b4d18679a8d6c902e2"
+      },
+      {
+        "symbol": "tools/chains.compose",
+        "detail": "exported",
+        "fact_id": "5f2ba8280686feaa45e25bb59e34ef30"
+      },
+      {
+        "symbol": "tools/chains.day_index",
+        "detail": "exported",
+        "fact_id": "2283b809f3003cd31efa0b0eb30dc1cc"
+      },
+      {
+        "symbol": "tools/chains.delek",
+        "detail": "exported",
+        "fact_id": "09f043b7ee4513a5d392448623634072"
+      },
+      {
+        "symbol": "tools/chains.dist",
+        "detail": "exported",
+        "fact_id": "2175efc9463325b3931efe720c94e077"
+      },
+      {
+        "symbol": "tools/chains.fetch_all",
+        "detail": "exported",
+        "fact_id": "e57edf2654cd133ba4d90b9cb25de6fc"
+      },
+      {
+        "symbol": "tools/chains.geocode",
+        "detail": "exported",
+        "fact_id": "055218507c95fa7a56106cb29fd79d99"
+      },
+      {
+        "symbol": "tools/chains.get",
+        "detail": "exported",
+        "fact_id": "2e3d5f417c8a9d3ffaa30dd33629b72f"
+      }
+    ],
+    "suggested_actions": [
+      "Unexport symbols that are only used within the module",
+      "Define a small, intentional public API and hide the rest",
+      "Split the module if it has several independent public responsibilities"
+    ]
+  },
+  {
+    "title": "High cyclomatic complexity: tools/chains.hebrew_to_oh (33)",
+    "source": "complexity-outliers",
+    "description": "\"tools/chains.hebrew_to_oh\" has a cyclomatic complexity of 33 — well above the repo average. Highly branched functions are hard to test fully and are frequent defect sites.",
+    "confidence": 0.7,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.hebrew_to_oh",
+        "detail": "cyclomatic complexity 33 at line 65",
+        "line": 65,
+        "fact_id": "e2ba98af36c898b9f084da9d2d7ef1e8"
+      }
+    ],
+    "suggested_actions": [
+      "Extract guard clauses and nested branches into helper functions",
+      "Replace deep conditionals with table/strategy dispatch where possible",
+      "Add tests covering the distinct branches before refactoring"
+    ]
+  },
+  {
+    "title": "High cyclomatic complexity: tools/chains.shufersal (25)",
+    "source": "complexity-outliers",
+    "description": "\"tools/chains.shufersal\" has a cyclomatic complexity of 25 — well above the repo average. Highly branched functions are hard to test fully and are frequent defect sites.",
+    "confidence": 0.7,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.shufersal",
+        "detail": "cyclomatic complexity 25 at line 142",
+        "line": 142,
+        "fact_id": "3371795cddcd6d09be325fd3188c2e43"
+      }
+    ],
+    "suggested_actions": [
+      "Extract guard clauses and nested branches into helper functions",
+      "Replace deep conditionals with table/strategy dispatch where possible",
+      "Add tests covering the distinct branches before refactoring"
+    ]
+  },
+  {
+    "title": "Additional dead-code candidates: 21 more (see find_orphans)",
+    "source": "dead-code",
+    "description": "0 further high/medium-confidence orphan(s) were omitted from individual insights and 21 low-confidence orphan(s) (methods/types/consts/vars — usage not edge-tracked) were not surfaced individually. Use the find_orphans tool (output_mode=full) for the complete list.",
+    "confidence": 0.4,
+    "evidence": null,
+    "suggested_actions": [
+      "Run find_orphans with confidence=high and visibility=unexported for the safest cleanup set"
+    ]
+  },
+  {
+    "title": "Performance risk (call-in-loop, O(n³)): tools/chains.ramilevy",
+    "source": "performance",
+    "description": "Calls tools/chains.geocode inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.9,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.ramilevy",
+        "detail": "Calls tools/chains.geocode inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop.",
+        "line": 228,
+        "fact_id": "8f69927b5ef55f3551284c8e9150cecd"
+      },
+      {
+        "symbol": "tools/chains.ramilevy",
+        "detail": "call_in_loop=tools/chains.geocode",
+        "fact_id": "8f69927b5ef55f3551284c8e9150cecd"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (call-in-loop, O(n³)): tools/update_data.main",
+    "source": "performance",
+    "description": "Calls tools/update_data.fetch inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.9,
+    "evidence": [
+      {
+        "file": "tools/update_data.py",
+        "symbol": "tools/update_data.main",
+        "detail": "Calls tools/update_data.fetch inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop.",
+        "line": 38,
+        "fact_id": "8efe20b9778fa40b5b81c2aa80de2dfe"
+      },
+      {
+        "symbol": "tools/update_data.main",
+        "detail": "call_in_loop=tools/update_data.fetch",
+        "fact_id": "8efe20b9778fa40b5b81c2aa80de2dfe"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (call-in-loop, O(n³+)): tools/chains.delek",
+    "source": "performance",
+    "description": "Calls tools/chains.get inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.5,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.delek",
+        "detail": "Calls tools/chains.get inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop.",
+        "line": 201,
+        "fact_id": "09f043b7ee4513a5d392448623634072"
+      },
+      {
+        "symbol": "tools/chains.delek",
+        "detail": "call_in_loop=tools/chains.get",
+        "fact_id": "09f043b7ee4513a5d392448623634072"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (call-in-loop, O(n³+)): tools/chains.osherad",
+    "source": "performance",
+    "description": "Calls tools/chains.geocode inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.5,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.osherad",
+        "detail": "Calls tools/chains.geocode inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop.",
+        "line": 286,
+        "fact_id": "8780b06d4736c164afe5c888c5e5194d"
+      },
+      {
+        "symbol": "tools/chains.osherad",
+        "detail": "call_in_loop=tools/chains.geocode",
+        "fact_id": "8780b06d4736c164afe5c888c5e5194d"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (call-in-loop, O(n³+)): tools/chains.superpharm",
+    "source": "performance",
+    "description": "Calls tools/chains.get inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.5,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.superpharm",
+        "detail": "Calls tools/chains.get inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop.",
+        "line": 181,
+        "fact_id": "a405823bdc61801d2f1ef21367b44c31"
+      },
+      {
+        "symbol": "tools/chains.superpharm",
+        "detail": "call_in_loop=tools/chains.get",
+        "fact_id": "a405823bdc61801d2f1ef21367b44c31"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (compounded, O(n³)): tools/chains.merge_into",
+    "source": "performance",
+    "description": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³). Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.55,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.merge_into",
+        "detail": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³).",
+        "line": 383,
+        "fact_id": "cc79f5a3a8c2128064301dbe05d58362"
+      },
+      {
+        "symbol": "tools/chains.merge_into",
+        "detail": "tools/chains.matches (loop_depth=2)",
+        "fact_id": "cc79f5a3a8c2128064301dbe05d58362"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (compounded, O(n³)): tools/chains.ramilevy",
+    "source": "performance",
+    "description": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³). Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.55,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.ramilevy",
+        "detail": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³).",
+        "line": 228,
+        "fact_id": "8f69927b5ef55f3551284c8e9150cecd"
+      },
+      {
+        "symbol": "tools/chains.ramilevy",
+        "detail": "tools/chains.geocode (loop_depth=1)",
+        "fact_id": "8f69927b5ef55f3551284c8e9150cecd"
+      },
+      {
+        "symbol": "tools/chains.ramilevy",
+        "detail": "tools/chains.hebrew_to_oh (loop_depth=2)",
+        "fact_id": "8f69927b5ef55f3551284c8e9150cecd"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (compounded, O(n³)): tools/chains.shufersal",
+    "source": "performance",
+    "description": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³). Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.55,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.shufersal",
+        "detail": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³).",
+        "line": 142,
+        "fact_id": "3371795cddcd6d09be325fd3188c2e43"
+      },
+      {
+        "symbol": "tools/chains.shufersal",
+        "detail": "tools/chains.compose (loop_depth=2)",
+        "fact_id": "3371795cddcd6d09be325fd3188c2e43"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (compounded, O(n³)): tools/chains.victory",
+    "source": "performance",
+    "description": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³). Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.55,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.victory",
+        "detail": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³).",
+        "line": 251,
+        "fact_id": "cfee5d8be3e1da494a842397bc3d1fb6"
+      },
+      {
+        "symbol": "tools/chains.victory",
+        "detail": "tools/chains.compose (loop_depth=2)",
+        "fact_id": "cfee5d8be3e1da494a842397bc3d1fb6"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (compounded, O(n³)): tools/update_data.main",
+    "source": "performance",
+    "description": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³). Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.55,
+    "evidence": [
+      {
+        "file": "tools/update_data.py",
+        "symbol": "tools/update_data.main",
+        "detail": "Loops here call other looping functions; worst-case nesting compounds across the call graph to about O(n³).",
+        "line": 38,
+        "fact_id": "8efe20b9778fa40b5b81c2aa80de2dfe"
+      },
+      {
+        "symbol": "tools/update_data.main",
+        "detail": "tools/update_data.fetch (loop_depth=2)",
+        "fact_id": "8efe20b9778fa40b5b81c2aa80de2dfe"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (call-in-loop, O(n)): tools/chains.geocode",
+    "source": "performance",
+    "description": "Calls tools/chains.get inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.9,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.geocode",
+        "detail": "Calls tools/chains.get inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop.",
+        "line": 322,
+        "fact_id": "055218507c95fa7a56106cb29fd79d99"
+      },
+      {
+        "symbol": "tools/chains.geocode",
+        "detail": "call_in_loop=tools/chains.get",
+        "fact_id": "055218507c95fa7a56106cb29fd79d99"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (compounded, O(n³+)): tools/chains.delek",
+    "source": "performance",
+    "description": "Loops here call other looping functions; worst-case nesting compounds across the call graph to O(n³+) — a deep structural estimate, verify before acting. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.5,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.delek",
+        "detail": "Loops here call other looping functions; worst-case nesting compounds across the call graph to O(n³+) — a deep structural estimate, verify before acting.",
+        "line": 201,
+        "fact_id": "09f043b7ee4513a5d392448623634072"
+      },
+      {
+        "symbol": "tools/chains.delek",
+        "detail": "tools/chains.hebrew_to_oh (loop_depth=2)",
+        "fact_id": "09f043b7ee4513a5d392448623634072"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (compounded, O(n³+)): tools/chains.osherad",
+    "source": "performance",
+    "description": "Loops here call other looping functions; worst-case nesting compounds across the call graph to O(n³+) — a deep structural estimate, verify before acting. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.5,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.osherad",
+        "detail": "Loops here call other looping functions; worst-case nesting compounds across the call graph to O(n³+) — a deep structural estimate, verify before acting.",
+        "line": 286,
+        "fact_id": "8780b06d4736c164afe5c888c5e5194d"
+      },
+      {
+        "symbol": "tools/chains.osherad",
+        "detail": "tools/chains.geocode (loop_depth=1)",
+        "fact_id": "8780b06d4736c164afe5c888c5e5194d"
+      },
+      {
+        "symbol": "tools/chains.osherad",
+        "detail": "tools/chains.hebrew_to_oh (loop_depth=2)",
+        "fact_id": "8780b06d4736c164afe5c888c5e5194d"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (compounded, O(n³+)): tools/chains.superpharm",
+    "source": "performance",
+    "description": "Loops here call other looping functions; worst-case nesting compounds across the call graph to O(n³+) — a deep structural estimate, verify before acting. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.5,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.superpharm",
+        "detail": "Loops here call other looping functions; worst-case nesting compounds across the call graph to O(n³+) — a deep structural estimate, verify before acting.",
+        "line": 181,
+        "fact_id": "a405823bdc61801d2f1ef21367b44c31"
+      },
+      {
+        "symbol": "tools/chains.superpharm",
+        "detail": "tools/chains.hebrew_to_oh (loop_depth=2)",
+        "fact_id": "a405823bdc61801d2f1ef21367b44c31"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.delek",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.delek",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 201,
+        "fact_id": "09f043b7ee4513a5d392448623634072"
+      },
+      {
+        "symbol": "tools/chains.delek",
+        "detail": "loop_depth=2, loop_count=2, cyclomatic=12",
+        "fact_id": "09f043b7ee4513a5d392448623634072"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.fetch_all",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.fetch_all",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 432,
+        "fact_id": "e57edf2654cd133ba4d90b9cb25de6fc"
+      },
+      {
+        "symbol": "tools/chains.fetch_all",
+        "detail": "loop_depth=2, loop_count=2, cyclomatic=6",
+        "fact_id": "e57edf2654cd133ba4d90b9cb25de6fc"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.hebrew_to_oh",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.hebrew_to_oh",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 65,
+        "fact_id": "e2ba98af36c898b9f084da9d2d7ef1e8"
+      },
+      {
+        "symbol": "tools/chains.hebrew_to_oh",
+        "detail": "loop_depth=2, loop_count=5, cyclomatic=33",
+        "fact_id": "e2ba98af36c898b9f084da9d2d7ef1e8"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.manual",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.manual",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 306,
+        "fact_id": "1477220b6489f8b39acb0eb66ed58ecf"
+      },
+      {
+        "symbol": "tools/chains.manual",
+        "detail": "loop_depth=2, loop_count=2, cyclomatic=5",
+        "fact_id": "1477220b6489f8b39acb0eb66ed58ecf"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.osherad",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.osherad",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 286,
+        "fact_id": "8780b06d4736c164afe5c888c5e5194d"
+      },
+      {
+        "symbol": "tools/chains.osherad",
+        "detail": "loop_depth=2, loop_count=2, cyclomatic=9",
+        "fact_id": "8780b06d4736c164afe5c888c5e5194d"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.shufersal",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.shufersal",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 142,
+        "fact_id": "3371795cddcd6d09be325fd3188c2e43"
+      },
+      {
+        "symbol": "tools/chains.shufersal",
+        "detail": "loop_depth=2, loop_count=2, cyclomatic=25",
+        "fact_id": "3371795cddcd6d09be325fd3188c2e43"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.superpharm",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.superpharm",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 181,
+        "fact_id": "a405823bdc61801d2f1ef21367b44c31"
+      },
+      {
+        "symbol": "tools/chains.superpharm",
+        "detail": "loop_depth=2, loop_count=2, cyclomatic=10",
+        "fact_id": "a405823bdc61801d2f1ef21367b44c31"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.victory",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.victory",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 251,
+        "fact_id": "cfee5d8be3e1da494a842397bc3d1fb6"
+      },
+      {
+        "symbol": "tools/chains.victory",
+        "detail": "loop_depth=2, loop_count=2, cyclomatic=14",
+        "fact_id": "cfee5d8be3e1da494a842397bc3d1fb6"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/update_data.main",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.8,
+    "evidence": [
+      {
+        "file": "tools/update_data.py",
+        "symbol": "tools/update_data.main",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds.",
+        "line": 38,
+        "fact_id": "8efe20b9778fa40b5b81c2aa80de2dfe"
+      },
+      {
+        "symbol": "tools/update_data.main",
+        "detail": "loop_depth=2, loop_count=5, cyclomatic=9",
+        "fact_id": "8efe20b9778fa40b5b81c2aa80de2dfe"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (nested-loop, O(n²)): tools/chains.merge_into",
+    "source": "performance",
+    "description": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. (Some enclosing loops iterate bounded/constant ranges and are excluded.) Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.6,
+    "evidence": [
+      {
+        "file": "tools/chains.py",
+        "symbol": "tools/chains.merge_into",
+        "detail": "Loops nest 2 deep, so the body runs about O(n²) in the loop bounds. (Some enclosing loops iterate bounded/constant ranges and are excluded.)",
+        "line": 383,
+        "fact_id": "cc79f5a3a8c2128064301dbe05d58362"
+      },
+      {
+        "symbol": "tools/chains.merge_into",
+        "detail": "loop_depth=4, loop_count=7, cyclomatic=21",
+        "fact_id": "cc79f5a3a8c2128064301dbe05d58362"
+      },
+      {
+        "symbol": "tools/chains.merge_into",
+        "detail": "scaling_loop_depth=2 (bounded loops discounted)",
+        "fact_id": "cc79f5a3a8c2128064301dbe05d58362"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  },
+  {
+    "title": "Performance risk (call-in-loop, O(n)): tools/update_data.fetch",
+    "source": "performance",
+    "description": "Calls json.load inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop. Big-O is a deterministic estimate of structural worst case from parser facts, not a proof — treat as a lead to verify.",
+    "confidence": 0.6,
+    "evidence": [
+      {
+        "file": "tools/update_data.py",
+        "symbol": "tools/update_data.fetch",
+        "detail": "Calls json.load inside a loop — a likely N+1 / per-iteration I/O pattern; batch or hoist out of the loop.",
+        "line": 25,
+        "fact_id": "943ca19fcb191f65ba5b62a321593490"
+      },
+      {
+        "symbol": "tools/update_data.fetch",
+        "detail": "call_in_loop=json.load",
+        "fact_id": "943ca19fcb191f65ba5b62a321593490"
+      }
+    ],
+    "suggested_actions": [
+      "Confirm the hot path with a profiler or benchmark before optimizing",
+      "Batch or hoist per-iteration I/O out of loops; add memoization or an iterative rewrite for recursion"
+    ]
+  }
+]

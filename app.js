@@ -9,8 +9,8 @@ const I18N = {
     units: ['место', 'места', 'мест'], whereMe: 'рядом с вами', whereMap: 'в этой части карты',
     zoomIn: 'Приблизьте карту, чтобы увидеть магазины',
     source: 'Данные: OpenStreetMap и официальные сайты сетей, обновляются каждый день.', madeBy: 'Сделано в',
-    cats: { all: 'Всё', food: 'Продукты', bakery: 'Пекарни', pharmacy: 'Аптеки', fuel: 'Заправки', atm: 'Банкоматы' },
-    types: { supermarket: 'Супермаркет', convenience: 'Минимаркет', kiosk: 'Киоск', grocery: 'Продукты', greengrocer: 'Овощи и фрукты', deli: 'Деликатесы', alcohol: 'Алкоголь', bakery: 'Пекарня', pastry: 'Кондитерская', pharmacy: 'Аптека', chemist: 'Аптека и косметика', fuel: 'Заправка', atm: 'Банкомат', bank: 'Банк с банкоматом' },
+    cats: { all: 'Всё', food: 'Продукты', bakery: 'Пекарни', pharmacy: 'Аптеки', fuel: 'Заправки', atm: 'Банкоматы', eat: 'Поесть' },
+    types: { supermarket: 'Супермаркет', convenience: 'Минимаркет', kiosk: 'Киоск', grocery: 'Продукты', greengrocer: 'Овощи и фрукты', deli: 'Деликатесы', alcohol: 'Алкоголь', bakery: 'Пекарня', pastry: 'Кондитерская', pharmacy: 'Аптека', chemist: 'Аптека и косметика', fuel: 'Заправка', atm: 'Банкомат', bank: 'Банк с банкоматом', restaurant: 'Ресторан', fast_food: 'Фастфуд, забегаловка', cafe: 'Кафе', food_court: 'Фудкорт', ice_cream: 'Мороженое' },
     open24: 'Круглосуточно', open: 'Открыто', until: 'до {t}', soon: 'Закроется через {m} мин',
     closed: 'Закрыто', opensAt: 'откроется в {t}', opensTomorrow: 'завтра в {t}', opensDay: '{d} в {t}',
     unknown: 'Часы не указаны', allDay: 'круглосуточно', dayOff: 'закрыто',
@@ -24,6 +24,8 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    kosher: 'кошерно', takeaway: 'с собой', delivery: 'доставка', privAtm: 'частный банкомат, обычно с комиссией', ownerOf: '{o}',
+    fixOpen: 'Неверные часы? Исправить', fixTitle: 'Как работает этот магазин?', fixPh: 'например: 7:00-23:00 или Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'Сохранить часы', fixThanks: 'Спасибо! Новые часы видны всем.', fixBad: 'Не понял часы. Напишите, например, 7:00-23:00 или выберите 24/7.', fixedTag: 'часы исправлены пользователем', tooMany: 'Слишком много отметок за час. Попробуйте позже.', acc: 'Вход', accTitle: 'Вход (необязательно)', accWhy: 'Ваши отметки и исправления уже работают и без входа. С входом они сохранятся за вами на всех устройствах.', accEmail: 'Ваш email', accSend: 'Прислать ссылку для входа', accSent: 'Готово! Откройте письмо и нажмите на ссылку.', accIn: 'Вы вошли как {e}', accOut: 'Выйти',
     atmDeposit: 'можно внести',
     nowLabel: 'сейчас',
     themeAuto: 'Тема: как на устройстве', themeLight: 'Тема: светлая', themeDark: 'Тема: тёмная (ночь)',
@@ -40,8 +42,8 @@ const I18N = {
     units: ['מקום', 'מקומות', 'מקומות'], whereMe: 'לידך', whereMap: 'באזור המפה',
     zoomIn: 'הגדילו את המפה כדי לראות חנויות',
     source: 'נתונים: OpenStreetMap ואתרי הרשתות, מתעדכנים מדי יום.', madeBy: 'נבנה ב-',
-    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'דלק', atm: 'כספומטים' },
-    types: { supermarket: 'סופרמרקט', convenience: 'מכולת', kiosk: 'קיוסק', grocery: 'מכולת', greengrocer: 'ירקן', deli: 'מעדנייה', alcohol: 'משקאות', bakery: 'מאפייה', pastry: 'קונדיטוריה', pharmacy: 'בית מרקחת', chemist: 'פארם', fuel: 'תחנת דלק', atm: 'כספומט', bank: 'בנק עם כספומט' },
+    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'דלק', atm: 'כספומטים', eat: 'אוכל' },
+    types: { supermarket: 'סופרמרקט', convenience: 'מכולת', kiosk: 'קיוסק', grocery: 'מכולת', greengrocer: 'ירקן', deli: 'מעדנייה', alcohol: 'משקאות', bakery: 'מאפייה', pastry: 'קונדיטוריה', pharmacy: 'בית מרקחת', chemist: 'פארם', fuel: 'תחנת דלק', atm: 'כספומט', bank: 'בנק עם כספומט', restaurant: 'מסעדה', fast_food: 'אוכל מהיר', cafe: 'בית קפה', food_court: 'מתחם מזון', ice_cream: 'גלידריה' },
     open24: '24 שעות', open: 'פתוח', until: 'עד {t}', soon: 'נסגר בעוד {m} דק׳',
     closed: 'סגור', opensAt: 'ייפתח ב-{t}', opensTomorrow: 'מחר ב-{t}', opensDay: '{d} ב-{t}',
     unknown: 'אין שעות', allDay: '24 שעות', dayOff: 'סגור',
@@ -55,6 +57,8 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    kosher: 'כשר', takeaway: 'טייק אווי', delivery: 'משלוחים', privAtm: 'כספומט פרטי, בדרך כלל בעמלה', ownerOf: '{o}',
+    fixOpen: 'שעות לא נכונות? לתקן', fixTitle: 'מתי החנות פתוחה?', fixPh: 'למשל: 7:00-23:00 או Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'שמירת שעות', fixThanks: 'תודה! השעות החדשות גלויות לכולם.', fixBad: 'לא הצלחנו להבין את השעות. כתבו למשל 7:00-23:00 או בחרו 24/7.', fixedTag: 'שעות תוקנו על ידי משתמש', tooMany: 'יותר מדי סימונים בשעה האחרונה. נסו מאוחר יותר.', acc: 'כניסה', accTitle: 'כניסה (לא חובה)', accWhy: 'הסימונים והתיקונים שלכם עובדים גם בלי כניסה. עם כניסה הם יישמרו אצלכם בכל המכשירים.', accEmail: 'האימייל שלכם', accSend: 'שלחו לי קישור כניסה', accSent: 'נשלח! פתחו את המייל ולחצו על הקישור.', accIn: 'מחוברים בתור {e}', accOut: 'יציאה',
     atmDeposit: 'אפשר להפקיד',
     nowLabel: 'עכשיו',
     themeAuto: 'ערכת נושא: כמו במכשיר', themeLight: 'ערכת נושא: בהירה', themeDark: 'ערכת נושא: כהה (לילה)',
@@ -71,8 +75,8 @@ const I18N = {
     units: ['place', 'places', 'places'], whereMe: 'near you', whereMap: 'in this part of the map',
     zoomIn: 'Zoom in to see shops',
     source: 'Data: OpenStreetMap and the chains\' own websites, refreshed daily.', madeBy: 'Made by',
-    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas', atm: 'ATMs' },
-    types: { supermarket: 'Supermarket', convenience: 'Convenience store', kiosk: 'Kiosk', grocery: 'Grocery', greengrocer: 'Greengrocer', deli: 'Deli', alcohol: 'Liquor store', bakery: 'Bakery', pastry: 'Pastry shop', pharmacy: 'Pharmacy', chemist: 'Drugstore', fuel: 'Gas station', atm: 'ATM', bank: 'Bank with ATM' },
+    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas', atm: 'ATMs', eat: 'Eat' },
+    types: { supermarket: 'Supermarket', convenience: 'Convenience store', kiosk: 'Kiosk', grocery: 'Grocery', greengrocer: 'Greengrocer', deli: 'Deli', alcohol: 'Liquor store', bakery: 'Bakery', pastry: 'Pastry shop', pharmacy: 'Pharmacy', chemist: 'Drugstore', fuel: 'Gas station', atm: 'ATM', bank: 'Bank with ATM', restaurant: 'Restaurant', fast_food: 'Fast food', cafe: 'Café', food_court: 'Food court', ice_cream: 'Ice cream' },
     open24: 'Open 24 hours', open: 'Open', until: 'until {t}', soon: 'Closes in {m} min',
     closed: 'Closed', opensAt: 'opens at {t}', opensTomorrow: 'tomorrow {t}', opensDay: '{d} {t}',
     unknown: 'No hours listed', allDay: '24 hours', dayOff: 'closed',
@@ -86,6 +90,8 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    kosher: 'kosher', takeaway: 'takeaway', delivery: 'delivery', privAtm: 'private ATM, usually charges a fee', ownerOf: '{o}',
+    fixOpen: 'Wrong hours? Fix them', fixTitle: 'When is this shop open?', fixPh: 'e.g. 7:00-23:00 or Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'Save hours', fixThanks: 'Thanks! Everyone sees the new hours now.', fixBad: "Couldn't read those hours. Try 7:00-23:00 or pick 24/7.", fixedTag: 'hours fixed by a user', tooMany: 'Too many updates in the last hour. Try again later.', acc: 'Sign in', accTitle: 'Sign in (optional)', accWhy: 'Your check-ins and fixes already work without signing in. Signing in keeps them yours on every device.', accEmail: 'Your email', accSend: 'Email me a sign-in link', accSent: 'Sent! Open the email and tap the link.', accIn: 'Signed in as {e}', accOut: 'Sign out',
     atmDeposit: 'deposits',
     nowLabel: 'now',
     themeAuto: 'Theme: same as device', themeLight: 'Theme: light', themeDark: 'Theme: dark (night)',
@@ -112,6 +118,7 @@ const CITIES = [
   ['eil', 29.5577, 34.9519, { ru: 'Эйлат', he: 'אילת', en: 'Eilat' }],
 ];
 const ICONS = {
+  eat: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1.5-3 4-3 7v3h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
   atm: '<rect x="3" y="5.5" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18" stroke="currentColor" stroke-width="2"/><path d="M7 14.5h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
   all: '<path d="M4 9.5 5.2 4h13.6L20 9.5M4 9.5h16V20H4zM9.5 20v-5.5h5V20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
   food: '<path d="M3 4h2.2l2.3 10.3a1.8 1.8 0 0 0 1.8 1.4h7.6a1.8 1.8 0 0 0 1.7-1.3L20.5 8H6.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="19.5" r="1.6" fill="currentColor"/><circle cx="17" cy="19.5" r="1.6" fill="currentColor"/>',
@@ -239,15 +246,54 @@ function weekTable(oh, now) {
 }
 
 // ---------- data ----------
+const EAT = new Set(['restaurant', 'fast_food', 'cafe', 'food_court', 'ice_cream']);
 function categoryOf(tg) {
   if (tg.amenity === 'atm' || tg.amenity === 'bank') return 'atm';
   if (tg.amenity === 'fuel') return 'fuel';
+  if (EAT.has(tg.amenity)) return 'eat';
   if (tg.amenity === 'pharmacy' || tg.shop === 'chemist') return 'pharmacy';
   if (tg.shop === 'bakery' || tg.shop === 'pastry') return 'bakery';
   return 'food';
 }
-const typeKey = (tg) => (tg.amenity === 'fuel' || tg.amenity === 'pharmacy' || tg.amenity === 'atm' || tg.amenity === 'bank' ? tg.amenity : tg.shop);
-const nameOf = (it) => it.tags['name:' + S.lang] || it.tags.name || it.tags.brand || it.tags.operator || I18N[S.lang].types[typeKey(it.tags)] || '';
+const typeKey = (tg) => (tg.amenity === 'fuel' || tg.amenity === 'pharmacy' || tg.amenity === 'atm' || tg.amenity === 'bank' || EAT.has(tg.amenity) ? tg.amenity : tg.shop);
+// Whose it is, readable for a tourist or a new immigrant: banks, ATM operators and fuel brands in their language.
+const OWNERS = [
+  [/פועלים|hapoalim/i, { he: 'בנק הפועלים', ru: 'Банк Апоалим', en: 'Bank Hapoalim' }],
+  [/לאומי|leumi/i, { he: 'בנק לאומי', ru: 'Банк Леуми', en: 'Bank Leumi' }],
+  [/דיסקונט|discount/i, { he: 'בנק דיסקונט', ru: 'Банк Дисконт', en: 'Discount Bank' }],
+  [/מזרחי|mizrahi|tefahot/i, { he: 'מזרחי טפחות', ru: 'Мизрахи-Тфахот', en: 'Mizrahi Tefahot' }],
+  [/בינלאומי|first international|fibi/i, { he: 'הבנק הבינלאומי', ru: 'Первый международный банк', en: 'First International Bank' }],
+  [/ירושלים|jerusalem/i, { he: 'בנק ירושלים', ru: 'Банк Иерусалим', en: 'Bank of Jerusalem' }],
+  [/מרכנתיל|mercantile/i, { he: 'מרכנתיל', ru: 'Меркантиль', en: 'Mercantile Bank' }],
+  [/אוצר החייל|otsar|otzar/i, { he: 'אוצר החייל', ru: 'Оцар а-Хаяль', en: 'Otsar HaHayal' }],
+  [/יהב|yahav/i, { he: 'בנק יהב', ru: 'Банк Яхав', en: 'Bank Yahav' }],
+  [/מסד|massad/i, { he: 'בנק מסד', ru: 'Банк Масад', en: 'Bank Massad' }],
+  [/כספונט|kaspont/i, { he: 'כספונט', ru: 'Каспонт', en: 'Kaspont' }, 'priv'],
+  [/קרן התמר/i, { he: 'קרן התמר', ru: 'Керен а-Тамар', en: 'Keren HaTamar' }, 'priv'],
+  [/triton|euronet|cardtronics|bitcoin/i, null, 'priv'],
+  [/^פז$|^paz$|yellow|ילו/i, { he: 'פז', ru: 'Паз', en: 'Paz' }],
+  [/סונול|sonol/i, { he: 'סונול', ru: 'Сонол', en: 'Sonol' }],
+  [/דור אלון|dor alon|אלונית|alonit/i, { he: 'דור אלון', ru: 'Дор Алон', en: 'Dor Alon' }],
+  [/^דלק$|^delek$/i, { he: 'דלק', ru: 'Делек', en: 'Delek' }],
+  [/^טן$|^ten$/i, { he: 'טן', ru: 'Тен', en: 'Ten' }],
+];
+function ownerOf(tg) {
+  const k = typeKey(tg);
+  const raw = tg['brand:' + S.lang] || tg.brand || tg['operator:' + S.lang] || tg.operator || tg.network ||
+    (k === 'atm' && tg.name && !/^(כספומט|atm|банкомат)$/i.test(tg.name.trim()) ? tg.name : '');
+  if (!raw) return null;
+  for (const [re, names, flag] of OWNERS) if (re.test(raw)) return { name: names ? names[S.lang] || names.en : raw, priv: flag === 'priv' };
+  return { name: raw, priv: false };
+}
+// Cuisine in plain words; unknown values are shown as they are.
+const CUISINE = {
+  ru: { pizza: 'пицца', burger: 'бургеры', falafel: 'фалафель', shawarma: 'шаурма', kebab: 'кебаб', sushi: 'суши', coffee_shop: 'кофе', italian: 'итальянская', asian: 'азиатская', chinese: 'китайская', japanese: 'японская', thai: 'тайская', indian: 'индийская', mexican: 'мексиканская', middle_eastern: 'ближневосточная', israeli: 'израильская', hummus: 'хумус', sandwich: 'сэндвичи', chicken: 'курица', bagel: 'бейглы', breakfast: 'завтраки', steak_house: 'стейки', grill: 'гриль', fish: 'рыба', seafood: 'морепродукты', vegan: 'веганская', vegetarian: 'вегетарианская', ice_cream: 'мороженое', dessert: 'десерты', bakery: 'выпечка', noodle: 'лапша', georgian: 'грузинская', russian: 'русская', ethiopian: 'эфиопская', yemeni: 'йеменская', moroccan: 'марокканская', arab: 'арабская', french: 'французская', american: 'американская', meat: 'мясо', dairy: 'молочная', juice: 'соки' },
+  he: { pizza: 'פיצה', burger: 'המבורגר', falafel: 'פלאפל', shawarma: 'שווארמה', kebab: 'קבב', sushi: 'סושי', coffee_shop: 'קפה', italian: 'איטלקי', asian: 'אסייתי', chinese: 'סיני', japanese: 'יפני', thai: 'תאילנדי', indian: 'הודי', mexican: 'מקסיקני', middle_eastern: 'מזרחי', israeli: 'ישראלי', hummus: 'חומוס', sandwich: 'כריכים', chicken: 'עוף', bagel: 'בייגל', breakfast: 'ארוחות בוקר', steak_house: 'סטייקיה', grill: 'גריל', fish: 'דגים', seafood: 'פירות ים', vegan: 'טבעוני', vegetarian: 'צמחוני', ice_cream: 'גלידה', dessert: 'קינוחים', bakery: 'מאפים', noodle: 'נודלס', georgian: 'גאורגי', russian: 'רוסי', ethiopian: 'אתיופי', yemeni: 'תימני', moroccan: 'מרוקאי', arab: 'ערבי', french: 'צרפתי', american: 'אמריקאי', meat: 'בשרי', dairy: 'חלבי', juice: 'מיצים' },
+  en: { coffee_shop: 'coffee', middle_eastern: 'Middle Eastern', steak_house: 'steakhouse' },
+};
+const cuisineText = (tg) => (tg.cuisine || '').split(/[;,]/).map((c) => c.trim()).filter(Boolean).slice(0, 3)
+  .map((c) => CUISINE[S.lang][c] || c.replace(/_/g, ' ')).join(', ');
+const nameOf = (it) => it.tags['name:' + S.lang] || it.tags['brand:' + S.lang] || it.tags.name || it.tags.brand || ownerOf(it.tags)?.name || I18N[S.lang].types[typeKey(it.tags)] || '';
 function distM(aLat, aLon, bLat, bLon) {
   const R = 6371e3, r = Math.PI / 180;
   const dLat = (bLat - aLat) * r, dLon = (bLon - aLon) * r;
@@ -301,7 +347,8 @@ async function addBaseMap() {
     if (!L.maplibreGL || !window.maplibregl) throw new Error('no maplibre');
     const style = await (await fetch('https://tiles.openfreemap.org/styles/liberty')).json();
     style.layers = style.layers.filter((l) => l['source-layer'] !== 'poi'); // no built-in shop / parking icons
-    L.maplibreGL({ style, attribution: '© <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © OpenStreetMap' }).addTo(map);
+    S.gl = L.maplibreGL({ style, attribution: '© <a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a> © OpenStreetMap' }).addTo(map);
+    S.gl.getMaplibreMap().once('load', () => { setGLNight(document.documentElement.classList.contains('night-map')); drawLights(); });
   } catch {
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
   }
@@ -479,6 +526,7 @@ function applyLang() {
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   $('#kicker').textContent = t('kicker');
+  if ($('#accBtn')) $('#accBtn').title = t('acc');
   if (typeof applyTheme === 'function' && $('#themeBtn')?.textContent) applyTheme();
   $('#addOpen').textContent = t('addOpen');
   $('#grab').setAttribute('aria-label', t('expand'));
@@ -488,6 +536,15 @@ function renderNotices() {
   const arr = [...(S.notices.loc ? [S.notices.loc] : []), ...S.notices.hebcal];
   $('#notices').innerHTML = arr.map((n) => `<p class="notice ${n.cls}">${esc(n.text)}</p>`).join('');
 }
+// "Fast food · falafel" / "ATM · Bank Leumi" / "Gas station · Paz": what the place is and whose, in one line.
+function kindLine(it, type, name) {
+  const tg = it.tags, own = ownerOf(tg), cui = cuisineText(tg);
+  const parts = [type];
+  if (cui) parts.push(cui);
+  if (own && own.name && own.name !== name && !name.includes(own.name)) parts.push(own.name);
+  const txt = parts.filter(Boolean).filter((x) => x !== name).join(' · ');
+  return txt ? `<span class="kind">${esc(txt)}</span>` : '';
+}
 function shopHTML(it, now) {
   const tg = it.tags, st = it.st;
   const type = I18N[S.lang].types[typeKey(tg)] || '';
@@ -496,7 +553,14 @@ function shopHTML(it, now) {
   const tags = [];
   if (st.oh && st.k !== 'open24' && opensOnShabbat(it, st.oh, now)) tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`);
   if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);
+  if (it.fixed) tags.push(`<span class="tag user">${esc(t('fixedTag'))}</span>`);
   if (tg.cash_in === 'yes') tags.push(`<span class="tag">${esc(t('atmDeposit'))}</span>`);
+  const own = ownerOf(tg);
+  if (own && own.priv) tags.push(`<span class="tag warn">${esc(t('privAtm'))}</span>`);
+  const kosher = tg['diet:kosher'] || tg.kosher;
+  if (kosher && kosher !== 'no') tags.push(`<span class="tag">${esc(t('kosher'))}</span>`);
+  if (tg.takeaway === 'yes' || tg.takeaway === 'only') tags.push(`<span class="tag">${esc(t('takeaway'))}</span>`);
+  if (tg.delivery === 'yes') tags.push(`<span class="tag">${esc(t('delivery'))}</span>`);
   const ci = ciLatest(it.id);
   if (ci && st.k !== 'ciopen' && Date.now() / 1000 - ci.time < 3 * 3600)
     tags.push(ci.v === 'open' ? `<span class="tag ci-ok">${esc(t('ciOkTag', { m: ciAgo(ci.time) }))}</span>` : `<span class="tag ci-bad">${esc(t('ciBadTag', { m: ciAgo(ci.time) }))}</span>`);
@@ -504,6 +568,7 @@ function shopHTML(it, now) {
   if (S.selected === it.id) {
     if (st.oh && st.k !== 'open24') more.push(weekTable(st.oh, now));
     if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p>`);
+    more.push(fixFormHTML(it));
     const acts = [
       `<button type="button" class="walk" data-walk="${esc(it.id)}">🚶 ${esc(t('walkBtn'))}</button>`,
       `<a href="https://www.google.com/maps/dir/?api=1&destination=${it.lat},${it.lon}" target="_blank" rel="noopener">${esc(t('route'))}</a>`,
@@ -520,7 +585,7 @@ function shopHTML(it, now) {
     <span class="ico c-${it.cat}">${svg(it.cat)}</span>
     <span class="name">${esc(name)}</span>
     <span class="dist">${walk}${fmtDist(it.d)}</span>
-    <span class="meta"><span class="pill ${st.k}">${esc(statusText(st, now))}</span>${tags.join('')}${type && type !== name ? `<span>${esc(type)}</span>` : ''}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
+    <span class="meta"><span class="pill ${st.k}">${esc(statusText(st, now))}</span>${tags.join('')}${kindLine(it, type, name)}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
     <div class="more">${more.join('')}</div>
   </li>`;
 }
@@ -541,18 +606,20 @@ function refresh() {
   const inView = z >= 10 ? ALL.concat(USER_SHOPS).filter((s) => pad.contains([s.lat, s.lon])) : [];
   if (z >= 13) loadUserShops(b);
   for (const it of inView) {
+    const fx = FIX.get(it.id);
+    if (fx && it.tags.opening_hours !== fx.oh) { it.tags = { ...it.tags, opening_hours: fx.oh }; it.fixed = true; }
     it.st = statusOf(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon);
     const ci = ciLatest(it.id);
     if (ci && ci.v === 'open' && it.st.k === 'unknown' && Date.now() / 1000 - ci.time < 3600) it.st = { k: 'ciopen', ci };
   }
-  if (z >= 13) loadCheckins(b);
+  if (z >= 13) loadCommunity(b);
   S.view = inView;
   history.replaceState(null, '', `#${c.lat.toFixed(5)},${c.lng.toFixed(5)},${z}`);
   store.set('lastView', JSON.stringify([c.lat, c.lng, z]));
 
   // category chips with open counts
   const openAll = inView.filter((it) => isOpen(it.st.k));
-  const counts = { all: openAll.length, food: 0, bakery: 0, pharmacy: 0, fuel: 0, atm: 0 };
+  const counts = { all: openAll.length, food: 0, eat: 0, bakery: 0, pharmacy: 0, fuel: 0, atm: 0 };
   for (const it of openAll) counts[it.cat]++;
   $('#cats').innerHTML = Object.entries(I18N[S.lang].cats).map(([k, v]) =>
     `<button type="button" class="chip" data-cat="${k}" aria-pressed="${k === S.cat}"><span class="ico c-${k}">${svg(k)}</span>${esc(v)} <span class="n">${counts[k]}</span></button>`).join('');
@@ -619,12 +686,11 @@ function locate(isAuto) {
 }
 function showLocErr() { S.notices.loc = { cls: 'err', text: t('geoFail') }; renderNotices(); }
 
-// ---------- shops added by people (OpenStreetMap notes, no server of our own) ----------
-// A report becomes a public OSM note tagged #betachpatuach. Everyone's app reads those notes for the visible
-// area and shows them right away; OSM mappers can then add the shop to the map for good.
+// ---------- shops added by people ----------
+// New shops go to our database (community.js). Shops added earlier as OpenStreetMap notes tagged #betachpatuach
+// are still read, so nothing people already added disappears.
 const NOTES_API = 'https://api.openstreetmap.org/api/0.6/notes';
 const NOTE_TAG = '#betachpatuach';
-const OSM_TYPE = { food: 'shop=convenience', bakery: 'shop=bakery', pharmacy: 'amenity=pharmacy', fuel: 'amenity=fuel' };
 let USER_SHOPS = [];
 const noteTiles = new Map();
 function noteToShop(f) {
@@ -687,7 +753,7 @@ function addPick(latlng) {
   $('#addHint').textContent = t('addHintForm');
   $('#addFields').hidden = false;
   $('#addName').placeholder = t('addName');
-  $('#addType').innerHTML = ['food', 'bakery', 'pharmacy', 'fuel'].map((k) => `<option value="${k}"${k === ADD.cat ? ' selected' : ''}>${esc(I18N[S.lang].cats[k])}</option>`).join('');
+  $('#addType').innerHTML = ['food', 'eat', 'bakery', 'pharmacy', 'fuel', 'atm'].map((k) => `<option value="${k}"${k === ADD.cat ? ' selected' : ''}>${esc(I18N[S.lang].cats[k])}</option>`).join('');
   const opts = [['24/7', t('h247')], ['24/6', t('h246')], ['?', t('hUnknown')], ['other', t('addHoursOther')]];
   $('#addHours').innerHTML = opts.map(([v, l]) => `<button type="button" role="radio" data-h="${v}" aria-checked="${v === ADD.hours}">${esc(l)}</button>`).join('');
   $('#addHoursText').placeholder = t('addHoursPh');
@@ -700,21 +766,19 @@ async function addSubmit(e) {
   e.preventDefault();
   const name = $('#addName').value.trim();
   if (!name || !ADD.pin) return;
-  const hours = ADD.hours === 'other' ? ($('#addHoursText').value.trim() || '?') : ADD.hours;
-  const text = `${name}\n${OSM_TYPE[$('#addType').value]}\nopening_hours=${hours}\n\nShop reported by a user of בטוח? פתוח! (betahopen.app). ${NOTE_TAG}`;
+  const hours = ADD.hours === 'other' ? normalizeUserHours($('#addHoursText').value) : ADD.hours === '?' ? null : ADD.hours;
+  if (ADD.hours === 'other' && !hours) { $('#addNote').textContent = t('fixBad'); return; }
+  const cat = $('#addType').value;
   const btn = $('#addSend'); btn.disabled = true;
   try {
-    const body = new URLSearchParams({ lat: ADD.pin.lat.toFixed(6), lon: ADD.pin.lng.toFixed(6), text });
-    const r = await fetch(`${NOTES_API}.json`, { method: 'POST', body });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    const s = noteToShop(await r.json());
-    if (s) USER_SHOPS.push(s);
-    track('add-sent', `add · ${$('#addType').value} · ${hours === '?' ? 'no hours' : 'hours'}`);
+    const row = await DB.addPlace({ lat: +ADD.pin.lat.toFixed(6), lon: +ADD.pin.lng.toFixed(6), name, cat, opening_hours: hours });
+    USER_SHOPS.push(placeToShop(row));
+    track('add-sent', `add · ${cat} · ${hours ? 'hours' : 'no hours'}`);
     addStop();
     S.notices.loc = { cls: 'info', text: t('addThanks', { n: name }) }; renderNotices();
     refresh();
-  } catch {
-    $('#addNote').textContent = t('addFail');
+  } catch (err) {
+    $('#addNote').textContent = t(err.code === 'rate_limited' ? 'tooMany' : 'addFail');
   } finally { btn.disabled = false; }
 }
 function initAdd() {
@@ -732,113 +796,119 @@ function initAdd() {
   map.on('click', (e) => { if (ADD.on) addPick(e.latlng); });
 }
 
-// ---------- "it's open" check-ins (ntfy.sh public topics, kept 12 h; no personal data) ----------
-// One topic per ~5 km tile. A message is {"s": shopId, "v": "open"|"closed"}; ntfy stamps the time.
-const CI_T = 0.05, CI = new Map(), ciTiles = new Map();
-const ciTopic = (lat, lon) => `betachpatuach-ci-${Math.floor(lat / CI_T)}-${Math.floor(lon / CI_T)}`;
-function ciAdd(m) {
-  try {
-    const x = JSON.parse(m.message);
-    if (!x || typeof x.s !== 'string' || (x.v !== 'open' && x.v !== 'closed')) return;
-    const arr = CI.get(x.s) || [];
-    if (!arr.some((y) => y.id === m.id)) arr.push({ id: m.id, v: x.v, time: m.time });
-    arr.sort((a, b) => b.time - a.time);
-    CI.set(x.s, arr.slice(0, 20));
-  } catch {}
+// ---------- community data from the database: added shops, hours fixes, check-ins, parking reports ----------
+const CI = new Map(), FIX = new Map(), comTiles = new Map(), CT = 0.05;
+const toSec = (iso) => Date.parse(iso) / 1000;
+const CAT_TAGS = { food: { shop: 'convenience' }, eat: { amenity: 'fast_food' }, bakery: { shop: 'bakery' }, pharmacy: { amenity: 'pharmacy' }, fuel: { amenity: 'fuel' }, atm: { amenity: 'atm' } };
+function placeToShop(r) {
+  const tags = { name: r.name, ...CAT_TAGS[r.cat], 'source:hours': 'user' };
+  if (r.opening_hours) tags.opening_hours = r.opening_hours;
+  if (r.phone) tags.phone = r.phone;
+  return { id: 'p' + r.id, lat: r.lat, lon: r.lon, tags, cat: r.cat, user: true };
+}
+function ciPut(shopId, v, time, id) {
+  const arr = CI.get(shopId) || [];
+  if (!arr.some((y) => y.id === id)) arr.push({ id, v, time });
+  arr.sort((a, b) => b.time - a.time);
+  CI.set(shopId, arr.slice(0, 20));
 }
 function ciLatest(id) { const a = CI.get(id); return a && a[0]; }
 function ciAgo(time) {
   const n = Math.round((Date.now() / 1000 - time) / 60);
   return n < 2 ? t('ciNow') : t('ciAgo', { n });
 }
-async function loadCheckins(bounds) {
-  const topics = new Set();
-  for (let la = Math.floor(bounds.getSouth() / CI_T); la <= Math.floor(bounds.getNorth() / CI_T); la++)
-    for (let lo = Math.floor(bounds.getWest() / CI_T); lo <= Math.floor(bounds.getEast() / CI_T); lo++) topics.add(`betachpatuach-ci-${la}-${lo}`);
-  if (topics.size > 6) return;
+// Loads community data for the visible area, ~5 km tiles, each re-read at most every 2 minutes.
+async function loadCommunity(bounds) {
+  if (!window.DB) return false;
+  const keys = [];
+  for (let la = Math.floor(bounds.getSouth() / CT); la <= Math.floor(bounds.getNorth() / CT); la++)
+    for (let lo = Math.floor(bounds.getWest() / CT); lo <= Math.floor(bounds.getEast() / CT); lo++) keys.push([la, lo]);
+  if (keys.length > 9) return false;
   let got = false;
-  await Promise.all([...topics].map(async (tp) => {
-    const last = ciTiles.get(tp);
-    if (last && Date.now() - last < 120000) return; // re-poll a tile at most every 2 minutes
-    ciTiles.set(tp, Date.now());
+  await Promise.all(keys.map(async ([la, lo]) => {
+    const k = la + ',' + lo, last = comTiles.get(k);
+    if (last && Date.now() - last < 120000) return;
+    comTiles.set(k, Date.now());
     try {
-      const txt = await (await fetch(`https://ntfy.sh/${tp}/json?poll=1&since=12h`)).text();
-      for (const line of txt.split('\n')) {
-        if (!line.trim()) continue;
-        const m = JSON.parse(line);
-        if (m.event === 'message') { ciAdd(m); got = true; }
-      }
-    } catch { ciTiles.delete(tp); }
+      const d = await DB.area([la * CT, lo * CT, (la + 1) * CT, (lo + 1) * CT]);
+      for (const r of d.places) { const s = placeToShop(r); if (!USER_SHOPS.some((x) => x.id === s.id)) USER_SHOPS.push(s); }
+      for (const r of d.fixes) { const cur = FIX.get(r.shop_id); if (!cur || toSec(r.created_at) > cur.time) FIX.set(r.shop_id, { oh: r.opening_hours, time: toSec(r.created_at) }); }
+      for (const r of d.checkins) ciPut(r.shop_id, r.status, toSec(r.created_at), 'c' + r.id);
+      for (const r of d.parking) pkPut(r.parking_id, r.status, toSec(r.created_at), 'k' + r.id);
+      got = true;
+    } catch { comTiles.delete(k); }
   }));
   if (got) refreshSoon();
+  return got;
 }
 let refreshTimer = null;
 function refreshSoon() { clearTimeout(refreshTimer); refreshTimer = setTimeout(refresh, 50); }
+const notify = (text, cls = 'info') => { S.notices.loc = { cls, text }; renderNotices(); };
 async function checkIn(id, v) {
   const it = S.view.find((x) => x.id === id);
   if (!it) return;
-  const note = (text, cls = 'info') => { S.notices.loc = { cls, text }; renderNotices(); };
-  if (!S.me) { note(t('ciNeedLoc')); locate(false); return; }
-  if (distM(S.me.lat, S.me.lon, it.lat, it.lon) > 300) { note(t('ciFar')); return; }
-  const key = 'ci:' + id;
-  const lastMine = Number(store.get(key) || 0);
-  if (Date.now() - lastMine < 30 * 60000) { note(t('ciTooSoon')); return; }
+  if (!S.me) { notify(t('ciNeedLoc')); locate(false); return; }
+  if (distM(S.me.lat, S.me.lon, it.lat, it.lon) > 300) { notify(t('ciFar')); return; }
   try {
-    const r = await fetch(`https://ntfy.sh/${ciTopic(it.lat, it.lon)}`, { method: 'POST', body: JSON.stringify({ s: id, v }) });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    ciAdd(await r.json());
-    store.set(key, String(Date.now()));
+    const r = await DB.checkin({ shop_id: id, lat: it.lat, lon: it.lon, status: v });
+    ciPut(id, v, toSec(r.created_at), 'c' + r.id);
     track('checkin', `${v} · ${it.cat}`);
-    note(t('ciThanks'));
+    notify(t('ciThanks'));
     refresh();
-  } catch { note(t('addFail'), 'err'); }
+  } catch (err) { notify(t(err.code === 'too_soon' ? 'ciTooSoon' : err.code === 'rate_limited' ? 'tooMany' : 'addFail'), err.code ? 'info' : 'err'); }
+}
+
+// ---------- "Wrong hours? Fix them" ----------
+// Accepts OSM syntax (Su-Th 07:00-23:00; Fr 07:00-14:00), 24/7, 24/6, or a plain daily range like 7:00-23:00.
+function normalizeUserHours(raw) {
+  const v = (raw || '').trim();
+  if (!v) return null;
+  if (v === '24/7' || v === '24/6') return v;
+  const m = v.match(/^(\d{1,2})[:.](\d{2})\s*[-–]\s*(\d{1,2})[:.](\d{2})$/);
+  const val = m ? `Mo-Su ${m[1].padStart(2, '0')}:${m[2]}-${m[3].padStart(2, '0')}:${m[4]}` : v;
+  return parseHours(val, 32, 35) ? val.slice(0, 200) : null;
+}
+async function submitFix(id, value) {
+  const it = S.view.find((x) => x.id === id);
+  const oh = normalizeUserHours(value);
+  if (!it || !oh) { notify(t('fixBad'), 'err'); return; }
+  try {
+    const r = await DB.fixHours({ shop_id: id, lat: it.lat, lon: it.lon, opening_hours: oh });
+    FIX.set(id, { oh, time: toSec(r.created_at) });
+    track('hours-fix', it.cat);
+    notify(t('fixThanks'));
+    S.fixOpen = null;
+    refresh();
+  } catch (err) { notify(t(err.code === 'rate_limited' ? 'tooMany' : 'addFail'), 'err'); }
+}
+function fixFormHTML(it) {
+  if (S.fixOpen !== it.id) return `<button type="button" class="fix-open" data-fix-open="${esc(it.id)}">✎ ${esc(t('fixOpen'))}</button>`;
+  return `<div class="fix-form" data-fix-for="${esc(it.id)}">
+    <p>${esc(t('fixTitle'))}</p>
+    <div class="fix-quick"><button type="button" data-fix-quick="24/7">${esc(t('h247'))}</button><button type="button" data-fix-quick="24/6">${esc(t('h246'))}</button></div>
+    <input type="text" id="fixInput" maxlength="200" placeholder="${esc(t('fixPh'))}" dir="ltr">
+    <div class="fix-actions"><button type="button" class="walk" data-fix-send>${esc(t('fixSend'))}</button><button type="button" class="ghost" data-fix-cancel>${esc(t('addCancel'))}</button></div>
+  </div>`;
 }
 
 // ---------- parking (car parks from the map tiles we already load for shade) ----------
 const PARK = { on: false, layer: null, nearMarker: null, cache: new Map() };
 const pid = (p) => p.lat.toFixed(5) + ',' + p.lon.toFixed(5);
 
-// Parking reports: same approach as check-ins (ntfy.sh topic per ~5 km tile, kept 12 h).
-// Message {"p": "lat,lon", "v": "free"|"busy"|"full"|"gone"}; a report counts for 90 minutes ("gone": 12 h).
-const PK = new Map(), pkTiles = new Map();
+// Parking reports (database): a report counts for 90 minutes ("no parking here": 12 h).
+const PK = new Map();
 const PK_EMOJI = { free: '🟢', busy: '🟡', full: '🔴', gone: '⚫' };
-const pkTopic = (lat, lon) => `betachpatuach-pk-${Math.floor(lat / CI_T)}-${Math.floor(lon / CI_T)}`;
-function pkAdd(m) {
-  try {
-    const x = JSON.parse(m.message);
-    if (!x || typeof x.p !== 'string' || !PK_EMOJI[x.v]) return;
-    const arr = PK.get(x.p) || [];
-    if (!arr.some((y) => y.id === m.id)) arr.push({ id: m.id, v: x.v, time: m.time });
-    arr.sort((a, b) => b.time - a.time);
-    PK.set(x.p, arr.slice(0, 10));
-  } catch {}
+function pkPut(parkId, v, time, id) {
+  const arr = PK.get(parkId) || [];
+  if (!arr.some((y) => y.id === id)) arr.push({ id, v, time });
+  arr.sort((a, b) => b.time - a.time);
+  PK.set(parkId, arr.slice(0, 10));
 }
 function pkLatest(id) {
   const r = (PK.get(id) || [])[0];
   if (!r) return null;
   const age = Date.now() / 1000 - r.time;
   return age < (r.v === 'gone' ? 12 * 3600 : 90 * 60) ? r : null;
-}
-async function loadParkReports(s, w, n, e) {
-  const topics = new Set();
-  for (let la = Math.floor(s / CI_T); la <= Math.floor(n / CI_T); la++)
-    for (let lo = Math.floor(w / CI_T); lo <= Math.floor(e / CI_T); lo++) topics.add(`betachpatuach-pk-${la}-${lo}`);
-  if (topics.size > 6) return false;
-  let got = false;
-  await Promise.all([...topics].map(async (tp) => {
-    const last = pkTiles.get(tp);
-    if (last && Date.now() - last < 120000) return;
-    pkTiles.set(tp, Date.now());
-    try {
-      const txt = await (await fetch(`https://ntfy.sh/${tp}/json?poll=1&since=12h`)).text();
-      for (const line of txt.split('\n')) {
-        if (!line.trim()) continue;
-        const m = JSON.parse(line);
-        if (m.event === 'message') { pkAdd(m); got = true; }
-      }
-    } catch { pkTiles.delete(tp); }
-  }));
-  return got;
 }
 function pkStatusText(r) { return `${PK_EMOJI[r.v]} ${t('pk_' + r.v)}, ${ciAgo(r.time)}`; }
 function pkPopupHTML(p) {
@@ -860,7 +930,7 @@ async function drawParking() {
   const b = map.getBounds().pad(0.1);
   const [list] = await Promise.all([
     Route.parkingIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]),
-    loadParkReports(b.getSouth(), b.getWest(), b.getNorth(), b.getEast()),
+    loadCommunity(b),
   ]);
   if (!PARK.on) return;
   if (PARK.layer) PARK.layer.remove();
@@ -873,22 +943,17 @@ async function drawParking() {
 }
 async function pkReport(id, v) {
   const [lat, lon] = id.split(',').map(Number);
-  const note = (text, cls = 'info') => { S.notices.loc = { cls, text }; renderNotices(); };
-  if (!S.me) { note(t('pkNeedLoc')); locate(false); return; }
-  if (distM(S.me.lat, S.me.lon, lat, lon) > 500) { note(t('pkFar')); return; }
-  const key = 'pk:' + id;
-  if (Date.now() - Number(store.get(key) || 0) < 15 * 60000) { note(t('ciTooSoon')); return; }
+  if (!S.me) { notify(t('pkNeedLoc')); locate(false); return; }
+  if (distM(S.me.lat, S.me.lon, lat, lon) > 500) { notify(t('pkFar')); return; }
   try {
-    const r = await fetch(`https://ntfy.sh/${pkTopic(lat, lon)}`, { method: 'POST', body: JSON.stringify({ p: id, v }) });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    pkAdd(await r.json());
-    store.set(key, String(Date.now()));
+    const r = await DB.parking({ parking_id: id, lat, lon, status: v });
+    pkPut(id, v, toSec(r.created_at), 'k' + r.id);
     track('parking-report', v);
-    note(t('ciThanks'));
+    notify(t('ciThanks'));
     map.closePopup();
     drawParking();
     refresh();
-  } catch { note(t('addFail'), 'err'); }
+  } catch (err) { notify(t(err.code === 'too_soon' ? 'ciTooSoon' : err.code === 'rate_limited' ? 'tooMany' : 'addFail'), err.code ? 'info' : 'err'); }
 }
 function parkLineHTML(itId) {
   const c = PARK.cache.get(itId);
@@ -905,7 +970,6 @@ async function fillParkLine(it) {
     for (const p of list) { const x = distM(it.lat, it.lon, p.lat, p.lon); if (x < bd) { bd = x; best = p; } }
     PARK.cache.set(it.id, best ? { p: best, d: bd } : null);
   }
-  await loadParkReports(it.lat - 0.01, it.lon - 0.01, it.lat + 0.01, it.lon + 0.01);
   const el2 = document.querySelector(`[data-park-for="${CSS.escape(it.id)}"]`);
   if (el2) el2.innerHTML = parkLineHTML(it.id);
 }
@@ -946,7 +1010,7 @@ function shadeNowClick(redraw = true) {
   SH.live = true;
   const min = shadeMinutes(new Date());
   $('#shadeTime').value = min; shadeSetTime(min);
-  if (redraw) drawShade();
+  if (redraw) { drawShade(); applyTheme(); }
 }
 async function drawShade() {
   if (!SH.on || !SH.canvas) return;
@@ -971,7 +1035,7 @@ async function drawShade() {
   const tanAlt = Math.tan(sun.altitude);
   const mPerDegLat = 111320, mPerDegLon = 111320 * Math.cos(c.lat * Math.PI / 180);
   const P = (lat, lon) => map.latLngToContainerPoint([lat, lon]);
-  ctx.fillStyle = 'rgba(28, 44, 78, 0.42)';
+  ctx.fillStyle = 'rgba(20, 32, 84, 0.5)';
   ctx.beginPath();
   const vb = map.getBounds(), maxLen = Math.min(120 / tanAlt, 400) / 111320;
   const S0 = vb.getSouth() - maxLen, N0 = vb.getNorth() + maxLen, W0 = vb.getWest() - maxLen * 1.3, E0 = vb.getEast() + maxLen * 1.3;
@@ -991,13 +1055,22 @@ async function drawShade() {
     }
   }
   ctx.fill('nonzero');
+  // Cut the buildings themselves out, so the shadow reads as the dark patch next to each house.
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.beginPath();
+  for (const bl of blds) {
+    const pts = bl.poly.map(([la, lo]) => P(la, lo));
+    ctx.moveTo(pts[0].x, pts[0].y); for (const q of pts) ctx.lineTo(q.x, q.y); ctx.closePath();
+  }
+  ctx.fill('nonzero');
+  ctx.globalCompositeOperation = 'source-over';
   if (S.notices.loc && (S.notices.loc.text === t('shadeNight') || S.notices.loc.text === t('shadeZoom'))) { S.notices.loc = null; renderNotices(); }
 }
 function initShade() {
   $('#shadeTime').addEventListener('input', (e) => {
     SH.live = false;
     shadeSetTime(+e.target.value);
-    clearTimeout(SH.timer); SH.timer = setTimeout(drawShade, 60);
+    clearTimeout(SH.timer); SH.timer = setTimeout(() => { drawShade(); applyTheme(); }, 60);
   });
   $('#shadeTime').addEventListener('change', () => { track('shade-time', fmtTime(SH.time)); if (RT.target) showRoute(RT.target); });
   $('#shadeNow').addEventListener('click', () => { shadeNowClick(); if (RT.target) showRoute(RT.target); });
@@ -1013,25 +1086,30 @@ const darkMQ = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
   const root = document.documentElement;
   if (THEME === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', THEME);
-  const dark = THEME === 'dark' || (THEME === 'auto' && (darkMQ.matches || sunIsDown()));
+  const dark = THEME === 'dark' || (THEME === 'auto' && sunIsDown()); // in auto the map follows the sun where it is, not the phone's dark mode
+  const changed = root.classList.contains('night-map') !== dark;
   root.classList.toggle('night-map', dark);
+  if (changed) setGLNight(dark);
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a0f13' : '#0e141a');
   const b = $('#themeBtn');
   if (b) { b.textContent = THEME_ICON[THEME]; const label = t({ auto: 'themeAuto', light: 'themeLight', dark: 'themeDark' }[THEME]); b.title = label; b.setAttribute('aria-label', label); }
-  if (typeof drawMarkers === 'function' && S.loaded) refresh(); // marker colours come from CSS variables
-  drawLights();
+  if (changed || !applyTheme.done) { if (S.loaded) refresh(); drawLights(); } // marker colours come from CSS variables
+  applyTheme.done = true;
 }
 // Real darkness where the map is: the sun more than 4 degrees below the horizon (end of civil twilight-ish).
+// The time the map shows: the shade slider when someone moved it, otherwise now.
+const sceneTime = () => (SH.on && !SH.live && SH.time ? SH.time : new Date());
 function sunIsDown() {
   if (!map) return false;
   const c = map.getCenter();
-  return SunCalc.getPosition(new Date(), c.lat, c.lng).altitude < -4 * Math.PI / 180;
+  return SunCalc.getPosition(sceneTime(), c.lat, c.lng).altitude < -4 * Math.PI / 180;
 }
 function initTheme() {
   $('#themeBtn').addEventListener('click', () => {
     THEME = { auto: 'light', light: 'dark', dark: 'auto' }[THEME];
     try { localStorage.setItem('theme', THEME); } catch {}
     track('theme', THEME);
+    applyTheme.done = false;
     applyTheme();
   });
   darkMQ.addEventListener?.('change', () => { if (THEME === 'auto') applyTheme(); });
@@ -1041,9 +1119,52 @@ function initTheme() {
   applyTheme();
 }
 
+// ---------- night palette for the vector map ----------
+const GLN = { saved: null };
+function nightPaint(l) {
+  const sl = l['source-layer'] || '', id = l.id;
+  if (l.type === 'background') return { 'background-color': '#0e1726' };
+  if (l.type === 'fill') {
+    if (sl === 'water') return { 'fill-color': '#0b2542' };
+    if (sl === 'building') return { 'fill-color': '#1e293b', 'fill-outline-color': '#2b3850' };
+    if (sl === 'aeroway') return { 'fill-color': '#18212e' };
+    return { 'fill-color': '#122029' };
+  }
+  if (l.type === 'fill-extrusion') return { 'fill-extrusion-color': '#243047' };
+  if (l.type === 'line') {
+    if (sl === 'waterway') return { 'line-color': '#14365c' };
+    if (sl === 'boundary') return null;
+    if (sl === 'transportation') {
+      if (/casing/.test(id)) return { 'line-color': '#0a111c' };
+      if (/rail|transit/.test(id)) return { 'line-color': '#3a4256' };
+      if (/motorway|trunk|primary/.test(id)) return { 'line-color': '#5d6d8a' };
+      return { 'line-color': '#3c4a62' };
+    }
+    return null;
+  }
+  if (l.type === 'symbol') {
+    const house = sl === 'housenumber';
+    return { 'text-color': house ? '#b9c6d8' : sl === 'water_name' ? '#7fb0e6' : '#eef3fa', 'text-halo-color': '#08101c', 'text-halo-width': house ? 1.2 : 1.6 };
+  }
+  return null;
+}
+function setGLNight(on) {
+  const gm = S.gl?.getMaplibreMap?.();
+  if (!gm || !gm.isStyleLoaded()) return;
+  if (!GLN.saved) GLN.saved = new Map();
+  for (const l of gm.getStyle().layers) {
+    const np = nightPaint(l); if (!np) continue;
+    for (const [k, v] of Object.entries(np)) {
+      const key = l.id + '|' + k;
+      if (!GLN.saved.has(key)) GLN.saved.set(key, gm.getPaintProperty(l.id, k));
+      try { gm.setPaintProperty(l.id, k, on ? v : GLN.saved.get(key)); } catch {}
+    }
+  }
+}
+
 // ---------- night lights: warm street lights along the road network + glowing open shops ----------
 // Real street-lamp positions are not in the map data, so lights follow the streets at an even on-screen spacing.
-const LT = { canvas: null, seq: 0, sprite: null, shopSprite: null };
+const LT = { canvas: null, seq: 0, shopSprite: null };
 function glowSprite(r, rgb, core) {
   const c = document.createElement('canvas'); c.width = c.height = r * 2;
   const g = c.getContext('2d'), grad = g.createRadialGradient(r, r, 0, r, r, r);
@@ -1052,15 +1173,48 @@ function glowSprite(r, rgb, core) {
   g.fillStyle = grad; g.fillRect(0, 0, r * 2, r * 2);
   return c;
 }
+// Lamps every ~25-120 m along the streets (closer when zoomed in), drawn by the vector map below street names.
+async function drawLamps(on, seq) {
+  const gm = S.gl?.getMaplibreMap?.();
+  if (!gm || !gm.isStyleLoaded()) return;
+  if (!gm.getSource('lamps')) {
+    gm.addSource('lamps', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+    const firstLabel = gm.getStyle().layers.find((l) => l.type === 'symbol')?.id;
+    gm.addLayer({ id: 'lamps-glow', type: 'circle', source: 'lamps', paint: {
+      'circle-color': '#ffbf66', 'circle-blur': 1, 'circle-opacity': 0.55,
+      'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, ['case', ['get', 'm'], 5, 3], 16, ['case', ['get', 'm'], 16, 11], 19, 34] } }, firstLabel);
+    gm.addLayer({ id: 'lamps-core', type: 'circle', source: 'lamps', minzoom: 15, paint: {
+      'circle-color': '#fff0c8', 'circle-blur': 0.6, 'circle-opacity': 0.9,
+      'circle-radius': ['interpolate', ['linear'], ['zoom'], 15, 1.2, 19, 3.5] } }, firstLabel);
+  }
+  const src = gm.getSource('lamps');
+  if (!on) { src.setData({ type: 'FeatureCollection', features: [] }); return; }
+  const z = map.getZoom(), b = map.getBounds().pad(0.05);
+  const roads = await Route.roadsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
+  if (seq !== LT.seq || !roads) return;
+  const gapM = z >= 16 ? 25 : z >= 15 ? 40 : z >= 14 ? 70 : 120;
+  const kx = Math.cos(map.getCenter().lat * Math.PI / 180);
+  const feats = [];
+  for (const r of roads) {
+    if (!r.main && z < 14) continue;
+    let carry = 0;
+    for (let i = 1; i < r.pts.length && feats.length < 8000; i++) {
+      const [la0, lo0] = r.pts[i - 1], [la1, lo1] = r.pts[i];
+      const len = Math.hypot((la1 - la0) * 111320, (lo1 - lo0) * 111320 * kx);
+      let d = gapM - carry;
+      while (d <= len) { const f = d / len; feats.push({ type: 'Feature', properties: { m: !!r.main }, geometry: { type: 'Point', coordinates: [lo0 + (lo1 - lo0) * f, la0 + (la1 - la0) * f] } }); d += gapM; }
+      carry = (carry + len) % gapM;
+    }
+  }
+  src.setData({ type: 'FeatureCollection', features: feats });
+}
 async function drawLights() {
   const night = document.documentElement.classList.contains('night-map');
-  if (!night || !map) { if (LT.canvas) { LT.canvas.remove(); LT.canvas = null; } return; }
+  if (!night || !map) { if (LT.canvas) { LT.canvas.remove(); LT.canvas = null; } drawLamps(false, ++LT.seq); return; }
   if (!LT.canvas) {
     LT.canvas = L.DomUtil.create('canvas', 'lights-canvas leaflet-zoom-hide');
     map.getPanes().overlayPane.appendChild(LT.canvas);
-    LT.sprite = glowSprite(14, '255, 196, 110', 0.85);
-    LT.mainSprite = glowSprite(20, '255, 206, 130', 0.9);
-    LT.shopSprite = glowSprite(46, '255, 214, 140', 0.75);
+    LT.shopSprite = glowSprite(40, '255, 214, 140', 0.5);
   }
   const seq = ++LT.seq, cv = LT.canvas, ctx = cv.getContext('2d'), size = map.getSize();
   L.DomUtil.setPosition(cv, map.containerPointToLayerPoint([0, 0]));
@@ -1071,44 +1225,14 @@ async function drawLights() {
   cv.style.opacity = '1';
   ctx.globalCompositeOperation = 'lighter';
   const z = map.getZoom();
-  if (z >= 13) {
-    const b = map.getBounds().pad(0.05);
-    const roads = await Route.roadsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
-    if (seq !== LT.seq) return;
-    if (roads) {
-      const gap = z >= 16 ? 30 : z >= 15 ? 24 : 18; // px between lamps on screen
-      let n = 0;
-      for (const r of roads) {
-        if (!r.main && z < 14) continue;
-        let carry = 0, prev = null;
-        for (const [la, lo] of r.pts) {
-          const p = map.latLngToContainerPoint([la, lo]);
-          if (prev) {
-            const dx = p.x - prev.x, dy = p.y - prev.y, len = Math.hypot(dx, dy);
-            let d = gap - carry;
-            while (d <= len) {
-              const x = prev.x + (dx * d) / len, y = prev.y + (dy * d) / len;
-              if (x > -20 && y > -20 && x < size.x + 20 && y < size.y + 20) {
-                const sp = r.main ? LT.mainSprite : LT.sprite;
-                ctx.drawImage(sp, x - sp.width / 2, y - sp.height / 2);
-                if (++n > 6000) break;
-              }
-              d += gap;
-            }
-            carry = (carry + len) % gap;
-          }
-          prev = p;
-        }
-        if (n > 6000) break;
-      }
-    }
-  }
+  await drawLamps(night && z >= 13, seq);
+  if (seq !== LT.seq) return;
   // Open shops glow: the night version of "here it's open".
   for (const it of S.view || []) {
     if (!isOpen(it.st?.k)) continue;
     const p = map.latLngToContainerPoint([it.lat, it.lon]);
     if (p.x < -60 || p.y < -60 || p.x > size.x + 60 || p.y > size.y + 60) continue;
-    ctx.drawImage(LT.shopSprite, p.x - 46, p.y - 46);
+    ctx.drawImage(LT.shopSprite, p.x - 40, p.y - 40);
   }
   ctx.globalCompositeOperation = 'source-over';
 }
@@ -1140,6 +1264,32 @@ function initLayers() {
   applyLayers();
 }
 
+// ---------- optional account (email link) ----------
+async function renderAccount() {
+  const pop = $('#accPop'); if (!pop || pop.hidden) return;
+  const me = window.DB ? await DB.me() : null;
+  if (me && me.email && !me.anonymous) {
+    pop.innerHTML = `<p class="acc-title">${esc(t('accIn', { e: me.email }))}</p><button type="button" class="ghost" id="accOut">${esc(t('accOut'))}</button>`;
+    $('#accOut').onclick = async () => { await DB.signOut(); renderAccount(); };
+  } else {
+    pop.innerHTML = `<p class="acc-title">${esc(t('accTitle'))}</p><p class="acc-why">${esc(t('accWhy'))}</p>
+      <form id="accForm"><input type="email" id="accEmail" required placeholder="${esc(t('accEmail'))}" autocomplete="email"><button type="submit" class="walk">${esc(t('accSend'))}</button></form><p class="acc-msg" id="accMsg" aria-live="polite"></p>`;
+    $('#accForm').onsubmit = async (e) => {
+      e.preventDefault();
+      try { await DB.signInEmail($('#accEmail').value.trim()); $('#accMsg').textContent = t('accSent'); track('account', 'link sent'); }
+      catch { $('#accMsg').textContent = t('addFail'); }
+    };
+  }
+}
+function initAccount() {
+  const btn = $('#accBtn'), pop = $('#accPop');
+  if (!btn || !window.DB) { if (btn) btn.hidden = true; return; }
+  btn.textContent = '👤';
+  btn.addEventListener('click', (e) => { e.stopPropagation(); pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden)); renderAccount(); });
+  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#accPop, #accBtn')) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
+  DB.onChange(renderAccount);
+}
+
 // ---------- analytics (GoatCounter: cookie-free, no personal data) ----------
 function track(path, title) {
   try { window.goatcounter?.count?.({ path, title, event: true }); } catch {}
@@ -1160,6 +1310,7 @@ async function init() {
   initShade();
   initLayers();
   initTheme();
+  initAccount();
   map.on('moveend', () => { if (PARK.on) drawParking(); });
   initAdd();
   document.addEventListener('click', (e) => {
@@ -1195,6 +1346,13 @@ async function init() {
       track(`click-${kind}`, `${kind} · ${it ? it.cat : ''}`);
     }
     if (e.target.closest('a')) return;
+    const fo = e.target.closest('[data-fix-open]');
+    if (fo) { S.fixOpen = fo.dataset.fixOpen; refresh(); setTimeout(() => $('#fixInput')?.focus(), 30); return; }
+    if (e.target.closest('[data-fix-cancel]')) { S.fixOpen = null; refresh(); return; }
+    const fq = e.target.closest('[data-fix-quick]');
+    if (fq) { submitFix(fq.closest('[data-fix-for]').dataset.fixFor, fq.dataset.fixQuick); return; }
+    if (e.target.closest('[data-fix-send]')) { const f = e.target.closest('[data-fix-for]'); submitFix(f.dataset.fixFor, $('#fixInput').value); return; }
+    if (e.target.closest('.fix-form')) return;
     const cb = e.target.closest('[data-ci]');
     if (cb) { checkIn(cb.dataset.ci, cb.dataset.v); return; }
     const pg = e.target.closest('[data-park-go]');

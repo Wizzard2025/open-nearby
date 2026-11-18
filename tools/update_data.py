@@ -15,11 +15,13 @@ area["ISO3166-1"="IL"][admin_level=2]->.il;
   nwr["shop"~"^({SHOPS})$"](area.il);
   nwr["amenity"~"^(pharmacy|fuel)$"](area.il);
   nwr["amenity"="atm"](area.il);
+  nwr["amenity"~"^(restaurant|fast_food|cafe|food_court|ice_cream)$"](area.il);
   nwr["amenity"="bank"]["atm"="yes"](area.il);
 );
 out center tags;"""
 MIRRORS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
-KEEP = ["name", "name:he", "name:ru", "name:en", "name:ar", "brand", "shop", "amenity", "opening_hours", "operator", "cash_in", "atm",
+KEEP = ["name", "name:he", "name:ru", "name:en", "name:ar", "brand", "shop", "amenity", "opening_hours", "operator", "cash_in", "atm", "network", "brand:en", "brand:ru", "brand:he", "operator:en",
+        "cuisine", "diet:kosher", "kosher", "takeaway", "delivery", "fee",
         "addr:street", "addr:housenumber", "addr:city", "phone", "contact:phone", "website"]
 
 def fetch():

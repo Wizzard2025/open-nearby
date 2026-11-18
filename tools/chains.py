@@ -355,6 +355,8 @@ ALIASES = {
     "victory": ["ויקטורי", "victory"],
     "osherad": ["אושר עד", "osher ad", "osher-ad"],
     "manual": [],
+    "ampm": ["am:pm", "ampm", "am pm", "am-pm"],
+    "goodpharm": ["good pharm", "goodpharm", "גוד פארם", "גודפארם"],
 }
 
 
@@ -409,6 +411,9 @@ def merge_into(shops, branches):
             if b["opening_hours"]:
                 best[3]["opening_hours"] = b["opening_hours"]
                 best[3]["source:hours"] = b["chain"]
+                for field in ("source:hours:url", "source:hours:text", "check_date:opening_hours"):
+                    if b["tags"].get(field):
+                        best[3][field] = b["tags"][field]
             for k in ("phone", "addr:street"):
                 if b["tags"].get(k) and not best[3].get(k):
                     best[3][k] = b["tags"][k]
@@ -424,7 +429,9 @@ def merge_into(shops, branches):
 
 # Delek is off by default: its station list is only served through the site's internal AJAX call guarded by a
 # per-page token. Enable it (--with-delek) only after Delek agrees to the data being reused.
-FETCHERS = {"shufersal": shufersal, "superpharm": superpharm, "ramilevy": ramilevy, "victory": victory, "osherad": osherad, "manual": manual}
+from more_chains import ampm, goodpharm
+
+FETCHERS = {"ampm": ampm, "goodpharm": goodpharm, "shufersal": shufersal, "superpharm": superpharm, "ramilevy": ramilevy, "victory": victory, "osherad": osherad, "manual": manual}
 if "--with-delek" in sys.argv:
     FETCHERS["delek"] = delek
 
@@ -453,3 +460,4 @@ def fetch_all():
                 print(f"{name}: FAILED {e!r}; no cached copy", file=sys.stderr)
         branches += got
     return branches
+

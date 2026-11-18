@@ -6,6 +6,7 @@ import json, sys, time, urllib.request, urllib.parse, pathlib
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import chains  # noqa: E402
 import registries  # noqa: E402
+import stores  # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "data" / "shops.json"
 RAW = pathlib.Path(__file__).resolve().parent.parent / "data" / "osm_raw.json"
@@ -65,6 +66,9 @@ def main():
     # Official registries (Bank of Israel ATMs, Ministry of Energy fuel stations): confirm, enrich, add what is missing.
     for name, st in registries.merge_into(out).items():
         print(f"  {name}: {st}")
+    # Store lists every big food retailer must publish (Price Transparency Law): confirm branches, add missing ones.
+    for name, st in stores.merge_into(out).items():
+        print(f"  stores {name}: {st}")
     for name, st in stats.items():
         print(f"  {name}: {st}")
 

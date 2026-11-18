@@ -9,8 +9,8 @@ const I18N = {
     units: ['место', 'места', 'мест'], whereMe: 'рядом с вами', whereMap: 'в этой части карты',
     zoomIn: 'Приблизьте карту, чтобы увидеть магазины',
     source: 'Данные: OpenStreetMap и официальные сайты сетей, обновляются каждый день.', madeBy: 'Сделано в',
-    cats: { all: 'Всё', food: 'Продукты', bakery: 'Пекарни', pharmacy: 'Аптеки', fuel: 'Заправки' },
-    types: { supermarket: 'Супермаркет', convenience: 'Минимаркет', kiosk: 'Киоск', grocery: 'Продукты', greengrocer: 'Овощи и фрукты', deli: 'Деликатесы', alcohol: 'Алкоголь', bakery: 'Пекарня', pastry: 'Кондитерская', pharmacy: 'Аптека', chemist: 'Аптека и косметика', fuel: 'Заправка' },
+    cats: { all: 'Всё', food: 'Продукты', bakery: 'Пекарни', pharmacy: 'Аптеки', fuel: 'Заправки', atm: 'Банкоматы' },
+    types: { supermarket: 'Супермаркет', convenience: 'Минимаркет', kiosk: 'Киоск', grocery: 'Продукты', greengrocer: 'Овощи и фрукты', deli: 'Деликатесы', alcohol: 'Алкоголь', bakery: 'Пекарня', pastry: 'Кондитерская', pharmacy: 'Аптека', chemist: 'Аптека и косметика', fuel: 'Заправка', atm: 'Банкомат', bank: 'Банк с банкоматом' },
     open24: 'Круглосуточно', open: 'Открыто', until: 'до {t}', soon: 'Закроется через {m} мин',
     closed: 'Закрыто', opensAt: 'откроется в {t}', opensTomorrow: 'завтра в {t}', opensDay: '{d} в {t}',
     unknown: 'Часы не указаны', allDay: 'круглосуточно', dayOff: 'закрыто',
@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    atmDeposit: 'можно внести',
     nowLabel: 'сейчас',
     themeAuto: 'Тема: как на устройстве', themeLight: 'Тема: светлая', themeDark: 'Тема: тёмная (ночь)',
     lyShade: '☀ Тень от зданий', shadeNow: 'Сейчас', shadeNight: 'Солнце село — тени нет', shadeZoom: 'Приблизьте карту, чтобы увидеть тень',
@@ -39,8 +40,8 @@ const I18N = {
     units: ['מקום', 'מקומות', 'מקומות'], whereMe: 'לידך', whereMap: 'באזור המפה',
     zoomIn: 'הגדילו את המפה כדי לראות חנויות',
     source: 'נתונים: OpenStreetMap ואתרי הרשתות, מתעדכנים מדי יום.', madeBy: 'נבנה ב-',
-    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'דלק' },
-    types: { supermarket: 'סופרמרקט', convenience: 'מכולת', kiosk: 'קיוסק', grocery: 'מכולת', greengrocer: 'ירקן', deli: 'מעדנייה', alcohol: 'משקאות', bakery: 'מאפייה', pastry: 'קונדיטוריה', pharmacy: 'בית מרקחת', chemist: 'פארם', fuel: 'תחנת דלק' },
+    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'דלק', atm: 'כספומטים' },
+    types: { supermarket: 'סופרמרקט', convenience: 'מכולת', kiosk: 'קיוסק', grocery: 'מכולת', greengrocer: 'ירקן', deli: 'מעדנייה', alcohol: 'משקאות', bakery: 'מאפייה', pastry: 'קונדיטוריה', pharmacy: 'בית מרקחת', chemist: 'פארם', fuel: 'תחנת דלק', atm: 'כספומט', bank: 'בנק עם כספומט' },
     open24: '24 שעות', open: 'פתוח', until: 'עד {t}', soon: 'נסגר בעוד {m} דק׳',
     closed: 'סגור', opensAt: 'ייפתח ב-{t}', opensTomorrow: 'מחר ב-{t}', opensDay: '{d} ב-{t}',
     unknown: 'אין שעות', allDay: '24 שעות', dayOff: 'סגור',
@@ -54,6 +55,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    atmDeposit: 'אפשר להפקיד',
     nowLabel: 'עכשיו',
     themeAuto: 'ערכת נושא: כמו במכשיר', themeLight: 'ערכת נושא: בהירה', themeDark: 'ערכת נושא: כהה (לילה)',
     lyShade: '☀ צל מבניינים', shadeNow: 'עכשיו', shadeNight: 'השמש שקעה — אין צל', shadeZoom: 'הגדילו את המפה כדי לראות צל',
@@ -69,8 +71,8 @@ const I18N = {
     units: ['place', 'places', 'places'], whereMe: 'near you', whereMap: 'in this part of the map',
     zoomIn: 'Zoom in to see shops',
     source: 'Data: OpenStreetMap and the chains\' own websites, refreshed daily.', madeBy: 'Made by',
-    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas' },
-    types: { supermarket: 'Supermarket', convenience: 'Convenience store', kiosk: 'Kiosk', grocery: 'Grocery', greengrocer: 'Greengrocer', deli: 'Deli', alcohol: 'Liquor store', bakery: 'Bakery', pastry: 'Pastry shop', pharmacy: 'Pharmacy', chemist: 'Drugstore', fuel: 'Gas station' },
+    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas', atm: 'ATMs' },
+    types: { supermarket: 'Supermarket', convenience: 'Convenience store', kiosk: 'Kiosk', grocery: 'Grocery', greengrocer: 'Greengrocer', deli: 'Deli', alcohol: 'Liquor store', bakery: 'Bakery', pastry: 'Pastry shop', pharmacy: 'Pharmacy', chemist: 'Drugstore', fuel: 'Gas station', atm: 'ATM', bank: 'Bank with ATM' },
     open24: 'Open 24 hours', open: 'Open', until: 'until {t}', soon: 'Closes in {m} min',
     closed: 'Closed', opensAt: 'opens at {t}', opensTomorrow: 'tomorrow {t}', opensDay: '{d} {t}',
     unknown: 'No hours listed', allDay: '24 hours', dayOff: 'closed',
@@ -84,6 +86,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    atmDeposit: 'deposits',
     nowLabel: 'now',
     themeAuto: 'Theme: same as device', themeLight: 'Theme: light', themeDark: 'Theme: dark (night)',
     lyShade: '☀ Shade from buildings', shadeNow: 'Now', shadeNight: 'The sun has set — no shade', shadeZoom: 'Zoom in to see shade',
@@ -109,6 +112,7 @@ const CITIES = [
   ['eil', 29.5577, 34.9519, { ru: 'Эйлат', he: 'אילת', en: 'Eilat' }],
 ];
 const ICONS = {
+  atm: '<rect x="3" y="5.5" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18" stroke="currentColor" stroke-width="2"/><path d="M7 14.5h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
   all: '<path d="M4 9.5 5.2 4h13.6L20 9.5M4 9.5h16V20H4zM9.5 20v-5.5h5V20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
   food: '<path d="M3 4h2.2l2.3 10.3a1.8 1.8 0 0 0 1.8 1.4h7.6a1.8 1.8 0 0 0 1.7-1.3L20.5 8H6.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="9.5" cy="19.5" r="1.6" fill="currentColor"/><circle cx="17" cy="19.5" r="1.6" fill="currentColor"/>',
   bakery: '<path d="M4 13.5C4 9.4 7.6 6.5 12 6.5s8 2.9 8 7V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M9 10v3.5M12 9.5v4M15 10v3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
@@ -236,13 +240,14 @@ function weekTable(oh, now) {
 
 // ---------- data ----------
 function categoryOf(tg) {
+  if (tg.amenity === 'atm' || tg.amenity === 'bank') return 'atm';
   if (tg.amenity === 'fuel') return 'fuel';
   if (tg.amenity === 'pharmacy' || tg.shop === 'chemist') return 'pharmacy';
   if (tg.shop === 'bakery' || tg.shop === 'pastry') return 'bakery';
   return 'food';
 }
-const typeKey = (tg) => (tg.amenity === 'fuel' || tg.amenity === 'pharmacy' ? tg.amenity : tg.shop);
-const nameOf = (it) => it.tags['name:' + S.lang] || it.tags.name || it.tags.brand || I18N[S.lang].types[typeKey(it.tags)] || '';
+const typeKey = (tg) => (tg.amenity === 'fuel' || tg.amenity === 'pharmacy' || tg.amenity === 'atm' || tg.amenity === 'bank' ? tg.amenity : tg.shop);
+const nameOf = (it) => it.tags['name:' + S.lang] || it.tags.name || it.tags.brand || it.tags.operator || I18N[S.lang].types[typeKey(it.tags)] || '';
 function distM(aLat, aLon, bLat, bLon) {
   const R = 6371e3, r = Math.PI / 180;
   const dLat = (bLat - aLat) * r, dLon = (bLon - aLon) * r;
@@ -252,7 +257,7 @@ function distM(aLat, aLon, bLat, bLon) {
 const fmtDist = (m) => (m < 1000 ? Math.round(m / 10) * 10 + ' ' + t('m') : (m / 1000).toFixed(1).replace('.0', '') + ' ' + t('km'));
 let ALL = [];
 async function loadAll() {
-  const r = await fetch('data/shops.json');
+  const r = await fetch('data/shops.json', { cache: 'no-cache' });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   const j = await r.json();
   ALL = j.shops.map(([id, lat, lon, tags]) => ({ id, lat, lon, tags, cat: categoryOf(tags) }));
@@ -491,6 +496,7 @@ function shopHTML(it, now) {
   const tags = [];
   if (st.oh && st.k !== 'open24' && opensOnShabbat(it, st.oh, now)) tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`);
   if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);
+  if (tg.cash_in === 'yes') tags.push(`<span class="tag">${esc(t('atmDeposit'))}</span>`);
   const ci = ciLatest(it.id);
   if (ci && st.k !== 'ciopen' && Date.now() / 1000 - ci.time < 3 * 3600)
     tags.push(ci.v === 'open' ? `<span class="tag ci-ok">${esc(t('ciOkTag', { m: ciAgo(ci.time) }))}</span>` : `<span class="tag ci-bad">${esc(t('ciBadTag', { m: ciAgo(ci.time) }))}</span>`);
@@ -546,7 +552,7 @@ function refresh() {
 
   // category chips with open counts
   const openAll = inView.filter((it) => isOpen(it.st.k));
-  const counts = { all: openAll.length, food: 0, bakery: 0, pharmacy: 0, fuel: 0 };
+  const counts = { all: openAll.length, food: 0, bakery: 0, pharmacy: 0, fuel: 0, atm: 0 };
   for (const it of openAll) counts[it.cat]++;
   $('#cats').innerHTML = Object.entries(I18N[S.lang].cats).map(([k, v]) =>
     `<button type="button" class="chip" data-cat="${k}" aria-pressed="${k === S.cat}"><span class="ico c-${k}">${svg(k)}</span>${esc(v)} <span class="n">${counts[k]}</span></button>`).join('');

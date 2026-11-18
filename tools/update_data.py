@@ -5,6 +5,7 @@ import json, sys, time, urllib.request, urllib.parse, pathlib
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import chains  # noqa: E402
+import registries  # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "data" / "shops.json"
 RAW = pathlib.Path(__file__).resolve().parent.parent / "data" / "osm_raw.json"
@@ -18,9 +19,9 @@ area["ISO3166-1"="IL"][admin_level=2]->.il;
   nwr["amenity"~"^(restaurant|fast_food|cafe|food_court|ice_cream)$"](area.il);
   nwr["amenity"="bank"]["atm"="yes"](area.il);
 );
-out center tags;"""
+out center tags meta;"""
 MIRRORS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter"]
-KEEP = ["name", "name:he", "name:ru", "name:en", "name:ar", "brand", "shop", "amenity", "opening_hours", "operator", "cash_in", "atm", "network", "brand:en", "brand:ru", "brand:he", "operator:en",
+KEEP = ["check_date", "survey:date", "name", "name:he", "name:ru", "name:en", "name:ar", "brand", "shop", "amenity", "opening_hours", "operator", "cash_in", "atm", "network", "brand:en", "brand:ru", "brand:he", "operator:en",
         "cuisine", "diet:kosher", "kosher", "takeaway", "delivery", "fee",
         "addr:street", "addr:housenumber", "addr:city", "phone", "contact:phone", "website"]
 
@@ -49,13 +50,21 @@ def main():
             if lat is None:
                 continue
             tags = {k: v for k, v in e.get("tags", {}).items() if k in KEEP}
+            # When OSM last saw it: the newer of the last edit and an explicit "checked on" date.
+            seen = max(filter(None, [e.get("timestamp", "")[:10], tags.get("check_date", "")[:10], tags.get("survey:date", "")[:10]]), default="")
+            tags["src"] = f"osm@{seen}" if seen else "osm"
             out.append([e["type"][0] + str(e["id"]), round(lat, 6), round(lon, 6), tags])
         RAW.parent.mkdir(parents=True, exist_ok=True)
         RAW.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     osm_hours = sum('opening_hours' in s[3] for s in out)
 
     # Official chain branch lists: attach their hours to OSM points, add branches OSM doesn't have.
+    for s in out:
+        s[3].setdefault("src", "osm")
     stats = chains.merge_into(out, chains.fetch_all())
+    # Official registries (Bank of Israel ATMs, Ministry of Energy fuel stations): confirm, enrich, add what is missing.
+    for name, st in registries.merge_into(out).items():
+        print(f"  {name}: {st}")
     for name, st in stats.items():
         print(f"  {name}: {st}")
 

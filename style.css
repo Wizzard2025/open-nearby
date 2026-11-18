@@ -431,3 +431,9 @@ html.night-map #map { background: #0e1726; }
   .glance { justify-content: flex-end; top: calc(74px + env(safe-area-inset-top, 0px)); }
   .maplibregl-ctrl-top-right { top: calc(126px + env(safe-area-inset-top, 0px)); }
 }
+
+/* is the place really there: sources */
+.vsrc { margin: 0; font-size: 0.8rem; line-height: 1.35; }
+.vsrc.ok { color: var(--open); font-weight: 600; }
+.vsrc.one { color: var(--soon); }
+.src-est::before { content: '≈ '; font-weight: 700; }

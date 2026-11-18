@@ -403,9 +403,12 @@ def merge_into(shops, branches):
         st["branches"] += 1
         if b["opening_hours"]:
             st["with_hours"] += 1
+        src = f"chain:{b['chain']}@{date.today().isoformat()}"
         if best:
             used.add(best[0])
             st["matched"] += 1
+            have = [x for x in (best[3].get("src") or "").split(";") if x and not x.startswith("chain:")]
+            best[3]["src"] = ";".join(have + [src])
             if b["opening_hours"]:
                 best[3]["opening_hours"] = b["opening_hours"]
                 best[3]["source:hours"] = b["chain"]
@@ -417,6 +420,7 @@ def merge_into(shops, branches):
             if b["opening_hours"]:
                 tags["opening_hours"] = b["opening_hours"]
                 tags["source:hours"] = b["chain"]
+            tags["src"] = src
             shops.append([f"c{b['chain']}{b['id']}", round(b["lat"], 6), round(b["lon"], 6), tags])
             st["added"] += 1
     return stats

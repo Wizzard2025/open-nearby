@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    srcConfirmed: '✓ Подтверждено: {s}', srcSingle: 'Один источник: {s} — на месте не проверено', srcOld: 'данные от {y} г. — могли устареть', srcNames: { osm: 'OpenStreetMap', chain: 'сайт сети', boi: 'реестр Банка Израиля', moe: 'реестр Минэнергетики', user: 'посетитель' }, srcAsOf: 'от {d}', srcEst: 'Часы оценены: банкомат на стене отделения обычно работает круглосуточно', feeYes: 'комиссия', feeNo: 'без комиссии', atmInside: 'внутри отделения — по часам отделения', atmCount: '{n} банкомата', oldTag: '⚠ данные {y} г.',
     openNear: 'открыто рядом', go: 'Идти', adLabel: 'Реклама', adBanner: 'Здесь может быть ваша реклама — её видят те, кто ищет открытое рядом', adCardTitle: 'Ваш бизнес здесь', adCardSub: 'Покажитесь тем, кто рядом и ищет открытое', adClose: 'Скрыть рекламу', noneCard: 'Здесь ничего не открыто. Отдалите карту.', tilt3d: 'Наклонить карту (3D)', tilt2d: 'Вид сверху (2D)', listAll: 'Весь список',
     kickerAt: 'Открыто в {t}',
     srcChain: 'Часы с официального сайта сети', srcUser: 'Часы указал посетитель', srcOsm: 'Часы из OpenStreetMap — могут быть устаревшими', doubtClosed: 'посетитель: закрыто ({m})', doubtOpen: 'посетитель: открыто ({m})', showingAt: 'Показываю, что открыто в {t}. Нажмите «Сейчас», чтобы вернуться.',
@@ -60,6 +61,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    srcConfirmed: '✓ מאומת: {s}', srcSingle: 'מקור אחד: {s} — לא נבדק בשטח', srcOld: 'נתונים משנת {y} — ייתכן שהתיישנו', srcNames: { osm: 'OpenStreetMap', chain: 'אתר הרשת', boi: 'מאגר בנק ישראל', moe: 'מאגר משרד האנרגיה', user: 'מבקר' }, srcAsOf: 'מ-{d}', srcEst: 'השעות משוערות: כספומט בקיר הסניף פועל בדרך כלל מסביב לשעון', feeYes: 'בעמלה', feeNo: 'ללא עמלה', atmInside: 'בתוך הסניף — לפי שעות הסניף', atmCount: '{n} כספומטים', oldTag: '⚠ נתונים מ-{y}',
     openNear: 'פתוחים לידך', go: 'ללכת', adLabel: 'מודעה', adBanner: 'כאן יכולה להיות המודעה שלכם — רואים אותה מי שמחפשים מה פתוח בסביבה', adCardTitle: 'העסק שלכם כאן', adCardSub: 'הופיעו מול מי שנמצא קרוב ומחפש מה פתוח', adClose: 'להסתיר מודעה', noneCard: 'אין כאן מקומות פתוחים. הרחיקו את המפה.', tilt3d: 'להטות את המפה (3D)', tilt2d: 'מבט מלמעלה (2D)', listAll: 'כל הרשימה',
     kickerAt: 'פתוח ב-{t}',
     srcChain: 'שעות מהאתר הרשמי של הרשת', srcUser: 'שעות שעדכן מבקר', srcOsm: 'שעות מ-OpenStreetMap — ייתכן שאינן מעודכנות', doubtClosed: 'מבקר: סגור ({m})', doubtOpen: 'מבקר: פתוח ({m})', showingAt: 'מוצג מה פתוח ב-{t}. לחצו «עכשיו» כדי לחזור.',
@@ -96,6 +98,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    srcConfirmed: '✓ Confirmed by: {s}', srcSingle: 'Single source: {s} — not checked on the spot', srcOld: 'data from {y} — may be out of date', srcNames: { osm: 'OpenStreetMap', chain: "the chain's website", boi: 'Bank of Israel registry', moe: 'Ministry of Energy registry', user: 'a visitor' }, srcAsOf: 'as of {d}', srcEst: 'Estimated hours: an ATM on the branch wall usually works around the clock', feeYes: 'fee', feeNo: 'no fee', atmInside: 'inside the branch — branch hours', atmCount: '{n} ATMs', oldTag: '⚠ data from {y}',
     openNear: 'open nearby', go: 'Go', adLabel: 'Ad', adBanner: "Your ad here — seen by people looking for what's open nearby", adCardTitle: 'Your business here', adCardSub: "Get seen by people nearby looking for what's open", adClose: 'Hide ad', noneCard: 'Nothing open here. Zoom out.', tilt3d: 'Tilt the map (3D)', tilt2d: 'Top view (2D)', listAll: 'Full list',
     kickerAt: 'Open at {t}',
     srcChain: "Hours from the chain's official site", srcUser: 'Hours from a visitor', srcOsm: 'Hours from OpenStreetMap — may be out of date', doubtClosed: 'visitor: closed ({m})', doubtOpen: 'visitor: open ({m})', showingAt: "Showing what's open at {t}. Tap Now to go back.",
@@ -393,7 +396,7 @@ function cardsHTML(openL, now) {
     const st = it.st, mins = Math.max(1, Math.round(it.d / 80));
     return `<article class="pcard${S.selected === it.id ? ' sel' : ''}" data-card="${esc(it.id)}">
       <div class="pc-top">${brandTile(it)}<div class="pc-name"><b>${esc(nameOf(it))}</b><small>${it.d < 2500 ? `<b>${esc(t('walk', { m: mins }))}</b> · ` : ''}${esc(fmtDist(it.d))}</small></div></div>
-      <div class="pc-bottom"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && trustOf(it) === 'osm' ? ' approx' : ''}">${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>
+      <div class="pc-bottom"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && ['osm', 'est'].includes(trustOf(it)) ? ' approx' : ''}">${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>
       <button type="button" class="gobtn" data-walk="${esc(it.id)}">${esc(t('go'))}</button></div></article>`;
   });
   out.splice(Math.min(1, out.length), 0, adCardHTML());
@@ -648,7 +651,37 @@ function kindLine(it, type, name) {
 function trustOf(it) {
   const src = it.tags['source:hours'];
   if (it.fixed || src === 'user') return 'user';
+  if (src === 'estimate') return 'est';
   return src ? 'chain' : 'osm';
+}
+// Is the place really there? Independent sources that list it (OpenStreetMap, the chain's site, official registries,
+// a visitor's check-in) and how fresh each one is.
+function sourcesOf(it) {
+  const list = (it.tags.src || (it.user ? 'user' : 'osm')).split(';').filter(Boolean).map((x) => {
+    const [code, date] = x.split('@');
+    return { code: code.split(':')[0], date: date || '' };
+  });
+  const ci = ciLatest(it.id);
+  if (ci && ci.v === 'open' && !list.some((x) => x.code === 'user')) list.push({ code: 'user', date: new Date(ci.time * 1000).toISOString().slice(0, 10) });
+  const seen = new Map();
+  for (const x of list) if (!seen.has(x.code) || x.date > seen.get(x.code).date) seen.set(x.code, x);
+  return [...seen.values()];
+}
+const fmtDate = (d) => { try { return new Intl.DateTimeFormat(locale(), { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(d)); } catch { return d; } };
+function sourcesLine(it) {
+  const srcs = sourcesOf(it), names = I18N[S.lang].srcNames;
+  const txt = srcs.map((x) => names[x.code] + (x.date ? ' ' + t('srcAsOf', { d: fmtDate(x.date) }) : '')).join(' · ');
+  if (srcs.length >= 2) return `<p class="vsrc ok">${esc(t('srcConfirmed', { s: txt }))}</p>`;
+  const y = (srcs[0]?.date || '').slice(0, 4);
+  const old = y && +y < new Date().getFullYear() - 2;
+  return `<p class="vsrc one">${esc(t('srcSingle', { s: txt }))}${old ? `<br>${esc(t('srcOld', { y }))}` : ''}</p>`;
+}
+// A single, years-old source is worth a warning right in the list.
+function staleYear(it) {
+  const srcs = sourcesOf(it);
+  if (srcs.length !== 1 || !srcs[0].date) return null;
+  const y = +srcs[0].date.slice(0, 4);
+  return y && y < new Date().getFullYear() - 3 ? y : null;
 }
 // When the slider is not at "now", say clearly which time the list is showing.
 function renderTimeNote(at) {
@@ -666,6 +699,12 @@ function shopHTML(it, now) {
   if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);
   if (it.fixed) tags.push(`<span class="tag user">${esc(t('fixedTag'))}</span>`);
   if (tg.cash_in === 'yes') tags.push(`<span class="tag">${esc(t('atmDeposit'))}</span>`);
+  if (tg.fee === 'yes') tags.push(`<span class="tag warn">${esc(t('feeYes'))}</span>`);
+  else if (tg.fee === 'no' && typeKey(tg) === 'atm') tags.push(`<span class="tag">${esc(t('feeNo'))}</span>`);
+  if (tg['atm:where'] === 'בתוך הסניף') tags.push(`<span class="tag">${esc(t('atmInside'))}</span>`);
+  if (tg['atm:count']) tags.push(`<span class="tag">${esc(t('atmCount', { n: tg['atm:count'] }))}</span>`);
+  const sy = staleYear(it);
+  if (sy) tags.push(`<span class="tag warn">${esc(t('oldTag', { y: sy }))}</span>`);
   const own = ownerOf(tg);
   if (own && own.priv) tags.push(`<span class="tag warn">${esc(t('privAtm'))}</span>`);
   const kosher = tg['diet:kosher'] || tg.kosher;
@@ -678,7 +717,8 @@ function shopHTML(it, now) {
   const more = [];
   if (S.selected === it.id) {
     if (st.oh && st.k !== 'open24') more.push(weekTable(st.oh, now));
-    if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p><p class="src src-${trustOf(it)}">${esc(t({ chain: 'srcChain', user: 'srcUser', osm: 'srcOsm' }[trustOf(it)]))}</p>`);
+    if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p><p class="src src-${trustOf(it)}">${esc(t({ chain: 'srcChain', user: 'srcUser', osm: 'srcOsm', est: 'srcEst' }[trustOf(it)]))}</p>`);
+    more.push(sourcesLine(it));
     more.push(fixFormHTML(it));
     const acts = [
       `<button type="button" class="walk" data-walk="${esc(it.id)}">🚶 ${esc(t('walkBtn'))}</button>`,
@@ -696,7 +736,7 @@ function shopHTML(it, now) {
     ${brandTile(it)}
     <span class="name">${esc(name)}</span>
     <span class="dist">${walk}${fmtDist(it.d)}</span>
-    <span class="meta"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && trustOf(it) === 'osm' ? ' approx' : ''}"${st.oh && trustOf(it) === 'osm' ? ` title="${esc(t('srcOsm'))}"` : ''}>${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>${st.doubt ? `<span class="tag ci-bad">${esc(t(st.doubt.v === 'closed' ? 'doubtClosed' : 'doubtOpen', { m: ciAgo(st.doubt.time) }))}</span>` : ''}${tags.join('')}${kindLine(it, type, name)}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
+    <span class="meta"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && ['osm', 'est'].includes(trustOf(it)) ? ' approx' : ''}"${st.oh && ['osm', 'est'].includes(trustOf(it)) ? ` title="${esc(t(trustOf(it) === 'est' ? 'srcEst' : 'srcOsm'))}"` : ''}>${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>${st.doubt ? `<span class="tag ci-bad">${esc(t(st.doubt.v === 'closed' ? 'doubtClosed' : 'doubtOpen', { m: ciAgo(st.doubt.time) }))}</span>` : ''}${tags.join('')}${kindLine(it, type, name)}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
     <div class="more">${more.join('')}</div>
   </li>`;
 }

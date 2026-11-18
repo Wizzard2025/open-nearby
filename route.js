@@ -112,6 +112,20 @@ window.Route = (() => {
     }
     return layers;
   }
+  // LineString geometry -> list of lines (each a list of tile points).
+  function lines(geom) {
+    const out = []; let x = 0, y = 0, cur = null, i = 0;
+    while (i < geom.length) {
+      const c = geom[i++], cmd = c & 7, n = c >> 3;
+      for (let k = 0; k < n; k++) {
+        const dx = geom[i++], dy = geom[i++];
+        x += (dx >> 1) ^ -(dx & 1); y += (dy >> 1) ^ -(dy & 1);
+        if (cmd === 1) { if (cur && cur.length > 1) out.push(cur); cur = [[x, y]]; } else if (cur) cur.push([x, y]);
+      }
+    }
+    if (cur && cur.length > 1) out.push(cur);
+    return out;
+  }
   function rings(geom) {
     const out = []; let x = 0, y = 0, cur = null, i = 0;
     while (i < geom.length) {
@@ -142,8 +156,22 @@ window.Route = (() => {
         const lat = Math.atan(Math.sinh(Math.PI * (1 - (2 * (ty + py / L.extent)) / n))) / RAD;
         return [lat, lon];
       };
-      const parking = [];
+      const parking = [], roads = [];
+      const MAIN = /^(motorway|trunk|primary|secondary)$/, STREET = /^(tertiary|minor|service)$/;
       for (const L of layers) {
+        if (L.name === 'transportation') {
+          // Streets for the night-lights layer (paths, tracks, rail and ferries are skipped).
+          for (const F of L.feats) {
+            if (F.type !== 2) continue;
+            const tags = {};
+            for (let i = 0; i < F.tags.length; i += 2) tags[L.keys[F.tags[i]]] = L.values[F.tags[i + 1]];
+            const main = MAIN.test(tags.class || '');
+            if (!main && !STREET.test(tags.class || '')) continue;
+            if (tags.brunnel === 'tunnel') continue;
+            for (const ln of lines(F.geom)) roads.push({ main, pts: ln.map((pt) => toLL(L, pt)) });
+          }
+          continue;
+        }
         if (L.name === 'poi') {
           // Car parks are points in the poi layer (class/subclass "parking"; bicycle parking excluded).
           for (const F of L.feats) {
@@ -171,7 +199,7 @@ window.Route = (() => {
           for (const ring of rings(F.geom)) res.push({ h: Math.min(h, 150), poly: ring.map((pt) => toLL(L, pt)) });
         }
       }
-      return { obs: res, parking };
+      return { obs: res, parking, roads };
     })();
     tileCache.set(key, pr);
     pr.catch(() => tileCache.delete(key));
@@ -306,5 +334,13 @@ window.Route = (() => {
     return (await Promise.all(jobs)).flatMap((p) => (p ? p.obs : []));
   }
 
-  return { plan, weather, isHot, parkingIn, buildingsIn };
+  // Streets for the visible map (night lights): up to 16 tiles.
+  async function roadsIn([s, w, n, e]) {
+    const jobs = [];
+    for (let tx = lon2x(w); tx <= lon2x(e); tx++) for (let ty = lat2y(n); ty <= lat2y(s); ty++) jobs.push(loadTile(tx, ty).catch(() => null));
+    if (jobs.length > 16) return null;
+    return (await Promise.all(jobs)).flatMap((p) => (p ? p.roads : []));
+  }
+
+  return { plan, weather, isHot, parkingIn, buildingsIn, roadsIn };
 })();

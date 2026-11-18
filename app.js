@@ -24,6 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
+    nowLabel: 'сейчас',
     themeAuto: 'Тема: как на устройстве', themeLight: 'Тема: светлая', themeDark: 'Тема: тёмная (ночь)',
     lyShade: '☀ Тень от зданий', shadeNow: 'Сейчас', shadeNight: 'Солнце село — тени нет', shadeZoom: 'Приблизьте карту, чтобы увидеть тень',
     layers: 'Что показывать', lyShops: '🛒 Магазины на карте', lyParking: '🅿 Парковки', lyRings: '⭕ Кольца «минут пешком»',
@@ -53,6 +54,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
+    nowLabel: 'עכשיו',
     themeAuto: 'ערכת נושא: כמו במכשיר', themeLight: 'ערכת נושא: בהירה', themeDark: 'ערכת נושא: כהה (לילה)',
     lyShade: '☀ צל מבניינים', shadeNow: 'עכשיו', shadeNight: 'השמש שקעה — אין צל', shadeZoom: 'הגדילו את המפה כדי לראות צל',
     layers: 'מה להציג', lyShops: '🛒 חנויות במפה', lyParking: '🅿 חניות', lyRings: '⭕ טבעות «דקות הליכה»',
@@ -82,6 +84,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
+    nowLabel: 'now',
     themeAuto: 'Theme: same as device', themeLight: 'Theme: light', themeDark: 'Theme: dark (night)',
     lyShade: '☀ Shade from buildings', shadeNow: 'Now', shadeNight: 'The sun has set — no shade', shadeZoom: 'Zoom in to see shade',
     layers: 'Show on map', lyShops: '🛒 Shops on the map', lyParking: '🅿 Parking', lyRings: '⭕ Walking-time rings',
@@ -574,6 +577,7 @@ function refresh() {
   if ($('#closedBox').open) $('#closedList').innerHTML = listWithMore(closedL, 'closed', now);
   S.lists = { unknown: unkL, closed: closedL };
   drawMarkers(openL, unkL, closedL);
+  if (typeof drawLights === 'function' && LT.canvas) drawLights();
 }
 function select(id, fromMap) {
   S.selected = S.selected === id && !fromMap ? null : id;
@@ -909,12 +913,15 @@ function showParkSpot(lat, lon) {
 // ---------- shade layer: building shadows for a chosen time of day ----------
 // Shadow of each building = its footprint swept away from the sun by height / tan(sun altitude).
 // Drawn opaque on an off-screen canvas, then shown at fixed opacity so overlapping shadows don't get darker.
-const SH = { on: false, time: null, canvas: null, seq: 0, timer: null };
+const SH = { on: false, time: null, canvas: null, seq: 0, timer: null, live: true };
 function shadeMinutes(d) { return d.getHours() * 60 + d.getMinutes(); }
 function shadeSetTime(min) {
   const d = new Date(); d.setHours(Math.floor(min / 60), min % 60, 0, 0);
   SH.time = d;
-  $('#shadeTimeL').textContent = fmtTime(d);
+  const l = $('#shadeTimeL');
+  l.textContent = fmtTime(d);
+  l.classList.toggle('live', SH.live);
+  l.title = SH.live ? t('nowLabel') : '';
 }
 function shadeToggle(on) {
   SH.on = on;
@@ -928,9 +935,10 @@ function shadeToggle(on) {
   }
   drawShade();
 }
+// "Now" follows the real clock (updated every minute) until the person drags the slider.
 function shadeNowClick(redraw = true) {
-  const n = new Date();
-  const min = Math.min(1200, Math.max(360, Math.round(shadeMinutes(n) / 15) * 15));
+  SH.live = true;
+  const min = shadeMinutes(new Date());
   $('#shadeTime').value = min; shadeSetTime(min);
   if (redraw) drawShade();
 }
@@ -944,6 +952,7 @@ async function drawShade() {
   cv.width = size.x * dpr; cv.height = size.y * dpr; cv.style.width = size.x + 'px'; cv.style.height = size.y + 'px';
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, size.x, size.y);
+  cv.style.opacity = '1';
   if (map.getZoom() < 15) { S.notices.loc = { cls: 'info', text: t('shadeZoom') }; renderNotices(); return; }
   const c = map.getCenter();
   const sun = SunCalc.getPosition(SH.time || new Date(), c.lat, c.lng);
@@ -956,7 +965,7 @@ async function drawShade() {
   const tanAlt = Math.tan(sun.altitude);
   const mPerDegLat = 111320, mPerDegLon = 111320 * Math.cos(c.lat * Math.PI / 180);
   const P = (lat, lon) => map.latLngToContainerPoint([lat, lon]);
-  ctx.fillStyle = '#000';
+  ctx.fillStyle = 'rgba(28, 44, 78, 0.42)';
   ctx.beginPath();
   const vb = map.getBounds(), maxLen = Math.min(120 / tanAlt, 400) / 111320;
   const S0 = vb.getSouth() - maxLen, N0 = vb.getNorth() + maxLen, W0 = vb.getWest() - maxLen * 1.3, E0 = vb.getEast() + maxLen * 1.3;
@@ -976,11 +985,11 @@ async function drawShade() {
     }
   }
   ctx.fill('nonzero');
-  cv.style.opacity = '0.28';
   if (S.notices.loc && (S.notices.loc.text === t('shadeNight') || S.notices.loc.text === t('shadeZoom'))) { S.notices.loc = null; renderNotices(); }
 }
 function initShade() {
   $('#shadeTime').addEventListener('input', (e) => {
+    SH.live = false;
     shadeSetTime(+e.target.value);
     clearTimeout(SH.timer); SH.timer = setTimeout(drawShade, 60);
   });
@@ -988,6 +997,7 @@ function initShade() {
   $('#shadeNow').addEventListener('click', () => { shadeNowClick(); if (RT.target) showRoute(RT.target); });
   map.on('moveend zoomend resize', () => { if (SH.on) drawShade(); });
   map.on('movestart zoomstart', () => { if (SH.canvas) SH.canvas.style.opacity = '0'; });
+  setInterval(() => { if (SH.on && SH.live) shadeNowClick(); }, 60000);
 }
 
 // ---------- theme: auto (follows the device) / light / dark; dark also darkens the map ----------
@@ -997,12 +1007,19 @@ const darkMQ = matchMedia('(prefers-color-scheme: dark)');
 function applyTheme() {
   const root = document.documentElement;
   if (THEME === 'auto') root.removeAttribute('data-theme'); else root.setAttribute('data-theme', THEME);
-  const dark = THEME === 'dark' || (THEME === 'auto' && darkMQ.matches);
+  const dark = THEME === 'dark' || (THEME === 'auto' && (darkMQ.matches || sunIsDown()));
   root.classList.toggle('night-map', dark);
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a0f13' : '#0e141a');
   const b = $('#themeBtn');
   if (b) { b.textContent = THEME_ICON[THEME]; const label = t({ auto: 'themeAuto', light: 'themeLight', dark: 'themeDark' }[THEME]); b.title = label; b.setAttribute('aria-label', label); }
   if (typeof drawMarkers === 'function' && S.loaded) refresh(); // marker colours come from CSS variables
+  drawLights();
+}
+// Real darkness where the map is: the sun more than 4 degrees below the horizon (end of civil twilight-ish).
+function sunIsDown() {
+  if (!map) return false;
+  const c = map.getCenter();
+  return SunCalc.getPosition(new Date(), c.lat, c.lng).altitude < -4 * Math.PI / 180;
 }
 function initTheme() {
   $('#themeBtn').addEventListener('click', () => {
@@ -1012,7 +1029,82 @@ function initTheme() {
     applyTheme();
   });
   darkMQ.addEventListener?.('change', () => { if (THEME === 'auto') applyTheme(); });
+  setInterval(() => { if (THEME === 'auto') applyTheme(); }, 5 * 60000); // dusk and dawn arrive on their own
+  map.on('moveend zoomend resize', drawLights);
+  map.on('movestart zoomstart', () => { if (LT.canvas) LT.canvas.style.opacity = '0'; });
   applyTheme();
+}
+
+// ---------- night lights: warm street lights along the road network + glowing open shops ----------
+// Real street-lamp positions are not in the map data, so lights follow the streets at an even on-screen spacing.
+const LT = { canvas: null, seq: 0, sprite: null, shopSprite: null };
+function glowSprite(r, rgb, core) {
+  const c = document.createElement('canvas'); c.width = c.height = r * 2;
+  const g = c.getContext('2d'), grad = g.createRadialGradient(r, r, 0, r, r, r);
+  grad.addColorStop(0, `rgba(${rgb}, ${core})`); grad.addColorStop(0.18, `rgba(${rgb}, ${core * 0.55})`);
+  grad.addColorStop(0.5, `rgba(${rgb}, ${core * 0.14})`); grad.addColorStop(1, `rgba(${rgb}, 0)`);
+  g.fillStyle = grad; g.fillRect(0, 0, r * 2, r * 2);
+  return c;
+}
+async function drawLights() {
+  const night = document.documentElement.classList.contains('night-map');
+  if (!night || !map) { if (LT.canvas) { LT.canvas.remove(); LT.canvas = null; } return; }
+  if (!LT.canvas) {
+    LT.canvas = L.DomUtil.create('canvas', 'lights-canvas leaflet-zoom-hide');
+    map.getPanes().overlayPane.appendChild(LT.canvas);
+    LT.sprite = glowSprite(14, '255, 196, 110', 0.85);
+    LT.mainSprite = glowSprite(20, '255, 206, 130', 0.9);
+    LT.shopSprite = glowSprite(46, '255, 214, 140', 0.75);
+  }
+  const seq = ++LT.seq, cv = LT.canvas, ctx = cv.getContext('2d'), size = map.getSize();
+  L.DomUtil.setPosition(cv, map.containerPointToLayerPoint([0, 0]));
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cv.width = size.x * dpr; cv.height = size.y * dpr; cv.style.width = size.x + 'px'; cv.style.height = size.y + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, size.x, size.y);
+  cv.style.opacity = '1';
+  ctx.globalCompositeOperation = 'lighter';
+  const z = map.getZoom();
+  if (z >= 13) {
+    const b = map.getBounds().pad(0.05);
+    const roads = await Route.roadsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
+    if (seq !== LT.seq) return;
+    if (roads) {
+      const gap = z >= 16 ? 30 : z >= 15 ? 24 : 18; // px between lamps on screen
+      let n = 0;
+      for (const r of roads) {
+        if (!r.main && z < 14) continue;
+        let carry = 0, prev = null;
+        for (const [la, lo] of r.pts) {
+          const p = map.latLngToContainerPoint([la, lo]);
+          if (prev) {
+            const dx = p.x - prev.x, dy = p.y - prev.y, len = Math.hypot(dx, dy);
+            let d = gap - carry;
+            while (d <= len) {
+              const x = prev.x + (dx * d) / len, y = prev.y + (dy * d) / len;
+              if (x > -20 && y > -20 && x < size.x + 20 && y < size.y + 20) {
+                const sp = r.main ? LT.mainSprite : LT.sprite;
+                ctx.drawImage(sp, x - sp.width / 2, y - sp.height / 2);
+                if (++n > 6000) break;
+              }
+              d += gap;
+            }
+            carry = (carry + len) % gap;
+          }
+          prev = p;
+        }
+        if (n > 6000) break;
+      }
+    }
+  }
+  // Open shops glow: the night version of "here it's open".
+  for (const it of S.view || []) {
+    if (!isOpen(it.st?.k)) continue;
+    const p = map.latLngToContainerPoint([it.lat, it.lon]);
+    if (p.x < -60 || p.y < -60 || p.x > size.x + 60 || p.y > size.y + 60) continue;
+    ctx.drawImage(LT.shopSprite, p.x - 46, p.y - 46);
+  }
+  ctx.globalCompositeOperation = 'source-over';
 }
 
 // ---------- layers menu: what to draw on the map (remembered per device) ----------

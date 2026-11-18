@@ -1181,18 +1181,18 @@ async function drawLamps(on, seq) {
     gm.addSource('lamps', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
     const firstLabel = gm.getStyle().layers.find((l) => l.type === 'symbol')?.id;
     gm.addLayer({ id: 'lamps-glow', type: 'circle', source: 'lamps', paint: {
-      'circle-color': '#ffbf66', 'circle-blur': 1, 'circle-opacity': 0.55,
-      'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, ['case', ['get', 'm'], 5, 3], 16, ['case', ['get', 'm'], 16, 11], 19, 34] } }, firstLabel);
-    gm.addLayer({ id: 'lamps-core', type: 'circle', source: 'lamps', minzoom: 15, paint: {
-      'circle-color': '#fff0c8', 'circle-blur': 0.6, 'circle-opacity': 0.9,
-      'circle-radius': ['interpolate', ['linear'], ['zoom'], 15, 1.2, 19, 3.5] } }, firstLabel);
+      'circle-color': '#ffc274', 'circle-blur': 1, 'circle-opacity': 0.6,
+      'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, ['case', ['get', 'm'], 3, 2], 16, ['case', ['get', 'm'], 9, 7], 19, 18] } }, firstLabel);
+    gm.addLayer({ id: 'lamps-core', type: 'circle', source: 'lamps', minzoom: 14, paint: {
+      'circle-color': '#fff6dc', 'circle-blur': 0.15, 'circle-opacity': 0.95,
+      'circle-radius': ['interpolate', ['linear'], ['zoom'], 14, 0.9, 16, 1.8, 19, 3.2] } }, firstLabel);
   }
   const src = gm.getSource('lamps');
   if (!on) { src.setData({ type: 'FeatureCollection', features: [] }); return; }
   const z = map.getZoom(), b = map.getBounds().pad(0.05);
   const roads = await Route.roadsIn([b.getSouth(), b.getWest(), b.getNorth(), b.getEast()]);
   if (seq !== LT.seq || !roads) return;
-  const gapM = z >= 16 ? 25 : z >= 15 ? 40 : z >= 14 ? 70 : 120;
+  const gapM = z >= 16 ? 30 : z >= 15 ? 45 : z >= 14 ? 70 : 120; // real city lamps stand ~25-35 m apart
   const kx = Math.cos(map.getCenter().lat * Math.PI / 180);
   const feats = [];
   for (const r of roads) {

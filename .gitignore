@@ -4,3 +4,4 @@ __pycache__/
 .claude/
 .enola/
 .superdesign/
+data/.cache/

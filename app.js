@@ -145,23 +145,31 @@ const DOT_ICONS = {
   clothes: '<path d="M8.5 4 4 6.5l1.8 4 2.2-1V20h8V9.5l2.2 1 1.8-4L15.5 4a3.5 3.5 0 0 1-7 0z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
   phone: '<rect x="7" y="3" width="10" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 17.5h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
   flower: '<circle cx="12" cy="9" r="2.2" fill="currentColor"/><path d="M12 4.2a2.4 2.4 0 0 1 0 2.6M12 11.3V21M12 17c-2-2.2-4.5-2.5-6-2 1 2.3 3.5 3 6 2zM12 15.5c2-2 4.3-2.2 6-1.7-1 2.2-3.5 2.8-6 1.7M8 6.5a2.4 2.4 0 0 1 2 1.3M16 6.5a2.4 2.4 0 0 0-2 1.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  hair: '<circle cx="6.5" cy="17.5" r="2.8" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.5" cy="17.5" r="2.8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8.5 15.5 18 3.5M15.5 15.5 6 3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  beauty: '<path d="M12 3.5l1.8 5 5.2.2-4.1 3.2 1.4 5L12 14l-4.3 2.9 1.4-5L5 8.7l5.2-.2z" fill="currentColor"/><path d="M18.5 15.5v4M16.5 17.5h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
   money: '<path d="M12 3v18M16.5 7.5c-.7-1.5-2.4-2.3-4.5-2.3-2.6 0-4.3 1.3-4.3 3.2 0 4.3 9 2.3 9 6.8 0 2-1.9 3.4-4.7 3.4-2.3 0-4-.9-4.8-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
 };
-const DOT_KIND = { cafe: 'cafe', ice_cream: 'cafe', coffee: 'cafe', clothes: 'clothes', boutique: 'clothes', shoes: 'clothes', mobile_phone: 'phone', electronics: 'phone', computer: 'phone', florist: 'flower', garden_centre: 'flower', bureau_de_change: 'money', money_transfer: 'money', bank: 'money' };
-// Badge colours dark enough for a white icon on top (grey: hours unknown, red: closed).
-const DOT_COL = { unknown: '#66737d', closed: '#c94a3e' };
-const dotIcon = (it) => 'i-' + (DOT_KIND[it.tags.amenity] || DOT_KIND[it.tags.shop] || it.cat);
+const DOT_KIND = { cafe: 'cafe', ice_cream: 'cafe', coffee: 'cafe', clothes: 'clothes', boutique: 'clothes', shoes: 'clothes', mobile_phone: 'phone', electronics: 'phone', computer: 'phone', florist: 'flower', garden_centre: 'flower', bureau_de_change: 'money', money_transfer: 'money', bank: 'money', hairdresser: 'hair', barber: 'hair', beauty: 'beauty', cosmetics: 'beauty', perfumery: 'beauty', massage: 'beauty', tattoo: 'beauty' };
+// Badges: hours unknown = dark slate with a white icon; closed = pale grey with a grey icon, so it fades back
+// and the coloured pins of what is open stand out.
+const DOT_COL = { unknown: '#5f6d78', closed: '#d5dade' };
+const kindOf = (it) => DOT_KIND[it.tags.amenity] || DOT_KIND[it.tags.shop] || it.cat;
+const dotIcon = (it) => (it.st.k === 'closed' ? 'g-' : 'i-') + kindOf(it);
 // Register white icons in the map style (drawn from the same SVG paths) for the symbol layer on top of the dots.
 function addDotIcons(gm) {
   const all = { ...ICONS, ...DOT_ICONS };
   return Promise.all(Object.entries(all).map(([k, body]) => new Promise((res) => {
     const img = new Image(48, 48);
-    img.onload = () => { try { if (!gm.hasImage('i-' + k)) gm.addImage('i-' + k, img, { pixelRatio: 2 }); } catch {} res(); };
-    img.onerror = () => res();
-    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" color="#fff">${body}</svg>`);
+    const add = (pre, col) => new Promise((ok) => {
+      const img = new Image(48, 48);
+      img.onload = () => { try { if (!gm.hasImage(pre + k)) gm.addImage(pre + k, img, { pixelRatio: 2 }); } catch {} ok(); };
+      img.onerror = () => ok();
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" color="${col}">${body}</svg>`);
+    });
+    Promise.all([add('i-', '#fff'), add('g-', '#7b8791')]).then(res);
   })));
 }
-const svg = (k) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`;
+const svg = (k) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k] || DOT_ICONS[k]}</svg>`;
 
 // ---------- state & helpers ----------
 const store = {
@@ -487,12 +495,12 @@ function addAppLayers() {
   gm.addLayer({ id: 'route-case', type: 'line', source: 'route', filter: ['==', ['get', 'r'], 'main'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': '#ffffff', 'line-width': 10, 'line-opacity': 0.9 } });
   gm.addLayer({ id: 'route-main', type: 'line', source: 'route', filter: ['==', ['get', 'r'], 'main'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['get', 'c'], 'line-width': 6 } });
   gm.addLayer({ id: 'glows', type: 'circle', source: 'glows', paint: { 'circle-color': '#ffd68c', 'circle-blur': 1, 'circle-opacity': 0.55, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, 10, 17, 34] } });
-  gm.addLayer({ id: 'dots', type: 'circle', source: 'dots', paint: {
+  gm.addLayer({ id: 'dots', type: 'circle', source: 'dots', layout: { 'circle-sort-key': ['-', 0, ['get', 's']] }, paint: {
     // small dots when zoomed out; from street level they grow into round badges with an icon of what the place is
-    'circle-radius': ['interpolate', ['linear'], ['zoom'], 12.5, 3.5, 13.8, 5, 14.6, 8.5, 16.5, 12], 'circle-color': ['get', 'c'], 'circle-opacity': ['get', 'o'],
-    'circle-stroke-color': '#ffffff', 'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 13.8, 1.5, 15, 2] } });
+    'circle-radius': ['interpolate', ['linear'], ['zoom'], 12.5, 3.5, 13.8, 5, 14.6, ['case', ['==', ['get', 's'], 1], 7.5, 8.5], 16.5, ['case', ['==', ['get', 's'], 1], 10.5, 12]], 'circle-color': ['get', 'c'], 'circle-opacity': ['get', 'o'],
+    'circle-stroke-color': ['case', ['==', ['get', 's'], 1], '#b9c1c7', '#ffffff'], 'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 13.8, 1.5, 15, 2] } });
   gm.addLayer({ id: 'dot-icons', type: 'symbol', source: 'dots', minzoom: 14, layout: {
-    'icon-image': ['get', 'k'], 'icon-size': ['interpolate', ['linear'], ['zoom'], 14, 0.45, 14.6, 0.58, 16.5, 0.8],
+    'icon-image': ['get', 'k'], 'icon-size': ['interpolate', ['linear'], ['zoom'], 14, 0.45, 14.6, ['case', ['==', ['get', 's'], 1], 0.5, 0.58], 16.5, ['case', ['==', ['get', 's'], 1], 0.7, 0.8]], 'symbol-sort-key': ['-', 0, ['get', 's']],
     'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'icon-opacity': ['get', 'o'] } });
   addDotIcons(gm);
   for (const ly of ['dots', 'dot-icons']) {
@@ -517,7 +525,7 @@ function syncTiltBtn() {
 }
 function pinIcon(it, sel) {
   const br = brandOf(it.tags);
-  const inner = br ? `<span class="blogo" style="background:${br.bg};color:${br.fg}">${esc(br.t)}</span>` : svg(it.cat);
+  const inner = br ? `<span class="blogo" style="background:${br.bg};color:${br.fg}">${esc(br.t)}</span>` : svg(kindOf(it));
   return MK.divIcon({
     iconSize: [34, 40], iconAnchor: [17, 40],
     html: `<div class="pin${sel ? ' sel' : ''}${br ? ' branded' : ''}" style="--pc:${cssVar(STATUS_VAR[it.st.k])}">${inner}</div>`,
@@ -540,7 +548,7 @@ function drawMarkers(openL, unkL, closedL) {
   if (!glReady()) return;
   const z = map.getZoom(), feats = [];
   if (z >= 14 && LY.shops) for (const it of [...unkL.slice(0, 400), ...closedL.slice(0, 300)])
-    feats.push(MK.point(it.lat, it.lon, { id: it.id, n: nameOf(it), k: dotIcon(it), c: DOT_COL[it.st.k] || cssVar(STATUS_VAR[it.st.k]), o: it.st.k === 'closed' ? 0.75 : 0.95 }));
+    feats.push(MK.point(it.lat, it.lon, { id: it.id, n: nameOf(it), k: dotIcon(it), c: DOT_COL[it.st.k] || cssVar(STATUS_VAR[it.st.k]), o: it.st.k === 'closed' ? 0.85 : 0.95, s: it.st.k === 'closed' ? 1 : 0 }));
   map.setData('dots', feats);
 }
 let ringLabels = null;

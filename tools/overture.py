@@ -40,6 +40,8 @@ T = {
     "department_store": {"shop": "department_store"}, "shopping_mall": {"shop": "mall"}, "stationery_store": {"shop": "stationery"},
     "office_supply_store": {"shop": "stationery"}, "kitchen_supply_store": {"shop": "houseware"}, "appliance_store": {"shop": "appliance"},
     "baby_gear_and_furniture_store": {"shop": "baby_goods"}, "pawn_shop": {"shop": "pawnbroker"}, "thrift_store": {"shop": "second_hand"},
+    "hair_salon": {"shop": "hairdresser"}, "barber": {"shop": "hairdresser"}, "beauty_salon": {"shop": "beauty"},
+    "nail_salon": {"shop": "beauty", "beauty": "nails"}, "cosmetics_store": {"shop": "cosmetics"}, "perfume_store": {"shop": "perfumery"},
     "music_store": {"shop": "musical_instrument"}, "photography_store": {"shop": "photo"}, "watch_store": {"shop": "watches"},
 }
 CUISINE = {"pizza": "pizza", "burger": "burger", "sushi": "sushi", "italian": "italian", "middle_eastern": "middle_eastern", "asian": "asian",

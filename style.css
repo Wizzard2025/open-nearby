@@ -245,6 +245,8 @@ button, select, input { font: inherit; color: inherit; }
 .pin { width: 30px; height: 30px; margin: 2px; border-radius: 50% 50% 50% 4px; transform: rotate(-45deg); display: grid; place-items: center; border: 2px solid #fff; box-shadow: 0 2px 6px rgb(0 0 0 / 0.3); background: var(--pc); cursor: pointer; }
 .pin svg { width: 16px; height: 16px; transform: rotate(45deg); color: #fff; }
 .pin.sel { outline: 3px solid var(--brand); outline-offset: 1px; }
+/* what is open glows in its status colour, so it stands out from the grey of what is closed */
+.pin { box-shadow: 0 0 0 4px color-mix(in srgb, var(--pc) 35%, transparent), 0 0 14px 2px color-mix(in srgb, var(--pc) 55%, transparent), 0 2px 6px rgb(0 0 0 / 0.3); }
 
 /* ---------- wide screens: floating side panel ---------- */
 @media (min-width: 860px) {

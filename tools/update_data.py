@@ -92,6 +92,11 @@ def main():
     for name, st in stats.items():
         print(f"  {name}: {st}")
 
+    # Sources sometimes send broken coordinates (0,0 or latitude repeated as longitude): keep only points inside Israel.
+    bad = [x for x in out if not (29.3 < x[1] < 33.5 and 34.2 < x[2] < 35.95)]
+    if bad:
+        print(f"  dropped {len(bad)} places with coordinates outside Israel: {[x[0] for x in bad][:5]}")
+    out[:] = [x for x in out if 29.3 < x[1] < 33.5 and 34.2 < x[2] < 35.95]
     write_tiles(out)
     OUT.write_text(json.dumps({"updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "shops": out},
                               ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

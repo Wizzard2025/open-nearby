@@ -17,12 +17,12 @@ jobs:
       - name: Download shops (OpenStreetMap + chain branch hours)
         if: github.event_name != 'push'
         continue-on-error: true
-        run: python tools/update_data.py
+        run: pip install --quiet duckdb && python tools/update_data.py && python tools/coverage.py
       - name: Commit fresh data
         if: github.event_name != 'push'
         run: |
           git config user.name "data-bot"; git config user.email "data-bot@users.noreply.github.com"
-          git add data/shops.json data/geocache.json data/chains && git commit -m "Update shop data" || echo "no changes"
+          git add data/shops.json data/tiles data/geocache.json data/geocache2.json data/chains data/registries data/coverage.json && git commit -m "Update shop data" || echo "no changes"
           git push || true
       - uses: actions/upload-pages-artifact@v3
         with: { path: . }

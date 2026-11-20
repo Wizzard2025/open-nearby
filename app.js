@@ -8,9 +8,9 @@ const I18N = {
     title: 'בטוח? פתוח! · Точно открыто', tagline: 'Точно открыто', pickCity: 'Город…', kicker: 'Сейчас открыто',
     units: ['место', 'места', 'мест'], whereMe: 'рядом с вами', whereMap: 'в этой части карты',
     zoomIn: 'Приблизьте карту, чтобы увидеть магазины',
-    source: 'Данные: OpenStreetMap и официальные сайты сетей, обновляются каждый день.', madeBy: 'Сделано в',
-    cats: { all: 'Всё', food: 'Продукты', bakery: 'Пекарни', pharmacy: 'Аптеки', fuel: 'Заправки', atm: 'Банкоматы', eat: 'Поесть' },
-    types: { supermarket: 'Супермаркет', convenience: 'Минимаркет', kiosk: 'Киоск', grocery: 'Продукты', greengrocer: 'Овощи и фрукты', deli: 'Деликатесы', alcohol: 'Алкоголь', bakery: 'Пекарня', pastry: 'Кондитерская', pharmacy: 'Аптека', chemist: 'Аптека и косметика', fuel: 'Заправка', atm: 'Банкомат', bank: 'Банк с банкоматом', restaurant: 'Ресторан', fast_food: 'Фастфуд, забегаловка', cafe: 'Кафе', food_court: 'Фудкорт', ice_cream: 'Мороженое' },
+    source: 'Данные: OpenStreetMap, Overture Maps, официальные реестры и сайты сетей, обновляются каждый день.', madeBy: 'Сделано в',
+    cats: { all: 'Всё', food: 'Продукты', bakery: 'Пекарни', pharmacy: 'Аптеки', fuel: 'Заправки', atm: 'Банкоматы', eat: 'Поесть', shop: 'Магазины' },
+    types: { supermarket: 'Супермаркет', convenience: 'Минимаркет', kiosk: 'Киоск', grocery: 'Продукты', greengrocer: 'Овощи и фрукты', deli: 'Деликатесы', alcohol: 'Алкоголь', bakery: 'Пекарня', pastry: 'Кондитерская', pharmacy: 'Аптека', chemist: 'Аптека и косметика', fuel: 'Заправка', atm: 'Банкомат', bank: 'Банк с банкоматом', restaurant: 'Ресторан', fast_food: 'Фастфуд, забегаловка', cafe: 'Кафе', food_court: 'Фудкорт', ice_cream: 'Мороженое', clothes: 'Одежда', shoes: 'Обувь', mobile_phone: 'Телефоны', electronics: 'Электроника', computer: 'Компьютеры', jewelry: 'Ювелирный', florist: 'Цветы', gift: 'Подарки', furniture: 'Мебель', houseware: 'Товары для дома', hardware: 'Хозтовары, инструменты', doityourself: 'Стройматериалы', trade: 'Стройматериалы', optician: 'Оптика', bicycle: 'Велосипеды', sports: 'Спорттовары', tobacco: 'Табак', cosmetics: 'Косметика', books: 'Книги', toys: 'Игрушки', pet: 'Зоотовары', lighting: 'Освещение', bed: 'Матрасы', carpet: 'Ковры', garden_centre: 'Сад и растения', nutrition_supplements: 'Витамины', variety_store: 'Всё по дешёвке', department_store: 'Универмаг', mall: 'Торговый центр', stationery: 'Канцтовары', appliance: 'Бытовая техника', baby_goods: 'Детские товары', second_hand: 'Секонд-хенд', musical_instrument: 'Музыкальный', photo: 'Фото', watches: 'Часы', boutique: 'Бутик', butcher: 'Мясная лавка', seafood: 'Рыба', health_food: 'Здоровое питание', confectionery: 'Сладости', bureau_de_change: 'Обмен валюты', money_transfer: 'Денежные переводы', hairdresser: 'Парикмахерская', beauty: 'Салон красоты', laundry: 'Прачечная', dry_cleaning: 'Химчистка', car_repair: 'Автосервис', yes: 'Магазин' },
     open24: 'Круглосуточно', open: 'Открыто', until: 'до {t}', soon: 'Закроется через {m} мин',
     closed: 'Закрыто', opensAt: 'откроется в {t}', opensTomorrow: 'завтра в {t}', opensDay: '{d} в {t}',
     unknown: 'Часы не указаны', allDay: 'круглосуточно', dayOff: 'закрыто',
@@ -24,7 +24,7 @@ const I18N = {
     holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
-    srcConfirmed: '✓ Подтверждено: {s}', srcSingle: 'Один источник: {s} — на месте не проверено', srcOld: 'данные от {y} г. — могли устареть', srcNames: { osm: 'OpenStreetMap', chain: 'данные самой сети', boi: 'реестр Банка Израиля', moe: 'реестр Минэнергетики', user: 'посетитель' }, srcAsOf: 'от {d}', srcEst: 'Часы оценены: банкомат на стене отделения обычно работает круглосуточно', feeYes: 'комиссия', feeNo: 'без комиссии', atmInside: 'внутри отделения — по часам отделения', atmCount: '{n} банкомата', oldTag: '⚠ данные {y} г.', approxLoc: '≈ место на карте приблизительно (центр посёлка), адрес: {a}', approxStreet: '≈ на нужной улице, дом точно не найден, адрес: {a}', approxPlace: '≈ по названию места (торговый центр, промзона), адрес: {a}',
+    srcConfirmed: '✓ Подтверждено: {s}', srcSingle: 'Один источник: {s} — на месте не проверено', srcOld: 'данные от {y} г. — могли устареть', srcNames: { osm: 'OpenStreetMap', chain: 'данные самой сети', boi: 'реестр Банка Израиля', moe: 'реестр Минэнергетики', ovt: 'Overture Maps (Meta, Microsoft и др.)', user: 'посетитель' }, srcAsOf: 'от {d}', srcEst: 'Часы оценены: банкомат на стене отделения обычно работает круглосуточно', feeYes: 'комиссия', feeNo: 'без комиссии', atmInside: 'внутри отделения — по часам отделения', atmCount: '{n} банкомата', oldTag: '⚠ данные {y} г.', approxLoc: '≈ место на карте приблизительно (центр посёлка), адрес: {a}', approxStreet: '≈ на нужной улице, дом точно не найден, адрес: {a}', approxPlace: '≈ по названию места (торговый центр, промзона), адрес: {a}',
     openNear: 'открыто рядом', go: 'Идти', adLabel: 'Реклама', adBanner: 'Здесь может быть ваша реклама — её видят те, кто ищет открытое рядом', adCardTitle: 'Ваш бизнес здесь', adCardSub: 'Покажитесь тем, кто рядом и ищет открытое', adClose: 'Скрыть рекламу', noneCard: 'Здесь ничего не открыто. Отдалите карту.', tilt3d: 'Наклонить карту (3D)', tilt2d: 'Вид сверху (2D)', listAll: 'Весь список',
     kickerAt: 'Открыто в {t}',
     srcChain: 'Часы с официального сайта сети', srcUser: 'Часы указал посетитель', srcOsm: 'Часы из OpenStreetMap — могут быть устаревшими', doubtClosed: 'посетитель: закрыто ({m})', doubtOpen: 'посетитель: открыто ({m})', showingAt: 'Показываю, что открыто в {t}. Нажмите «Сейчас», чтобы вернуться.',
@@ -45,9 +45,9 @@ const I18N = {
     title: 'בטוח? פתוח!', tagline: "Betcha it's open", pickCity: 'עיר…', kicker: 'פתוח עכשיו',
     units: ['מקום', 'מקומות', 'מקומות'], whereMe: 'לידך', whereMap: 'באזור המפה',
     zoomIn: 'הגדילו את המפה כדי לראות חנויות',
-    source: 'נתונים: OpenStreetMap ואתרי הרשתות, מתעדכנים מדי יום.', madeBy: 'נבנה ב-',
-    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'דלק', atm: 'כספומטים', eat: 'אוכל' },
-    types: { supermarket: 'סופרמרקט', convenience: 'מכולת', kiosk: 'קיוסק', grocery: 'מכולת', greengrocer: 'ירקן', deli: 'מעדנייה', alcohol: 'משקאות', bakery: 'מאפייה', pastry: 'קונדיטוריה', pharmacy: 'בית מרקחת', chemist: 'פארם', fuel: 'תחנת דלק', atm: 'כספומט', bank: 'בנק עם כספומט', restaurant: 'מסעדה', fast_food: 'אוכל מהיר', cafe: 'בית קפה', food_court: 'מתחם מזון', ice_cream: 'גלידריה' },
+    source: 'נתונים: OpenStreetMap, Overture Maps, מאגרים רשמיים ואתרי הרשתות, מתעדכנים מדי יום.', madeBy: 'נבנה ב-',
+    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'דלק', atm: 'כספומטים', eat: 'אוכל', shop: 'חנויות' },
+    types: { supermarket: 'סופרמרקט', convenience: 'מכולת', kiosk: 'קיוסק', grocery: 'מכולת', greengrocer: 'ירקן', deli: 'מעדנייה', alcohol: 'משקאות', bakery: 'מאפייה', pastry: 'קונדיטוריה', pharmacy: 'בית מרקחת', chemist: 'פארם', fuel: 'תחנת דלק', atm: 'כספומט', bank: 'בנק עם כספומט', restaurant: 'מסעדה', fast_food: 'אוכל מהיר', cafe: 'בית קפה', food_court: 'מתחם מזון', ice_cream: 'גלידריה', clothes: 'ביגוד', shoes: 'נעליים', mobile_phone: 'סלולר', electronics: 'אלקטרוניקה', computer: 'מחשבים', jewelry: 'תכשיטים', florist: 'פרחים', gift: 'מתנות', furniture: 'רהיטים', houseware: 'כלי בית', hardware: 'כלי עבודה', doityourself: 'חומרי בניין', trade: 'חומרי בניין', optician: 'אופטיקה', bicycle: 'אופניים', sports: 'ספורט', tobacco: 'טבק', cosmetics: 'קוסמטיקה', books: 'ספרים', toys: 'צעצועים', pet: 'חיות מחמד', lighting: 'תאורה', bed: 'מזרנים', carpet: 'שטיחים', garden_centre: 'משתלה', nutrition_supplements: 'תוספי תזונה', variety_store: 'הכל בזול', department_store: 'כלבו', mall: 'קניון', stationery: 'כלי כתיבה', appliance: 'מוצרי חשמל', baby_goods: 'מוצרי תינוקות', second_hand: 'יד שנייה', musical_instrument: 'כלי נגינה', photo: 'צילום', watches: 'שעונים', boutique: 'בוטיק', butcher: 'אטליז', seafood: 'דגים', health_food: 'טבע', confectionery: 'ממתקים', bureau_de_change: 'המרת מטבע', money_transfer: 'העברות כספים', hairdresser: 'מספרה', beauty: 'מכון יופי', laundry: 'מכבסה', dry_cleaning: 'ניקוי יבש', car_repair: 'מוסך', yes: 'חנות' },
     open24: '24 שעות', open: 'פתוח', until: 'עד {t}', soon: 'נסגר בעוד {m} דק׳',
     closed: 'סגור', opensAt: 'ייפתח ב-{t}', opensTomorrow: 'מחר ב-{t}', opensDay: '{d} ב-{t}',
     unknown: 'אין שעות', allDay: '24 שעות', dayOff: 'סגור',
@@ -61,7 +61,7 @@ const I18N = {
     holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
-    srcConfirmed: '✓ מאומת: {s}', srcSingle: 'מקור אחד: {s} — לא נבדק בשטח', srcOld: 'נתונים משנת {y} — ייתכן שהתיישנו', srcNames: { osm: 'OpenStreetMap', chain: 'נתוני הרשת עצמה', boi: 'מאגר בנק ישראל', moe: 'מאגר משרד האנרגיה', user: 'מבקר' }, srcAsOf: 'מ-{d}', srcEst: 'השעות משוערות: כספומט בקיר הסניף פועל בדרך כלל מסביב לשעון', feeYes: 'בעמלה', feeNo: 'ללא עמלה', atmInside: 'בתוך הסניף — לפי שעות הסניף', atmCount: '{n} כספומטים', oldTag: '⚠ נתונים מ-{y}', approxLoc: '≈ המיקום במפה משוער (מרכז היישוב), כתובת: {a}', approxStreet: '≈ ברחוב הנכון, הבית המדויק לא נמצא, כתובת: {a}', approxPlace: '≈ לפי שם המקום (מרכז מסחרי, אזור תעשייה), כתובת: {a}',
+    srcConfirmed: '✓ מאומת: {s}', srcSingle: 'מקור אחד: {s} — לא נבדק בשטח', srcOld: 'נתונים משנת {y} — ייתכן שהתיישנו', srcNames: { osm: 'OpenStreetMap', chain: 'נתוני הרשת עצמה', boi: 'מאגר בנק ישראל', moe: 'מאגר משרד האנרגיה', ovt: 'Overture Maps (Meta, Microsoft ועוד)', user: 'מבקר' }, srcAsOf: 'מ-{d}', srcEst: 'השעות משוערות: כספומט בקיר הסניף פועל בדרך כלל מסביב לשעון', feeYes: 'בעמלה', feeNo: 'ללא עמלה', atmInside: 'בתוך הסניף — לפי שעות הסניף', atmCount: '{n} כספומטים', oldTag: '⚠ נתונים מ-{y}', approxLoc: '≈ המיקום במפה משוער (מרכז היישוב), כתובת: {a}', approxStreet: '≈ ברחוב הנכון, הבית המדויק לא נמצא, כתובת: {a}', approxPlace: '≈ לפי שם המקום (מרכז מסחרי, אזור תעשייה), כתובת: {a}',
     openNear: 'פתוחים לידך', go: 'ללכת', adLabel: 'מודעה', adBanner: 'כאן יכולה להיות המודעה שלכם — רואים אותה מי שמחפשים מה פתוח בסביבה', adCardTitle: 'העסק שלכם כאן', adCardSub: 'הופיעו מול מי שנמצא קרוב ומחפש מה פתוח', adClose: 'להסתיר מודעה', noneCard: 'אין כאן מקומות פתוחים. הרחיקו את המפה.', tilt3d: 'להטות את המפה (3D)', tilt2d: 'מבט מלמעלה (2D)', listAll: 'כל הרשימה',
     kickerAt: 'פתוח ב-{t}',
     srcChain: 'שעות מהאתר הרשמי של הרשת', srcUser: 'שעות שעדכן מבקר', srcOsm: 'שעות מ-OpenStreetMap — ייתכן שאינן מעודכנות', doubtClosed: 'מבקר: סגור ({m})', doubtOpen: 'מבקר: פתוח ({m})', showingAt: 'מוצג מה פתוח ב-{t}. לחצו «עכשיו» כדי לחזור.',
@@ -82,9 +82,9 @@ const I18N = {
     title: "בטוח? פתוח! · Betcha it's open", tagline: "Betcha it's open", pickCity: 'City…', kicker: 'Open right now',
     units: ['place', 'places', 'places'], whereMe: 'near you', whereMap: 'in this part of the map',
     zoomIn: 'Zoom in to see shops',
-    source: 'Data: OpenStreetMap and the chains\' own websites, refreshed daily.', madeBy: 'Made by',
-    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas', atm: 'ATMs', eat: 'Eat' },
-    types: { supermarket: 'Supermarket', convenience: 'Convenience store', kiosk: 'Kiosk', grocery: 'Grocery', greengrocer: 'Greengrocer', deli: 'Deli', alcohol: 'Liquor store', bakery: 'Bakery', pastry: 'Pastry shop', pharmacy: 'Pharmacy', chemist: 'Drugstore', fuel: 'Gas station', atm: 'ATM', bank: 'Bank with ATM', restaurant: 'Restaurant', fast_food: 'Fast food', cafe: 'Café', food_court: 'Food court', ice_cream: 'Ice cream' },
+    source: 'Data: OpenStreetMap, Overture Maps, official registries and the chains\' own data, refreshed daily.', madeBy: 'Made by',
+    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas', atm: 'ATMs', eat: 'Eat', shop: 'Shops' },
+    types: { supermarket: 'Supermarket', convenience: 'Convenience store', kiosk: 'Kiosk', grocery: 'Grocery', greengrocer: 'Greengrocer', deli: 'Deli', alcohol: 'Liquor store', bakery: 'Bakery', pastry: 'Pastry shop', pharmacy: 'Pharmacy', chemist: 'Drugstore', fuel: 'Gas station', atm: 'ATM', bank: 'Bank with ATM', restaurant: 'Restaurant', fast_food: 'Fast food', cafe: 'Café', food_court: 'Food court', ice_cream: 'Ice cream', clothes: 'Clothes', shoes: 'Shoes', mobile_phone: 'Phones', electronics: 'Electronics', computer: 'Computers', jewelry: 'Jewellery', florist: 'Flowers', gift: 'Gifts', furniture: 'Furniture', houseware: 'Housewares', hardware: 'Hardware', doityourself: 'DIY & building', trade: 'Building supplies', optician: 'Optician', bicycle: 'Bikes', sports: 'Sports', tobacco: 'Tobacco', cosmetics: 'Cosmetics', books: 'Books', toys: 'Toys', pet: 'Pet shop', lighting: 'Lighting', bed: 'Mattresses', carpet: 'Carpets', garden_centre: 'Garden centre', nutrition_supplements: 'Supplements', variety_store: 'Variety store', department_store: 'Department store', mall: 'Mall', stationery: 'Stationery', appliance: 'Appliances', baby_goods: 'Baby goods', second_hand: 'Second hand', musical_instrument: 'Music', photo: 'Photo', watches: 'Watches', boutique: 'Boutique', butcher: 'Butcher', seafood: 'Fish', health_food: 'Health food', confectionery: 'Sweets', bureau_de_change: 'Currency exchange', money_transfer: 'Money transfer', hairdresser: 'Hairdresser', beauty: 'Beauty salon', laundry: 'Laundry', dry_cleaning: 'Dry cleaning', car_repair: 'Car repair', yes: 'Shop' },
     open24: 'Open 24 hours', open: 'Open', until: 'until {t}', soon: 'Closes in {m} min',
     closed: 'Closed', opensAt: 'opens at {t}', opensTomorrow: 'tomorrow {t}', opensDay: '{d} {t}',
     unknown: 'No hours listed', allDay: '24 hours', dayOff: 'closed',
@@ -98,7 +98,7 @@ const I18N = {
     holiday: 'Today is {h}. Many shops are closed or keep different hours.',
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
-    srcConfirmed: '✓ Confirmed by: {s}', srcSingle: 'Single source: {s} — not checked on the spot', srcOld: 'data from {y} — may be out of date', srcNames: { osm: 'OpenStreetMap', chain: "the chain's own data", boi: 'Bank of Israel registry', moe: 'Ministry of Energy registry', user: 'a visitor' }, srcAsOf: 'as of {d}', srcEst: 'Estimated hours: an ATM on the branch wall usually works around the clock', feeYes: 'fee', feeNo: 'no fee', atmInside: 'inside the branch — branch hours', atmCount: '{n} ATMs', oldTag: '⚠ data from {y}', approxLoc: '≈ map position is approximate (town centre), address: {a}', approxStreet: '≈ on the right street, exact building not found, address: {a}', approxPlace: '≈ placed by the name of the area (mall, industrial zone), address: {a}',
+    srcConfirmed: '✓ Confirmed by: {s}', srcSingle: 'Single source: {s} — not checked on the spot', srcOld: 'data from {y} — may be out of date', srcNames: { osm: 'OpenStreetMap', chain: "the chain's own data", boi: 'Bank of Israel registry', moe: 'Ministry of Energy registry', ovt: 'Overture Maps (Meta, Microsoft and others)', user: 'a visitor' }, srcAsOf: 'as of {d}', srcEst: 'Estimated hours: an ATM on the branch wall usually works around the clock', feeYes: 'fee', feeNo: 'no fee', atmInside: 'inside the branch — branch hours', atmCount: '{n} ATMs', oldTag: '⚠ data from {y}', approxLoc: '≈ map position is approximate (town centre), address: {a}', approxStreet: '≈ on the right street, exact building not found, address: {a}', approxPlace: '≈ placed by the name of the area (mall, industrial zone), address: {a}',
     openNear: 'open nearby', go: 'Go', adLabel: 'Ad', adBanner: "Your ad here — seen by people looking for what's open nearby", adCardTitle: 'Your business here', adCardSub: "Get seen by people nearby looking for what's open", adClose: 'Hide ad', noneCard: 'Nothing open here. Zoom out.', tilt3d: 'Tilt the map (3D)', tilt2d: 'Top view (2D)', listAll: 'Full list',
     kickerAt: 'Open at {t}',
     srcChain: "Hours from the chain's official site", srcUser: 'Hours from a visitor', srcOsm: 'Hours from OpenStreetMap — may be out of date', doubtClosed: 'visitor: closed ({m})', doubtOpen: 'visitor: open ({m})', showingAt: "Showing what's open at {t}. Tap Now to go back.",
@@ -130,6 +130,7 @@ const CITIES = [
   ['eil', 29.5577, 34.9519, { ru: 'Эйлат', he: 'אילת', en: 'Eilat' }],
 ];
 const ICONS = {
+  shop: '<path d="M5 8h14l-1.2 12H6.2zM9 8V6.5a3 3 0 0 1 6 0V8" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>',
   eat: '<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 21V3c-2 1.5-3 4-3 7v3h3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
   atm: '<rect x="3" y="5.5" width="18" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 9.5h18" stroke="currentColor" stroke-width="2"/><path d="M7 14.5h4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
   all: '<path d="M4 9.5 5.2 4h13.6L20 9.5M4 9.5h16V20H4zM9.5 20v-5.5h5V20" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
@@ -259,15 +260,18 @@ function weekTable(oh, now) {
 
 // ---------- data ----------
 const EAT = new Set(['restaurant', 'fast_food', 'cafe', 'food_court', 'ice_cream']);
+const FOOD = new Set(['supermarket', 'convenience', 'kiosk', 'grocery', 'greengrocer', 'deli', 'alcohol', 'butcher', 'seafood', 'health_food', 'confectionery', 'dairy', 'cheese', 'spices', 'nuts', 'coffee', 'tea', 'beverages', 'wine', 'frozen_food', 'food']);
+const MONEY = new Set(['atm', 'bank', 'bureau_de_change', 'money_transfer']);
 function categoryOf(tg) {
-  if (tg.amenity === 'atm' || tg.amenity === 'bank') return 'atm';
+  if (MONEY.has(tg.amenity)) return 'atm';
   if (tg.amenity === 'fuel') return 'fuel';
   if (EAT.has(tg.amenity)) return 'eat';
   if (tg.amenity === 'pharmacy' || tg.shop === 'chemist') return 'pharmacy';
   if (tg.shop === 'bakery' || tg.shop === 'pastry') return 'bakery';
-  return 'food';
+  if (!tg.shop || FOOD.has(tg.shop)) return 'food';
+  return 'shop';
 }
-const typeKey = (tg) => (tg.amenity === 'fuel' || tg.amenity === 'pharmacy' || tg.amenity === 'atm' || tg.amenity === 'bank' || EAT.has(tg.amenity) ? tg.amenity : tg.shop);
+const typeKey = (tg) => (tg.amenity === 'fuel' || tg.amenity === 'pharmacy' || MONEY.has(tg.amenity) || EAT.has(tg.amenity) ? tg.amenity : tg.shop);
 // Whose it is, readable for a tourist or a new immigrant: banks, ATM operators and fuel brands in their language.
 const OWNERS = [
   [/פועלים|hapoalim/i, { he: 'בנק הפועלים', ru: 'Банк Апоалим', en: 'Bank Hapoalim' }],
@@ -314,11 +318,30 @@ function distM(aLat, aLon, bLat, bLon) {
 }
 const fmtDist = (m) => (m < 1000 ? Math.round(m / 10) * 10 + ' ' + t('m') : (m / 1000).toFixed(1).replace('.0', '') + ' ' + t('km'));
 let ALL = [];
+// Places come in tiles of 1/4 degree (~10 km); the app fetches only the tiles around what the map shows.
+const TILES = { size: 10, have: new Set(), loading: new Map(), list: null, ver: '' };
 async function loadAll() {
-  const r = await fetch('data/shops.json', { cache: 'no-cache' });
+  const r = await fetch('data/tiles/index.json', { cache: 'no-cache' });
   if (!r.ok) throw new Error('HTTP ' + r.status);
   const j = await r.json();
-  ALL = j.shops.map(([id, lat, lon, tags]) => ({ id, lat, lon, tags, cat: categoryOf(tags) }));
+  TILES.size = j.size; TILES.list = j.tiles; TILES.ver = j.updated;
+  ALL = [];
+  await ensureTiles(map.getBounds().pad(0.3));
+}
+function ensureTiles(b) {
+  if (!TILES.list || map.getZoom() < 9) return Promise.resolve(false);
+  const k = TILES.size, jobs = [];
+  for (let y = Math.floor(b.getSouth() * k); y <= Math.floor(b.getNorth() * k); y++)
+    for (let x = Math.floor(b.getWest() * k); x <= Math.floor(b.getEast() * k); x++) {
+      const key = y + '_' + x;
+      if (!TILES.list[key] || TILES.have.has(key)) continue;
+      if (!TILES.loading.has(key)) TILES.loading.set(key, fetch(`data/tiles/${key}.json?v=${encodeURIComponent(TILES.ver)}`).then((r) => r.json()).then((arr) => {
+        for (const [id, lat, lon, tags] of arr) ALL.push({ id, lat, lon, tags, cat: categoryOf(tags) });
+        TILES.have.add(key);
+      }).catch(() => {}).finally(() => TILES.loading.delete(key)));
+      jobs.push(TILES.loading.get(key));
+    }
+  return jobs.length ? Promise.all(jobs).then(() => true) : Promise.resolve(false);
 }
 
 // ---------- Hebcal ----------
@@ -755,6 +778,7 @@ function refresh() {
   const meIn = S.me && b.contains([S.me.lat, S.me.lon]);
   const ref = meIn ? S.me : { lat: c.lat, lon: c.lng };
   const pad = b.pad(0.05);
+  ensureTiles(b.pad(0.3)).then((got) => { if (got) refreshSoon(); });
   const inView = z >= 10 ? ALL.concat(USER_SHOPS).filter((s) => pad.contains([s.lat, s.lon])) : [];
   if (z >= 13) loadUserShops(b);
   for (const it of inView) {
@@ -773,7 +797,7 @@ function refresh() {
 
   // category chips with open counts
   const openAll = inView.filter((it) => isOpen(it.st.k));
-  const counts = { all: openAll.length, food: 0, eat: 0, bakery: 0, pharmacy: 0, fuel: 0, atm: 0 };
+  const counts = { all: openAll.length, food: 0, eat: 0, shop: 0, bakery: 0, pharmacy: 0, fuel: 0, atm: 0 };
   for (const it of openAll) counts[it.cat]++;
   $('#cats').innerHTML = Object.entries(I18N[S.lang].cats).map(([k, v]) =>
     `<button type="button" class="chip" data-cat="${k}" aria-pressed="${k === S.cat}"><span class="ico c-${k}">${svg(k)}</span>${esc(v)} <span class="n">${counts[k]}</span></button>`).join('');
@@ -917,7 +941,7 @@ function addPick(latlng) {
   $('#addHint').textContent = t('addHintForm');
   $('#addFields').hidden = false;
   $('#addName').placeholder = t('addName');
-  $('#addType').innerHTML = ['food', 'eat', 'bakery', 'pharmacy', 'fuel', 'atm'].map((k) => `<option value="${k}"${k === ADD.cat ? ' selected' : ''}>${esc(I18N[S.lang].cats[k])}</option>`).join('');
+  $('#addType').innerHTML = ['food', 'shop', 'eat', 'bakery', 'pharmacy', 'fuel', 'atm'].map((k) => `<option value="${k}"${k === ADD.cat ? ' selected' : ''}>${esc(I18N[S.lang].cats[k])}</option>`).join('');
   const opts = [['24/7', t('h247')], ['24/6', t('h246')], ['?', t('hUnknown')], ['other', t('addHoursOther')]];
   $('#addHours').innerHTML = opts.map(([v, l]) => `<button type="button" role="radio" data-h="${v}" aria-checked="${v === ADD.hours}">${esc(l)}</button>`).join('');
   $('#addHoursText').placeholder = t('addHoursPh');
@@ -963,7 +987,7 @@ function initAdd() {
 // ---------- community data from the database: added shops, hours fixes, check-ins, parking reports ----------
 const CI = new Map(), FIX = new Map(), comTiles = new Map(), CT = 0.05;
 const toSec = (iso) => Date.parse(iso) / 1000;
-const CAT_TAGS = { food: { shop: 'convenience' }, eat: { amenity: 'fast_food' }, bakery: { shop: 'bakery' }, pharmacy: { amenity: 'pharmacy' }, fuel: { amenity: 'fuel' }, atm: { amenity: 'atm' } };
+const CAT_TAGS = { food: { shop: 'convenience' }, shop: { shop: 'yes' }, eat: { amenity: 'fast_food' }, bakery: { shop: 'bakery' }, pharmacy: { amenity: 'pharmacy' }, fuel: { amenity: 'fuel' }, atm: { amenity: 'atm' } };
 function placeToShop(r) {
   const tags = { name: r.name, ...CAT_TAGS[r.cat], 'source:hours': 'user' };
   if (r.opening_hours) tags.opening_hours = r.opening_hours;

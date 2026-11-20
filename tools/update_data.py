@@ -1,12 +1,13 @@
 """Downloads all shops in Israel from OpenStreetMap (Overpass API) into data/shops.json.
 Run nightly (cron / GitHub Actions):  python tools/update_data.py
 """
-import json, sys, time, urllib.request, urllib.parse, pathlib
+import math, json, sys, time, urllib.request, urllib.parse, pathlib
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import chains  # noqa: E402
 import registries  # noqa: E402
 import stores  # noqa: E402
+import overture  # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "data" / "shops.json"
 RAW = pathlib.Path(__file__).resolve().parent.parent / "data" / "osm_raw.json"
@@ -14,7 +15,7 @@ SHOPS = "supermarket|convenience|kiosk|grocery|greengrocer|deli|alcohol|bakery|p
 QUERY = f"""[out:json][timeout:180];
 area["ISO3166-1"="IL"][admin_level=2]->.il;
 (
-  nwr["shop"~"^({SHOPS})$"](area.il);
+  nwr["shop"](area.il);
   nwr["amenity"~"^(pharmacy|fuel)$"](area.il);
   nwr["amenity"="atm"](area.il);
   nwr["amenity"~"^(restaurant|fast_food|cafe|food_court|ice_cream)$"](area.il);
@@ -38,6 +39,23 @@ def fetch():
                 print(f"{url} attempt {attempt + 1}: {e}", file=sys.stderr)
                 time.sleep(10)
     sys.exit("All Overpass mirrors failed")
+
+TILE = 10  # tiles of 1/10 degree (~10 km): a phone downloads only the area it shows
+
+
+def write_tiles(out):
+    tiles_dir = OUT.parent / "tiles"
+    tiles_dir.mkdir(exist_ok=True)
+    tiles = {}
+    for sh in out:
+        tiles.setdefault(f"{math.floor(sh[1] * TILE)}_{math.floor(sh[2] * TILE)}", []).append(sh)
+    for f in tiles_dir.glob("*.json"):
+        f.unlink()
+    for k, items in tiles.items():
+        (tiles_dir / f"{k}.json").write_text(json.dumps(items, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
+    (tiles_dir / "index.json").write_text(json.dumps({"updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "size": TILE,
+        "tiles": {k: len(v) for k, v in tiles.items()}}, separators=(",", ":")), encoding="utf-8")
+
 
 def main():
     # --skip-osm reuses the last OpenStreetMap download (handy when only chain data changed).
@@ -69,9 +87,12 @@ def main():
     # Store lists every big food retailer must publish (Price Transparency Law): confirm branches, add missing ones.
     for name, st in stores.merge_into(out).items():
         print(f"  stores {name}: {st}")
+    # Overture Maps (open data from Meta, Microsoft, Foursquare, AllThePlaces): confirm and add shops and food places.
+    print(f"  overture: {overture.merge_into(out)}")
     for name, st in stats.items():
         print(f"  {name}: {st}")
 
+    write_tiles(out)
     OUT.write_text(json.dumps({"updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "shops": out},
                               ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     total_hours = sum('opening_hours' in s[3] for s in out)

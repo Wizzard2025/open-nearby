@@ -139,6 +139,28 @@ const ICONS = {
   pharmacy: '<path d="M9.5 3.5h5v6h6v5h-6v6h-5v-6h-6v-5h6z" fill="currentColor"/>',
   fuel: '<path d="M5 20V5a1 1 0 0 1 1-1h7a1 1 0 0 1 1 1v15M3.5 20h12M14 9h2a1.8 1.8 0 0 1 1.8 1.8v5a1.5 1.5 0 0 0 3 0V8.2L18 5.5M7 8h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
 };
+// Extra map-only icons for the most common kinds of place, so a dot says what it is without opening it.
+const DOT_ICONS = {
+  cafe: '<path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM16 10.5h1.5a2.5 2.5 0 0 1 0 5H16M8 3.5v2.5M12 3.5v2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>',
+  clothes: '<path d="M8.5 4 4 6.5l1.8 4 2.2-1V20h8V9.5l2.2 1 1.8-4L15.5 4a3.5 3.5 0 0 1-7 0z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>',
+  phone: '<rect x="7" y="3" width="10" height="18" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 17.5h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+  flower: '<circle cx="12" cy="9" r="2.2" fill="currentColor"/><path d="M12 4.2a2.4 2.4 0 0 1 0 2.6M12 11.3V21M12 17c-2-2.2-4.5-2.5-6-2 1 2.3 3.5 3 6 2zM12 15.5c2-2 4.3-2.2 6-1.7-1 2.2-3.5 2.8-6 1.7M8 6.5a2.4 2.4 0 0 1 2 1.3M16 6.5a2.4 2.4 0 0 0-2 1.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>',
+  money: '<path d="M12 3v18M16.5 7.5c-.7-1.5-2.4-2.3-4.5-2.3-2.6 0-4.3 1.3-4.3 3.2 0 4.3 9 2.3 9 6.8 0 2-1.9 3.4-4.7 3.4-2.3 0-4-.9-4.8-2.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
+};
+const DOT_KIND = { cafe: 'cafe', ice_cream: 'cafe', coffee: 'cafe', clothes: 'clothes', boutique: 'clothes', shoes: 'clothes', mobile_phone: 'phone', electronics: 'phone', computer: 'phone', florist: 'flower', garden_centre: 'flower', bureau_de_change: 'money', money_transfer: 'money', bank: 'money' };
+// Badge colours dark enough for a white icon on top (grey: hours unknown, red: closed).
+const DOT_COL = { unknown: '#66737d', closed: '#c94a3e' };
+const dotIcon = (it) => 'i-' + (DOT_KIND[it.tags.amenity] || DOT_KIND[it.tags.shop] || it.cat);
+// Register white icons in the map style (drawn from the same SVG paths) for the symbol layer on top of the dots.
+function addDotIcons(gm) {
+  const all = { ...ICONS, ...DOT_ICONS };
+  return Promise.all(Object.entries(all).map(([k, body]) => new Promise((res) => {
+    const img = new Image(48, 48);
+    img.onload = () => { try { if (!gm.hasImage('i-' + k)) gm.addImage('i-' + k, img, { pixelRatio: 2 }); } catch {} res(); };
+    img.onerror = () => res();
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" color="#fff">${body}</svg>`);
+  })));
+}
 const svg = (k) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k]}</svg>`;
 
 // ---------- state & helpers ----------
@@ -466,11 +488,18 @@ function addAppLayers() {
   gm.addLayer({ id: 'route-main', type: 'line', source: 'route', filter: ['==', ['get', 'r'], 'main'], layout: { 'line-cap': 'round', 'line-join': 'round' }, paint: { 'line-color': ['get', 'c'], 'line-width': 6 } });
   gm.addLayer({ id: 'glows', type: 'circle', source: 'glows', paint: { 'circle-color': '#ffd68c', 'circle-blur': 1, 'circle-opacity': 0.55, 'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, 10, 17, 34] } });
   gm.addLayer({ id: 'dots', type: 'circle', source: 'dots', paint: {
-    'circle-radius': ['interpolate', ['linear'], ['zoom'], 13, 4, 17, 6], 'circle-color': ['get', 'c'], 'circle-opacity': ['get', 'o'],
-    'circle-stroke-color': '#ffffff', 'circle-stroke-width': 1.5, 'circle-pitch-alignment': 'map' } });
-  gm.on('click', 'dots', (e) => { const f = e.features?.[0]; if (f) select(f.properties.id, true); });
-  gm.on('mouseenter', 'dots', (e) => { gm.getCanvas().style.cursor = 'pointer'; gm.getCanvas().title = e.features?.[0]?.properties.n || ''; });
-  gm.on('mouseleave', 'dots', () => { gm.getCanvas().style.cursor = ''; gm.getCanvas().title = ''; });
+    // small dots when zoomed out; from street level they grow into round badges with an icon of what the place is
+    'circle-radius': ['interpolate', ['linear'], ['zoom'], 12.5, 3.5, 13.8, 5, 14.6, 8.5, 16.5, 12], 'circle-color': ['get', 'c'], 'circle-opacity': ['get', 'o'],
+    'circle-stroke-color': '#ffffff', 'circle-stroke-width': ['interpolate', ['linear'], ['zoom'], 13.8, 1.5, 15, 2] } });
+  gm.addLayer({ id: 'dot-icons', type: 'symbol', source: 'dots', minzoom: 14, layout: {
+    'icon-image': ['get', 'k'], 'icon-size': ['interpolate', ['linear'], ['zoom'], 14, 0.45, 14.6, 0.58, 16.5, 0.8],
+    'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'icon-opacity': ['get', 'o'] } });
+  addDotIcons(gm);
+  for (const ly of ['dots', 'dot-icons']) {
+    gm.on('click', ly, (e) => { const f = e.features?.[0]; if (f) select(f.properties.id, true); });
+    gm.on('mouseenter', ly, (e) => { gm.getCanvas().style.cursor = 'pointer'; gm.getCanvas().title = e.features?.[0]?.properties.n || ''; });
+    gm.on('mouseleave', ly, () => { gm.getCanvas().style.cursor = ''; gm.getCanvas().title = ''; });
+  }
   applyLayers();
 }
 const glReady = () => map && map.gm.getLayer && map.gm.getLayer('dots');
@@ -511,7 +540,7 @@ function drawMarkers(openL, unkL, closedL) {
   if (!glReady()) return;
   const z = map.getZoom(), feats = [];
   if (z >= 14 && LY.shops) for (const it of [...unkL.slice(0, 400), ...closedL.slice(0, 300)])
-    feats.push(MK.point(it.lat, it.lon, { id: it.id, n: nameOf(it), c: cssVar(STATUS_VAR[it.st.k]), o: it.st.k === 'closed' ? 0.6 : 0.9 }));
+    feats.push(MK.point(it.lat, it.lon, { id: it.id, n: nameOf(it), k: dotIcon(it), c: DOT_COL[it.st.k] || cssVar(STATUS_VAR[it.st.k]), o: it.st.k === 'closed' ? 0.75 : 0.95 }));
   map.setData('dots', feats);
 }
 let ringLabels = null;
@@ -1396,7 +1425,7 @@ function drawShopGlows() {
 const LY = Object.assign({ shops: true, parking: false, rings: true, shade: false }, (() => { try { return JSON.parse(store.get('layers') || '{}'); } catch { return {}; } })());
 function applyLayers() {
   for (const p of PINS.values()) { if (LY.shops) p.m.addTo(map); else p.m.remove(); }
-  if (glReady()) map.gm.setLayoutProperty('dots', 'visibility', LY.shops ? 'visible' : 'none');
+  if (glReady()) for (const ly of ['dots', 'dot-icons']) map.gm.setLayoutProperty(ly, 'visibility', LY.shops ? 'visible' : 'none');
   drawRings();
   PARK.on = LY.parking;
   if (!PARK.on && PARK.nearMarker) { PARK.nearMarker.remove(); PARK.nearMarker = null; }

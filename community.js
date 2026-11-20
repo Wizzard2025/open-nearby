@@ -53,6 +53,12 @@ window.DB = (() => {
     fixHours: (row) => insert('hours_fixes', row),
     checkin: (row) => insert('checkins', row),
     parking: (row) => insert('parking_reports', row),
+    // Ad requests are write-only for visitors (no read-back): nobody but the owner sees the contacts.
+    adRequest: async (row) => {
+      await ensureUser();
+      const { error } = await sb.from('ad_requests').insert(row);
+      if (error) { const e = new Error(error.message); e.code = /rate_limited/.test(error.message) ? 'rate_limited' : 'failed'; throw e; }
+    },
     signInEmail, signOut, me, onChange,
   };
 })();

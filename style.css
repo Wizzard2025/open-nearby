@@ -439,3 +439,20 @@ html.night-map #map { background: #0e1726; }
 .vsrc.ok { color: var(--open); font-weight: 600; }
 .vsrc.one { color: var(--soon); }
 .src-est::before { content: '≈ '; font-weight: 700; }
+
+/* advertise-here request form */
+.adopen { all: unset; cursor: pointer; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--brand) 50%, transparent); text-underline-offset: 3px; }
+.adopen:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.addlg { width: min(420px, calc(100vw - 32px)); border: 1px solid var(--line); border-radius: 16px; padding: 20px; background: var(--surface, #fff); color: var(--ink); }
+.addlg::backdrop { background: rgb(0 0 0 / 0.45); }
+.addlg h2 { margin: 0 28px 6px 0; font-size: 1.15rem; }
+.addlg .ad-hint { margin: 0 0 14px; color: var(--muted); font-size: 0.88rem; line-height: 1.4; }
+.addlg label { display: grid; gap: 4px; margin-bottom: 10px; font-size: 0.85rem; font-weight: 600; }
+.addlg input, .addlg textarea { font: inherit; font-weight: 400; padding: 9px 11px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--ink); resize: vertical; }
+.addlg input:focus, .addlg textarea:focus { outline: 2px solid var(--brand); outline-offset: 0; border-color: transparent; }
+.addlg .ad-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px; }
+.addlg .adx { position: absolute; top: 10px; inset-inline-end: 10px; }
+.addlg .ad-out { margin: 8px 0 0; font-size: 0.9rem; }
+.addlg .ad-out:empty { display: none; }
+.addlg .ad-out.ok { color: var(--open); font-weight: 600; }
+.addlg .ad-out.bad { color: var(--closed); }

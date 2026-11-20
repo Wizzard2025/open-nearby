@@ -25,7 +25,7 @@ const I18N = {
     shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
     m: 'м', km: 'км', expand: 'Развернуть список',
     srcConfirmed: '✓ Подтверждено: {s}', srcSingle: 'Один источник: {s} — на месте не проверено', srcOld: 'данные от {y} г. — могли устареть', srcNames: { osm: 'OpenStreetMap', chain: 'данные самой сети', boi: 'реестр Банка Израиля', moe: 'реестр Минэнергетики', ovt: 'Overture Maps (Meta, Microsoft и др.)', user: 'посетитель' }, srcAsOf: 'от {d}', srcEst: 'Часы оценены: банкомат на стене отделения обычно работает круглосуточно', feeYes: 'комиссия', feeNo: 'без комиссии', atmInside: 'внутри отделения — по часам отделения', atmCount: '{n} банкомата', oldTag: '⚠ данные {y} г.', approxLoc: '≈ место на карте приблизительно (центр посёлка), адрес: {a}', approxStreet: '≈ на нужной улице, дом точно не найден, адрес: {a}', approxPlace: '≈ по названию места (торговый центр, промзона), адрес: {a}',
-    openNear: 'открыто рядом', go: 'Идти', adLabel: 'Реклама', adBanner: 'Здесь может быть ваша реклама — её видят те, кто ищет открытое рядом', adCardTitle: 'Ваш бизнес здесь', adCardSub: 'Покажитесь тем, кто рядом и ищет открытое', adClose: 'Скрыть рекламу', noneCard: 'Здесь ничего не открыто. Отдалите карту.', tilt3d: 'Наклонить карту (3D)', tilt2d: 'Вид сверху (2D)', listAll: 'Весь список',
+    openNear: 'открыто рядом', go: 'Идти', adLabel: 'Реклама', adBanner: 'Здесь может быть ваша реклама — её видят те, кто ищет открытое рядом', adCardTitle: 'Ваш бизнес здесь', adCardSub: 'Покажитесь тем, кто рядом и ищет открытое', adClose: 'Скрыть рекламу', adCta: 'Разместить рекламу', adFormTitle: 'Реклама в «Точно открыто»', adFormHint: 'Оставьте контакт — мы свяжемся и расскажем об условиях. Ваши данные видит только владелец сайта.', adBiz: 'Бизнес', adBizPh: 'Например: Кафе «Утро», Хайфа', adContact: 'Телефон или e-mail', adMsg: 'Что хотите показать (необязательно)', adSend: 'Отправить заявку', adCancel: 'Отмена', adSent: 'Спасибо! Заявка отправлена, мы скоро свяжемся.', adFail: 'Не получилось отправить. Проверьте интернет и попробуйте ещё раз.', adLimit: 'Вы уже отправили несколько заявок сегодня — мы их получили.', noneCard: 'Здесь ничего не открыто. Отдалите карту.', tilt3d: 'Наклонить карту (3D)', tilt2d: 'Вид сверху (2D)', listAll: 'Весь список',
     kickerAt: 'Открыто в {t}',
     srcChain: 'Часы с официального сайта сети', srcUser: 'Часы указал посетитель', srcOsm: 'Часы из OpenStreetMap — могут быть устаревшими', doubtClosed: 'посетитель: закрыто ({m})', doubtOpen: 'посетитель: открыто ({m})', showingAt: 'Показываю, что открыто в {t}. Нажмите «Сейчас», чтобы вернуться.',
     kosher: 'кошерно', takeaway: 'с собой', delivery: 'доставка', privAtm: 'частный банкомат, обычно с комиссией', ownerOf: '{o}',
@@ -62,7 +62,7 @@ const I18N = {
     shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
     m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
     srcConfirmed: '✓ מאומת: {s}', srcSingle: 'מקור אחד: {s} — לא נבדק בשטח', srcOld: 'נתונים משנת {y} — ייתכן שהתיישנו', srcNames: { osm: 'OpenStreetMap', chain: 'נתוני הרשת עצמה', boi: 'מאגר בנק ישראל', moe: 'מאגר משרד האנרגיה', ovt: 'Overture Maps (Meta, Microsoft ועוד)', user: 'מבקר' }, srcAsOf: 'מ-{d}', srcEst: 'השעות משוערות: כספומט בקיר הסניף פועל בדרך כלל מסביב לשעון', feeYes: 'בעמלה', feeNo: 'ללא עמלה', atmInside: 'בתוך הסניף — לפי שעות הסניף', atmCount: '{n} כספומטים', oldTag: '⚠ נתונים מ-{y}', approxLoc: '≈ המיקום במפה משוער (מרכז היישוב), כתובת: {a}', approxStreet: '≈ ברחוב הנכון, הבית המדויק לא נמצא, כתובת: {a}', approxPlace: '≈ לפי שם המקום (מרכז מסחרי, אזור תעשייה), כתובת: {a}',
-    openNear: 'פתוחים לידך', go: 'ללכת', adLabel: 'מודעה', adBanner: 'כאן יכולה להיות המודעה שלכם — רואים אותה מי שמחפשים מה פתוח בסביבה', adCardTitle: 'העסק שלכם כאן', adCardSub: 'הופיעו מול מי שנמצא קרוב ומחפש מה פתוח', adClose: 'להסתיר מודעה', noneCard: 'אין כאן מקומות פתוחים. הרחיקו את המפה.', tilt3d: 'להטות את המפה (3D)', tilt2d: 'מבט מלמעלה (2D)', listAll: 'כל הרשימה',
+    openNear: 'פתוחים לידך', go: 'ללכת', adLabel: 'מודעה', adBanner: 'כאן יכולה להיות המודעה שלכם — רואים אותה מי שמחפשים מה פתוח בסביבה', adCardTitle: 'העסק שלכם כאן', adCardSub: 'הופיעו מול מי שנמצא קרוב ומחפש מה פתוח', adClose: 'להסתיר מודעה', adCta: 'לפרסם כאן', adFormTitle: 'פרסום ב«בטוח? פתוח!»', adFormHint: 'השאירו פרטים ונחזור אליכם עם התנאים. את הפרטים רואה רק בעל האתר.', adBiz: 'שם העסק', adBizPh: 'למשל: קפה בוקר, חיפה', adContact: 'טלפון או אימייל', adMsg: 'מה תרצו להציג (לא חובה)', adSend: 'לשלוח בקשה', adCancel: 'ביטול', adSent: 'תודה! הבקשה נשלחה, נחזור אליכם בקרוב.', adFail: 'השליחה לא הצליחה. בדקו את החיבור ונסו שוב.', adLimit: 'כבר שלחתם כמה בקשות היום — קיבלנו אותן.', noneCard: 'אין כאן מקומות פתוחים. הרחיקו את המפה.', tilt3d: 'להטות את המפה (3D)', tilt2d: 'מבט מלמעלה (2D)', listAll: 'כל הרשימה',
     kickerAt: 'פתוח ב-{t}',
     srcChain: 'שעות מהאתר הרשמי של הרשת', srcUser: 'שעות שעדכן מבקר', srcOsm: 'שעות מ-OpenStreetMap — ייתכן שאינן מעודכנות', doubtClosed: 'מבקר: סגור ({m})', doubtOpen: 'מבקר: פתוח ({m})', showingAt: 'מוצג מה פתוח ב-{t}. לחצו «עכשיו» כדי לחזור.',
     kosher: 'כשר', takeaway: 'טייק אווי', delivery: 'משלוחים', privAtm: 'כספומט פרטי, בדרך כלל בעמלה', ownerOf: '{o}',
@@ -99,7 +99,7 @@ const I18N = {
     shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
     m: 'm', km: 'km', expand: 'Expand the list',
     srcConfirmed: '✓ Confirmed by: {s}', srcSingle: 'Single source: {s} — not checked on the spot', srcOld: 'data from {y} — may be out of date', srcNames: { osm: 'OpenStreetMap', chain: "the chain's own data", boi: 'Bank of Israel registry', moe: 'Ministry of Energy registry', ovt: 'Overture Maps (Meta, Microsoft and others)', user: 'a visitor' }, srcAsOf: 'as of {d}', srcEst: 'Estimated hours: an ATM on the branch wall usually works around the clock', feeYes: 'fee', feeNo: 'no fee', atmInside: 'inside the branch — branch hours', atmCount: '{n} ATMs', oldTag: '⚠ data from {y}', approxLoc: '≈ map position is approximate (town centre), address: {a}', approxStreet: '≈ on the right street, exact building not found, address: {a}', approxPlace: '≈ placed by the name of the area (mall, industrial zone), address: {a}',
-    openNear: 'open nearby', go: 'Go', adLabel: 'Ad', adBanner: "Your ad here — seen by people looking for what's open nearby", adCardTitle: 'Your business here', adCardSub: "Get seen by people nearby looking for what's open", adClose: 'Hide ad', noneCard: 'Nothing open here. Zoom out.', tilt3d: 'Tilt the map (3D)', tilt2d: 'Top view (2D)', listAll: 'Full list',
+    openNear: 'open nearby', go: 'Go', adLabel: 'Ad', adBanner: "Your ad here — seen by people looking for what's open nearby", adCardTitle: 'Your business here', adCardSub: "Get seen by people nearby looking for what's open", adClose: 'Hide ad', adCta: 'Advertise here', adFormTitle: "Advertise on Betcha it's open", adFormHint: "Leave a contact and we'll get back to you with the terms. Only the site owner sees your details.", adBiz: 'Business', adBizPh: 'For example: Morning Cafe, Haifa', adContact: 'Phone or email', adMsg: 'What you would like to show (optional)', adSend: 'Send request', adCancel: 'Cancel', adSent: "Thanks! Request sent, we'll be in touch soon.", adFail: "Couldn't send. Check your connection and try again.", adLimit: "You've already sent a few requests today — we have them.", noneCard: 'Nothing open here. Zoom out.', tilt3d: 'Tilt the map (3D)', tilt2d: 'Top view (2D)', listAll: 'Full list',
     kickerAt: 'Open at {t}',
     srcChain: "Hours from the chain's official site", srcUser: 'Hours from a visitor', srcOsm: 'Hours from OpenStreetMap — may be out of date', doubtClosed: 'visitor: closed ({m})', doubtOpen: 'visitor: open ({m})', showingAt: "Showing what's open at {t}. Tap Now to go back.",
     kosher: 'kosher', takeaway: 'takeaway', delivery: 'delivery', privAtm: 'private ATM, usually charges a fee', ownerOf: '{o}',
@@ -433,14 +433,40 @@ function renderAdBanner() {
   el.hidden = adClosed();
   const a = ADS.banner;
   el.innerHTML = `<span class="adtag">${esc(t('adLabel'))}</span>` +
-    (a ? `<a href="${esc(a.href)}" target="_blank" rel="noopener sponsored">${esc(a.title)}</a>` : `<span class="adtext">${esc(t('adBanner'))}</span>`) +
+    (a ? `<a href="${esc(a.href)}" target="_blank" rel="noopener sponsored">${esc(a.title)}</a>` : `<button type="button" class="adtext adopen" data-ad-open>${esc(t('adBanner'))}</button>`) +
     `<button type="button" class="adx" data-ad-close aria-label="${esc(t('adClose'))}">×</button>`;
 }
 function adCardHTML() {
   const a = ADS.card;
   return `<article class="pcard ad" data-ad-slot="card"><span class="adtag">${esc(t('adLabel'))}</span>
     <div class="pc-top"><span class="ico adico">★</span><div class="pc-name"><b>${esc(a ? a.title : t('adCardTitle'))}</b><small>${esc(a ? a.sub : t('adCardSub'))}</small></div></div>
-    ${a ? `<div class="pc-bottom"><span></span><a class="gobtn" href="${esc(a.href)}" target="_blank" rel="noopener sponsored">${esc(t('go'))}</a></div>` : ''}</article>`;
+    <div class="pc-bottom"><span></span>${a ? `<a class="gobtn" href="${esc(a.href)}" target="_blank" rel="noopener sponsored">${esc(t('go'))}</a>` : `<button type="button" class="gobtn" data-ad-open>${esc(t('adCta'))}</button>`}</div></article>`;
+}
+// "Advertise here": a short request form; requests land in the ad_requests table, readable only by the site owner.
+function initAdForm() {
+  const dlg = $('#adDlg'), f = $('#adForm'); if (!dlg || !f) return;
+  const fill = () => {
+    for (const el of dlg.querySelectorAll('[data-t]')) el.textContent = t(el.dataset.t);
+    f.business.placeholder = t('adBizPh');
+  };
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('[data-ad-open]')) { fill(); $('#adMsgOut').textContent = ''; f.hidden = false; dlg.showModal(); track('ad-form', 'open'); }
+    if (e.target.closest('[data-ad-cancel]')) dlg.close();
+  });
+  dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+  f.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const out = $('#adMsgOut'), btn = f.querySelector('[type=submit]');
+    const row = { business: f.business.value.trim(), contact: f.contact.value.trim(), message: f.message.value.trim() || null, lang: S.lang };
+    if (row.business.length < 2 || row.contact.length < 5) { out.textContent = t('adFormHint'); out.className = 'ad-out bad'; (row.business.length < 2 ? f.business : f.contact).focus(); return; }
+    btn.disabled = true;
+    try {
+      await DB.adRequest(row);
+      out.textContent = t('adSent'); out.className = 'ad-out ok'; f.reset(); f.hidden = true; track('ad-form', 'sent');
+    } catch (err) {
+      out.textContent = t(err.code === 'rate_limited' ? 'adLimit' : 'adFail'); out.className = 'ad-out bad';
+    } finally { btn.disabled = false; }
+  });
 }
 // Swipeable cards of open places (glance mode): name, status, walk time and one big "Go".
 function cardsHTML(openL, now) {
@@ -1512,6 +1538,7 @@ async function init() {
     const it = S.view.find((x) => x.id === S.selected); if (it) map.panTo([it.lat, it.lon]);
     setTimeout(() => document.querySelector(`.shop[data-id="${CSS.escape(S.selected)}"]`)?.scrollIntoView({ block: 'nearest' }), 320);
   });
+  initAdForm();
   document.addEventListener('click', (e) => { if (e.target.closest('[data-ad-close]')) { try { sessionStorage.setItem('adClosed', '1'); } catch {} renderAdBanner(); setSheet(sheet().dataset.state); } });
   initShade();
   initLayers();

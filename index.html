@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css">
 <script>(function(){try{var m=localStorage.getItem("theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m)}catch(e){}})();</script>
-<link rel="stylesheet" href="style.css?v=20261120c">
+<link rel="stylesheet" href="style.css?v=20261120d">
 <script data-goatcounter="https://open-nearby.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -145,13 +145,25 @@
   </div>
 </section>
 
+<dialog class="addlg" id="adDlg" aria-labelledby="adT">
+  <form id="adForm" novalidate>
+    <h2 id="adT" data-t="adFormTitle"></h2>
+    <p class="ad-hint" data-t="adFormHint"></p>
+    <label><span data-t="adBiz"></span><input name="business" required minlength="2" maxlength="120" autocomplete="organization"></label>
+    <label><span data-t="adContact"></span><input name="contact" required minlength="5" maxlength="120" autocomplete="tel"></label>
+    <label><span data-t="adMsg"></span><textarea name="message" rows="3" maxlength="1000"></textarea></label>
+    <div class="ad-actions"><button type="button" class="ghost" data-ad-cancel data-t="adCancel"></button><button type="submit" class="gobtn" data-t="adSend"></button></div>
+  </form>
+  <p id="adMsgOut" class="ad-out" role="status"></p>
+  <button type="button" class="adx" data-ad-cancel aria-label="Close">×</button>
+</dialog>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
 <script src="vendor/suncalc.js"></script>
 <script src="vendor/opening_hours.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
-<script src="community.js?v=20261120c"></script>
-<script src="mapkit.js?v=20261120c"></script>
-<script src="route.js?v=20261120c"></script>
-<script src="app.js?v=20261120c"></script>
+<script src="community.js?v=20261120d"></script>
+<script src="mapkit.js?v=20261120d"></script>
+<script src="route.js?v=20261120d"></script>
+<script src="app.js?v=20261120d"></script>
 </body>
 </html>

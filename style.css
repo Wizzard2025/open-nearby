@@ -89,7 +89,10 @@ button, select, input { font: inherit; color: inherit; }
 .themebtn::after, .langs button::after { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 44px; transform: translateY(-50%); }
 
 /* ---------- locate button ---------- */
-.mapctl { display: flex; flex-direction: column; gap: 10px; position: fixed; z-index: 900; right: max(12px, env(safe-area-inset-right, 0px)); bottom: calc(var(--sheet-peek) + 14px); transition: bottom 0.25s ease; }
+.mapctl { display: flex; flex-direction: column; gap: 10px; position: fixed; z-index: 900; right: max(12px, env(safe-area-inset-right, 0px));
+  /* Above the sheet, but never up into the top bar and pill (they end ~122px down); on a short screen (landscape) the
+     buttons stay low and the sheet can be pulled down to reach them. */
+  bottom: min(calc(var(--sheet-peek) + 14px), calc(100dvh - 122px - 130px)); transition: bottom 0.25s ease; }
 [dir="rtl"] .mapctl { right: auto; left: max(12px, env(safe-area-inset-left, 0px)); }
 .fab {
   width: 52px; height: 52px; border-radius: 50%; border: 0; cursor: pointer;
@@ -454,7 +457,7 @@ html.night-map #map { background: #0e1726; }
 .adopen { all: unset; cursor: pointer; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--brand) 50%, transparent); text-underline-offset: 3px; }
 .adopen:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 /* ---------- add a shop (1.3.0): "+" button, step 1 = fixed pin over the map, step 2 = compact form ---------- */
-.addctl { position: fixed; z-index: 900; left: max(12px, env(safe-area-inset-left, 0px)); bottom: calc(var(--sheet-peek) + 14px); transition: bottom 0.25s ease; }
+.addctl { position: fixed; z-index: 900; left: max(12px, env(safe-area-inset-left, 0px)); bottom: min(calc(var(--sheet-peek) + 14px), calc(100dvh - 122px - 64px)); transition: bottom 0.25s ease; }
 [dir="rtl"] .addctl { left: auto; right: max(12px, env(safe-area-inset-right, 0px)); }
 .fab.addfab { background: var(--brand); color: var(--brand-ink); }
 .fab.addfab svg { width: 26px; height: 26px; }

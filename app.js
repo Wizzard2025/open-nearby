@@ -75,6 +75,7 @@ const t = (k, vars) => {
 };
 const ADD_HOURS_INPUT = '#addHoursText';
 const ARIA_EXPANDED = 'aria-expanded';
+const ADD_FORM_MIN = 130;   // px: add-shop panel title row + name field (+ padding), see trackKeyboard()
 // --sheet-peek: how much of the bottom sheet covers the map on a phone (map buttons and popups keep clear of it).
 const SHEET_PEEK = '--sheet-peek';
 const setSheetPeek = (px) => document.documentElement.style.setProperty(SHEET_PEEK, px + 'px');
@@ -989,6 +990,7 @@ async function addSubmit(e) {
     $('#addNote').textContent = t(err.code === 'rate_limited' ? 'tooMany' : 'addFail');
   } finally { btn.disabled = false; }
 }
+const addGap = (avail, kb) => Math.max(0, Math.min(kb > 0 ? 150 : 200, avail - ADD_FORM_MIN));
 // The on-screen keyboard shrinks the visual viewport: lift the form by that much and keep the pin in view.
 function trackKeyboard() {
   const vv = window.visualViewport;
@@ -996,14 +998,16 @@ function trackKeyboard() {
   const update = () => {
     const kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
     document.documentElement.style.setProperty('--kb', kb + 'px');
-    // A strip of map stays above the form so the picked pin is visible: more without the keyboard, less with it
-    // (top bar + the pin, ~150px); the form scrolls within the rest.
-    document.documentElement.style.setProperty('--add-gap', kb > 0 ? '150px' : '200px');
+    // A strip of map stays above the form so the picked pin is visible: ~200px without the keyboard, ~150px with it
+    // (top bar + pin). On a short screen (a phone in landscape) the form keeps at least ADD_FORM_MIN for its title
+    // and the name field, and the map strip shrinks instead; the form scrolls within whatever it gets.
+    document.documentElement.style.setProperty('--add-gap', addGap(vv.height, kb) + 'px');
     document.body.classList.toggle('kbopen', kb > 0);
     if (ADD.on) { requestAnimationFrame(addFitPin); }
   };
   vv.addEventListener('resize', update);
   vv.addEventListener('scroll', update);
+  update();
 }
 function initAdd() {
   $('#addOpen').addEventListener('click', addStart);

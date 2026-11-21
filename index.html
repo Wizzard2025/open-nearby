@@ -26,10 +26,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.css">
 <script>(function(){try{var m=localStorage.getItem("theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m)}catch(e){}})();</script>
-<link rel="stylesheet" href="style.css?v=20261121a">
+<link rel="stylesheet" href="style.css?v=20261121b">
 <script data-goatcounter="https://open-nearby.goatcounter.com/count" async src="https://gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -43,6 +42,8 @@
     </picture></span>
     <span class="appname" data-i18n="tagline">Точно открыто</span>
   </div>
+  <button type="button" class="themebtn" id="accBtn" aria-label="Account" aria-expanded="false" aria-controls="accPop"></button>
+  <div class="accpop" id="accPop" hidden></div>
   <button type="button" class="themebtn" id="themeBtn" aria-label="Theme"></button>
   <div class="langs" role="group" aria-label="Language">
     <button type="button" data-lang="he">עב</button>
@@ -51,9 +52,19 @@
   </div>
 </header>
 
+<div class="glance" id="glance">
+  <button type="button" class="answer" id="answerBtn" aria-controls="sheet">
+    <b id="gCount">—</b><span id="gText"></span>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button type="button" class="tiltbtn" id="tiltBtn" aria-pressed="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 20.5 7.5v9L12 21.2 3.5 16.5v-9zM3.5 7.5 12 12.2l8.5-4.7M12 12.2v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    <span>3D</span>
+  </button>
+</div>
 <div class="shadebar" id="shadeBar" hidden>
   <span class="sb-sun" aria-hidden="true">☀</span>
-  <input type="range" id="shadeTime" min="360" max="1200" step="15" aria-label="Time">
+  <input type="range" id="shadeTime" min="0" max="1435" step="5" aria-label="Time">
   <span class="sb-time" id="shadeTimeL"></span>
   <button type="button" class="sb-now" id="shadeNow"></button>
 </div>
@@ -73,7 +84,7 @@
   </button>
 </div>
 
-<section class="sheet" id="sheet" data-state="half" aria-label="Список мест">
+<section class="sheet" id="sheet" data-state="peek" aria-label="Список мест">
   <button type="button" class="grab" id="grab" aria-label="Развернуть список"><span></span></button>
 
   <div class="hero">
@@ -96,6 +107,8 @@
 
   <div class="chips" role="group" id="cats"></div>
   <div id="notices"></div>
+  <div class="adbanner" id="adBanner" data-ad-slot="banner" hidden></div>
+  <div class="cards" id="cards"></div>
 
   <form class="addbox" id="addBox" hidden autocomplete="off">
     <p class="add-title" id="addTitle"></p>
@@ -127,17 +140,30 @@
       <ol id="closedList" class="list"></ol>
     </details>
     <button type="button" class="addcta" id="addOpen"></button>
-    <p class="source"><span data-i18n="source"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a></p>
+    <p class="source"><span data-i18n="source"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · <a href="https://overturemaps.org" target="_blank" rel="noopener">© Overture Maps Foundation</a> · <a href="https://data.gov.il" target="_blank" rel="noopener">data.gov.il</a></p>
     <p class="madeby">made by <b>Vichi</b> · 2026 · <a href="CHANGELOG.md" target="_blank" rel="noopener">v1.1.0</a></p>
   </div>
 </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<dialog class="addlg" id="adDlg" aria-labelledby="adT">
+  <form id="adForm" novalidate>
+    <h2 id="adT" data-t="adFormTitle"></h2>
+    <p class="ad-hint" data-t="adFormHint"></p>
+    <label><span data-t="adBiz"></span><input name="business" required minlength="2" maxlength="120" autocomplete="organization"></label>
+    <label><span data-t="adContact"></span><input name="contact" required minlength="5" maxlength="120" autocomplete="tel"></label>
+    <label><span data-t="adMsg"></span><textarea name="message" rows="3" maxlength="1000"></textarea></label>
+    <div class="ad-actions"><button type="button" class="ghost" data-ad-cancel data-t="adCancel"></button><button type="submit" class="gobtn" data-t="adSend"></button></div>
+  </form>
+  <p id="adMsgOut" class="ad-out" role="status"></p>
+  <button type="button" class="adx" data-ad-cancel aria-label="Close">×</button>
+</dialog>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@maplibre/maplibre-gl-leaflet@0.1.3/leaflet-maplibre-gl.js"></script>
 <script src="vendor/suncalc.js"></script>
 <script src="vendor/opening_hours.js"></script>
-<script src="route.js?v=20261121a"></script>
-<script src="app.js?v=20261121a"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="community.js?v=20261121b"></script>
+<script src="mapkit.js?v=20261121b"></script>
+<script src="route.js?v=20261121b"></script>
+<script src="app.js?v=20261121b"></script>
 </body>
 </html>

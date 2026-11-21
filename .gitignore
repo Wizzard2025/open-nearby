@@ -2,3 +2,6 @@ data/osm_raw.json
 __pycache__/
 *.pyc
 .claude/
+.enola/
+.superdesign/
+data/.cache/

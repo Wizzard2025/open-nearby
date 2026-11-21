@@ -13,6 +13,7 @@
   --header-ink: #e8f6fc;
   --glow: #3cc4f2;
   --open: #12955a;
+  --open-ink: #16794a; /* green text on the surface: 5.4:1 */
   --open-bg: #e2f5ea;
   --soon: #b46a00;
   --soon-bg: #fff0d4;
@@ -33,7 +34,7 @@
   :root:not([data-theme="light"]) {
     --bg: #0b1014; --surface: #121a20; --surface-2: #18222a; --ink: #e7eef2; --muted: #95a4ad; --line: #22303a;
     --brand: #3cc4f2; --brand-ink: #04141d; --header: #0a0f13; --header-ink: #e8f6fc;
-    --open: #47d38a; --open-bg: #12301f; --soon: #f0b44c; --soon-bg: #382a0e;
+    --open: #47d38a; --open-ink: #47d38a; --open-bg: #12301f; --soon: #f0b44c; --soon-bg: #382a0e;
     --closed: #ef8a80; --closed-bg: #381c19; --unknown: #a0adb5; --unknown-bg: #1e2830;
     --food: #47d38a; --bakery: #e8a54a; --pharmacy: #f07b8e; --fuel: #78a3ff;
     --shadow: 0 8px 28px rgb(0 0 0 / 0.5);
@@ -43,7 +44,7 @@
 :root[data-theme="dark"] {
   --bg: #0b1014; --surface: #121a20; --surface-2: #18222a; --ink: #e7eef2; --muted: #95a4ad; --line: #22303a;
   --brand: #3cc4f2; --brand-ink: #04141d; --header: #0a0f13; --header-ink: #e8f6fc;
-  --open: #47d38a; --open-bg: #12301f; --soon: #f0b44c; --soon-bg: #382a0e;
+  --open: #47d38a; --open-ink: #47d38a; --open-bg: #12301f; --soon: #f0b44c; --soon-bg: #382a0e;
   --closed: #ef8a80; --closed-bg: #381c19; --unknown: #a0adb5; --unknown-bg: #1e2830;
   --food: #47d38a; --bakery: #e8a54a; --pharmacy: #f07b8e; --fuel: #78a3ff;
   --shadow: 0 8px 28px rgb(0 0 0 / 0.5);
@@ -296,7 +297,7 @@ button, select, input { font: inherit; color: inherit; }
 .pk-pay-btn { display: block; border-radius: 10px; padding: 7px 8px; background: #0f5fd6; color: #fff !important; font: 700 0.85rem var(--font); text-align: center; text-decoration: none; }
 .pk-pay-btn:hover { background: #0b4fb3; }
 .pk-pay-note { color: var(--muted); font-size: 0.72rem; line-height: 1.25; }
-.pk-thanks { color: var(--open); font-weight: 600; }
+.pk-thanks { color: var(--open-ink); font-weight: 600; }
 
 /* layers menu */
 .layers-pop { position: absolute; right: 64px; bottom: 0; min-width: 220px; padding: 12px 14px; border-radius: 14px;

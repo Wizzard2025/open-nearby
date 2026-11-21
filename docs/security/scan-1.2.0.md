@@ -15,7 +15,7 @@ Quality gate **Strict (open-nearby)**: **OK**
 | software_quality_reliability_rating | 1 | GT 1 | OK |
 | software_quality_security_rating | 1 | GT 1 | OK |
 
-Lines of code: 4450. Open issues: 571. Hotspots to review: 0.
+Lines of code: 4451. Open issues: 571. Hotspots to review: 0.
 
 Open issues by quality: maintainability 571.
 Most frequent rules: javascript:S121 (319), javascript:S2681 (23), python:S3776 (17), javascript:S3358 (17), python:S7498 (16), css:S4664 (16), javascript:S6582 (15), javascript:S134 (15).

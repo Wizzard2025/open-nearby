@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.3.0 — 2026-11-21
+
+Easier on phones.
+
+- Adding a shop is a separate, step-by-step mode. A "+" button on the map starts it. Step 1 shows only the map with a pin fixed in the middle: move the map until the pin sits on the shop, then press «Here» (it starts at your location). Step 2 is a compact form under the map, with the pin still visible; it stays above the on-screen keyboard. The pin can be dragged or moved by tapping the map; Esc or × cancels. Before, the hint and the form ended up below the edge of the screen, under the list and the ad.
+- First screen: the open count and the city share one line, notices (Shabbat, location) take one line and expand on tap, the ad banner takes one line. On an iPhone SE the first shop is now on screen without scrolling.
+- Map buttons no longer slide under the list or into the 3D button.
+- While a popup on the map is open (parking, payment) the list slides away on phones and comes back when it closes, so the popup's buttons are never under it. The layers menu no longer opens under the top pill.
+- Bigger touch targets: language switch, account and theme buttons, category chips, the list handle, close buttons.
+- The form's «Add to the map» button is styled as the main action.
+
 ## 1.2.0 — 2026-11-21
 
 Security and quality release, checked by the new release scan (`tools/sonar/`: local SonarQube + OSV.dev CVE check).

@@ -74,6 +74,10 @@ const t = (k, vars) => {
   return s;
 };
 const ADD_HOURS_INPUT = '#addHoursText';
+const ARIA_EXPANDED = 'aria-expanded';
+// --sheet-peek: how much of the bottom sheet covers the map on a phone (map buttons and popups keep clear of it).
+const SHEET_PEEK = '--sheet-peek';
+const setSheetPeek = (px) => document.documentElement.style.setProperty(SHEET_PEEK, px + 'px');
 const setAriaLabel = (el, text) => el.setAttribute('aria-label', text);
 // Fire-and-forget async work (redraws, background loads, click handlers): a failure is logged instead of
 // surfacing as an unhandled promise rejection.
@@ -386,15 +390,22 @@ function initMap(center, zoom) {
   const touch = matchMedia('(pointer: coarse)').matches;
   map = new MK.Map('map', { center, zoom, touch, style: { version: 8, sources: {}, layers: [] } });
   // A popup needs map room on a phone: lower the list to its peek state first.
-  map.onPopup = () => { if (!wide() && sheet().dataset.state !== 'peek') setSheet('peek'); };
+  // A map popup on a phone gets the whole map: the list (with its cards) slides away and comes back when it closes.
+  map.onPopup = () => {
+    if (wide()) { return; }
+    if (sheet().dataset.state !== 'peek') { setSheet('peek'); }
+    document.body.classList.add('mappop');
+    setSheetPeek(0);
+  };
   map.popupInset = () => {
     const sh = $('#sheet');
     // Floating things over the top of the map: the top bar and the "N open nearby / 3D" row under it.
     const top = Math.max(0, ...['.topbar', '#glance'].map((q) => { const el = $(q); const r = el && el.getBoundingClientRect(); return r && r.height ? r.bottom : 0; }));
     // The sheet may be mid-animation; use the height it is moving to (set by setSheet) on phones.
-    const peek = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sheet-peek'));
+    const peek = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue(SHEET_PEEK));
     // On a wide screen the list is a side panel, so nothing covers the bottom of the map.
-    const bottom = wide() ? 0 : peek > 0 ? peek : sh ? Math.max(0, innerHeight - sh.getBoundingClientRect().top) : 0;
+    let bottom = 0;
+    if (!wide() && !document.body.classList.contains('mappop')) { bottom = peek > 0 ? peek : Math.max(0, innerHeight - sh.getBoundingClientRect().top); }
     return { top, bottom };
   };
   map.gm.setStyle(STYLE_URL, { transformStyle: (_, next) => ({ ...next, layers: next.layers.filter((l) => l['source-layer'] !== 'poi') }) });
@@ -561,12 +572,14 @@ const wide = () => matchMedia('(min-width: 860px)').matches;
 function setSheet(state) {
   const el = sheet();
   el.dataset.state = state;
-  if (wide()) { document.documentElement.style.setProperty('--sheet-peek', '0px'); return; }
+  if (wide()) { setSheetPeek(0); return; }
   const H = el.offsetHeight, vh = window.innerHeight;
   const peekH = (() => { const c = $('#cards'); if (!c || !c.offsetHeight) return 212; return Math.round(c.getBoundingClientRect().bottom - el.getBoundingClientRect().top + 10); })();
   const visible = state === 'full' ? H : state === 'half' ? Math.min(H, Math.round(vh * 0.55)) : Math.min(H, peekH);
   el.style.setProperty('--sheet-offset', H - visible + 'px');
-  document.documentElement.style.setProperty('--sheet-peek', Math.min(visible, Math.round(vh * 0.5)) + 'px');
+  // Map buttons sit just above the sheet; only a full-height sheet caps them at mid-screen (they are behind it then).
+  const peekPx = state === 'full' ? Math.min(visible, Math.round(vh * 0.5)) : visible;
+  setSheetPeek(document.body.classList.contains('mappop') ? 0 : peekPx);
 }
 function initSheet() {
   const el = sheet(), grab = $('#grab');
@@ -621,12 +634,21 @@ function applyLang() {
   if (typeof applyTheme === 'function' && $('#themeBtn')?.textContent) applyTheme();
   $('#addOpen').textContent = t('addOpen');
   setAriaLabel($('#grab'), t('expand'));
+  setAriaLabel($('#addFab'), t('addTitle')); $('#addFab').title = t('addTitle');
   $('#tiltBtn').title = t('tilt3d');
   $('#city').innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
 }
 function renderNotices() {
   const arr = [...(S.notices.time ? [S.notices.time] : []), ...(S.notices.loc ? [S.notices.loc] : []), ...S.notices.hebcal];
-  $('#notices').innerHTML = arr.map((n) => `<p class="notice ${n.cls}">${esc(n.text)}</p>`).join('');
+  // On phones a notice shows one line; it is a button that expands to the full text.
+  $('#notices').innerHTML = arr.map((n) => `<p class="notice ${n.cls}" role="button" tabindex="0" aria-expanded="false">${esc(n.text)}</p>`).join('');
+}
+function toggleNotice(e) {
+  const n = e.target.closest('#notices .notice');
+  if (!n || (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ')) { return; }
+  e.preventDefault();
+  n.classList.toggle('open');
+  n.setAttribute(ARIA_EXPANDED, String(n.classList.contains('open')));
 }
 // "Fast food · falafel" / "ATM · Bank Leumi" / "Gas station · Paz": what the place is and whose, in one line.
 function kindLine(it, type, name) {
@@ -888,23 +910,48 @@ async function loadUserShops(bounds) {
 }
 
 const ADD = { on: false, pin: null, marker: null, hours: '24/7', cat: 'food' };
+// Adding a shop on a phone: step 1 shows only the map with a fixed pin in the middle (the user moves the map under
+// it, which is more precise than tapping), step 2 a compact form panel that sits above the keyboard with the pin
+// still visible. Everything else (list, cards, ads, map buttons) is hidden while adding: body[data-add].
 function addStart() {
   ADD.on = true; ADD.pin = null;
-  $('#addBox').hidden = false; $('#addFields').hidden = true;
-  $('#addTitle').textContent = t('addTitle'); $('#addHint').textContent = t('addHintPin');
-  if (!wide()) setSheet('peek');
+  map.closePopup();
+  document.body.dataset.add = 'pick';
+  $('#addBox').hidden = true; $('#addPick').hidden = false;
+  $('#addPickHint').textContent = t('addHintPin');
+  $('#addPickHere').textContent = t('addHere'); $('#addPickCancel').textContent = t('addCancel');
+  // Start where the user is (a shop they want to add is usually around them), close enough to aim.
+  const c = S.me ? { lat: S.me.lat, lng: S.me.lon } : map.getCenter();
+  map.setView([c.lat, c.lng], Math.max(map.getZoom(), 17));
   track('add-start', 'add shop');
 }
 function addStop() {
   ADD.on = false; ADD.pin = null;
   if (ADD.marker) { ADD.marker.remove(); ADD.marker = null; }
+  delete document.body.dataset.add;
+  $('#addPick').hidden = true;
   $('#addBox').hidden = true; $('#addBox').reset();
+  if (!wide()) { setSheet('peek'); }
+}
+// Keep the picked pin in the free part of the map: below the top bar, above the form panel.
+function addFitPin() {
+  if (!ADD.pin || $('#addBox').hidden) { return; }
+  const p = map.latLngToContainerPoint([ADD.pin.lat, ADD.pin.lng]);
+  const top = $('.topbar').getBoundingClientRect().bottom + 50, bottom = $('#addBox').getBoundingClientRect().top - 16;
+  if (bottom <= top) { return; }
+  if (p.y < top || p.y > bottom) { map.gm.panBy([0, p.y - (top + bottom) / 2], { duration: 250 }); }
 }
 function addPick(latlng) {
   ADD.pin = latlng;
-  if (ADD.marker) ADD.marker.setLatLng(latlng);
-  else ADD.marker = MK.marker(latlng, { draggable: true, icon: MK.divIcon({ html: '<div class="add-pin"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }) })
-    .on('dragend', (e) => { ADD.pin = e.target.getLatLng(); }).addTo(map);
+  if (ADD.marker) { ADD.marker.setLatLng(latlng); }
+  else {
+    ADD.marker = MK.marker(latlng, { draggable: true, icon: MK.divIcon({ html: '<div class="add-pin drop"></div>', iconSize: [30, 36], iconAnchor: [15, 36] }) })
+      .on('dragend', (e) => { ADD.pin = e.target.getLatLng(); }).addTo(map);
+  }
+  if (document.body.dataset.add === 'form') { return; }   // tapping the map again only moves the pin
+  document.body.dataset.add = 'form';
+  $('#addPick').hidden = true; $('#addBox').hidden = false;
+  $('#addTitle').textContent = t('addTitle');
   $('#addHint').textContent = t('addHintForm');
   $('#addFields').hidden = false;
   const addName = $('#addName'), addHours = $(ADD_HOURS_INPUT);
@@ -917,7 +964,7 @@ function addPick(latlng) {
   setAriaLabel($('#addType'), t('addTypeL'));
   addHours.hidden = ADD.hours !== 'other';
   $('#addSend').textContent = t('addSend'); $('#addCancel').textContent = t('addCancel'); $('#addNote').textContent = t('addNote');
-  if (!wide()) setSheet('half');
+  requestAnimationFrame(addFitPin);
   setTimeout(() => addName.focus(), 50);
 }
 async function addSubmit(e) {
@@ -941,9 +988,29 @@ async function addSubmit(e) {
     $('#addNote').textContent = t(err.code === 'rate_limited' ? 'tooMany' : 'addFail');
   } finally { btn.disabled = false; }
 }
+// The on-screen keyboard shrinks the visual viewport: lift the form by that much and keep the pin in view.
+function trackKeyboard() {
+  const vv = window.visualViewport;
+  if (!vv) { return; }
+  const update = () => {
+    const kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+    document.documentElement.style.setProperty('--kb', kb + 'px');
+    // With the keyboard up the form gets everything below the top bar; without it a strip of map stays visible.
+    document.documentElement.style.setProperty('--add-gap', kb > 0 ? '66px' : '200px');
+    if (ADD.on) { requestAnimationFrame(addFitPin); }
+  };
+  vv.addEventListener('resize', update);
+  vv.addEventListener('scroll', update);
+}
 function initAdd() {
   $('#addOpen').addEventListener('click', addStart);
+  $('#addFab').addEventListener('click', addStart);
+  $('#addPickHere').addEventListener('click', () => addPick(map.getCenter()));
+  $('#addPickCancel').addEventListener('click', addStop);
+  $('#addClose').addEventListener('click', addStop);
   $('#addCancel').addEventListener('click', addStop);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && ADD.on) { addStop(); } });
+  trackKeyboard();
   $('#addBox').addEventListener('submit', addSubmit);
   $('#addType').addEventListener('change', (e) => { ADD.cat = e.target.value; });
   $('#addHours').addEventListener('click', (e) => {
@@ -953,7 +1020,7 @@ function initAdd() {
     $(ADD_HOURS_INPUT).hidden = ADD.hours !== 'other';
     if (ADD.hours === 'other') { $(ADD_HOURS_INPUT).focus(); }
   });
-  map.on('click', (e) => { if (ADD.on) addPick(e.latlng); });
+  map.on('click', (e) => { if (ADD.on && ADD.pin) { addPick(e.latlng); } });
 }
 
 // ---------- community data from the database: added shops, hours fixes, check-ins, parking reports ----------
@@ -1405,14 +1472,16 @@ function initLayers() {
   const sync = () => { $('#lyShops').checked = LY.shops; $('#lyParking').checked = LY.parking; $('#lyRings').checked = LY.rings; $('#lyShade').checked = LY.shade; };
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden));
+    pop.hidden = !pop.hidden; btn.setAttribute(ARIA_EXPANDED, String(!pop.hidden));
+    // The menu opens upwards from the map buttons: on a phone, lower the list first so it fits under the top bar.
+    if (!pop.hidden && !wide() && sheet().dataset.state !== 'peek') { setSheet('peek'); }
     $('#lpTitle').textContent = t('layers'); $('#lyShopsL').textContent = t('lyShops'); $('#lyParkingL').textContent = t('lyParking'); $('#lyRingsL').textContent = t('lyRings'); $('#lyShadeL').textContent = t('lyShade');
     sync();
   });
   for (const [id, k] of [['#lyShops', 'shops'], ['#lyParking', 'parking'], ['#lyRings', 'rings'], ['#lyShade', 'shade']]) {
     $(id).addEventListener('change', (e) => { LY[k] = e.target.checked; track('layer-' + k, LY[k] ? 'on' : 'off'); applyLayers(); refresh(); });
   }
-  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#layersPop, #layersBtn')) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
+  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#layersPop, #layersBtn')) { pop.hidden = true; btn.setAttribute(ARIA_EXPANDED, 'false'); } });
   applyLayers();
 }
 
@@ -1437,8 +1506,8 @@ function initAccount() {
   const btn = $('#accBtn'), pop = $('#accPop');
   if (!btn || !window.DB) { if (btn) btn.hidden = true; return; }
   btn.textContent = '👤';
-  btn.addEventListener('click', (e) => { e.stopPropagation(); pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden)); background(renderAccount()); });
-  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#accPop, #accBtn')) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
+  btn.addEventListener('click', (e) => { e.stopPropagation(); pop.hidden = !pop.hidden; btn.setAttribute(ARIA_EXPANDED, String(!pop.hidden)); background(renderAccount()); });
+  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#accPop, #accBtn')) { pop.hidden = true; btn.setAttribute(ARIA_EXPANDED, 'false'); } });
   DB.onChange(renderAccount);
 }
 
@@ -1485,9 +1554,13 @@ async function init() {
     if (parkPopupOpen()) { PARK.stale = true; } else { background(drawParking()); }
   });
   map.onPopupClose = () => setTimeout(() => {   // next tick: a popup that replaced this one is open by then
+    if (document.querySelector('.maplibregl-popup')) { return; }
+    if (document.body.classList.contains('mappop')) { document.body.classList.remove('mappop'); setSheet(sheet().dataset.state); }
     if (PARK.on && PARK.stale && !parkPopupOpen()) { PARK.stale = false; background(drawParking()); }
   }, 0);
   initAdd();
+  $('#notices').addEventListener('click', toggleNotice);
+  $('#notices').addEventListener('keydown', toggleNotice);
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-pk]');
     if (b) { e.preventDefault(); background(pkReport(b.dataset.pk, b.dataset.v)); return; }

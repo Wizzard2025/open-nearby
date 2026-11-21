@@ -28,7 +28,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700;800&display=swap">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.1/dist/maplibre-gl.css" integrity="sha384-uTttxo/aOKbdE5RlD/SPzSDoDmNvGlUYPjONi2MN/b7c9HPSvW07OIuyP7uL6jxK" crossorigin="anonymous">
 <script>(function(){try{var m=localStorage.getItem("theme");if(m==="light"||m==="dark")document.documentElement.setAttribute("data-theme",m)}catch(e){}})();</script>
-<link rel="stylesheet" href="style.css?v=20261121c">
+<link rel="stylesheet" href="style.css?v=20261121d">
 <script data-goatcounter="https://open-nearby.goatcounter.com/count" async src="https://gc.zgo.at/count.v5.js" integrity="sha384-atnOLvQb9t+jTSipvd75X2yginT4PjVbqDdlJAmxMm+wYElFmeR6EmLP5bYeoRVQ" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -67,6 +67,12 @@
   <input type="range" id="shadeTime" min="0" max="1435" step="5" aria-label="Time">
   <span class="sb-time" id="shadeTimeL"></span>
   <button type="button" class="sb-now" id="shadeNow"></button>
+</div>
+<!-- "+" sits on the other side of the map from the layers/location column, so neither runs into the top bar. -->
+<div class="addctl">
+  <button type="button" id="addFab" class="fab addfab" aria-label="הוספת חנות">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>
+  </button>
 </div>
 <div class="mapctl">
   <div class="layers-pop" id="layersPop" hidden>
@@ -110,24 +116,6 @@
   <div class="adbanner" id="adBanner" data-ad-slot="banner" hidden></div>
   <div class="cards" id="cards"></div>
 
-  <!-- Submitted by app.js (preventDefault); method is explicit for the no-JS case. -->
-  <form class="addbox" id="addBox" method="get" hidden autocomplete="off">
-    <p class="add-title" id="addTitle"></p>
-    <p class="add-hint" id="addHint"></p>
-    <div id="addFields" hidden>
-      <input id="addName" required maxlength="60" aria-label="שם (למשל «המכולת של משה»)">
-      <div class="add-row">
-        <select id="addType" aria-label="סוג המקום"></select>
-      </div>
-      <div class="add-hours" id="addHours" role="radiogroup"></div>
-      <input id="addHoursText" hidden maxlength="80" aria-label="שעות אחרות">
-      <div class="add-actions">
-        <button type="submit" class="walk" id="addSend"></button>
-        <button type="button" class="ghost" id="addCancel"></button>
-      </div>
-      <p class="add-note" id="addNote"></p>
-    </div>
-  </form>
 
   <div class="scroller" id="scroller">
     <ol id="list" class="list"></ol>
@@ -142,9 +130,37 @@
     </details>
     <button type="button" class="addcta" id="addOpen"></button>
     <p class="source"><span data-i18n="source"></span> <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap</a> · <a href="https://overturemaps.org" target="_blank" rel="noopener">© Overture Maps Foundation</a> · <a href="https://data.gov.il" target="_blank" rel="noopener">data.gov.il</a></p>
-    <p class="madeby">made by <b>Vichi</b> · 2026 · <a href="CHANGELOG.md" target="_blank" rel="noopener">v1.2.0</a></p>
+    <p class="madeby">made by <b>Vichi</b> · 2026 · <a href="CHANGELOG.md" target="_blank" rel="noopener">v1.3.0</a></p>
   </div>
 </section>
+
+<!-- Add-a-shop, step 1: a fixed pin in the middle of the map; the user moves the map under it. -->
+<div class="addpick" id="addPick" hidden>
+  <p class="addpick-hint" id="addPickHint"></p>
+  <div class="addpick-aim" aria-hidden="true"><div class="add-pin drop"></div></div>
+  <div class="addpick-bar">
+    <button type="button" class="ghost" id="addPickCancel"></button>
+    <button type="button" class="walk" id="addPickHere"></button>
+  </div>
+</div>
+<!-- Submitted by app.js (preventDefault); method is explicit for the no-JS case. -->
+<form class="addbox addpanel" id="addBox" method="get" hidden autocomplete="off">
+  <div class="add-head"><p class="add-title" id="addTitle"></p><button type="button" class="xbtn" id="addClose" aria-label="Close">×</button></div>
+  <p class="add-hint" id="addHint"></p>
+  <div id="addFields" hidden>
+    <input id="addName" required maxlength="60" aria-label="שם (למשל «המכולת של משה»)">
+    <div class="add-row">
+      <select id="addType" aria-label="סוג המקום"></select>
+    </div>
+    <div class="add-hours" id="addHours" role="radiogroup"></div>
+    <input id="addHoursText" hidden maxlength="80" aria-label="שעות אחרות">
+    <div class="add-actions">
+      <button type="submit" class="walk" id="addSend"></button>
+      <button type="button" class="ghost" id="addCancel"></button>
+    </div>
+    <p class="add-note" id="addNote"></p>
+  </div>
+</form>
 
 <dialog class="addlg" id="adDlg" aria-labelledby="adT">
   <form id="adForm" method="dialog" novalidate>
@@ -162,10 +178,10 @@
 <script src="vendor/suncalc.js"></script>
 <script src="vendor/opening_hours.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js" integrity="sha384-TcHRA3zBbn+Lexh5n+Oil4guNPOS3rjNDpGRAN46u/s/mB2IZ50ceC6TYDU2yvgK" crossorigin="anonymous"></script>
-<script src="i18n.js?v=20261121c"></script>
-<script src="community.js?v=20261121c"></script>
-<script src="mapkit.js?v=20261121c"></script>
-<script src="route.js?v=20261121c"></script>
-<script src="app.js?v=20261121c"></script>
+<script src="i18n.js?v=20261121d"></script>
+<script src="community.js?v=20261121d"></script>
+<script src="mapkit.js?v=20261121d"></script>
+<script src="route.js?v=20261121d"></script>
+<script src="app.js?v=20261121d"></script>
 </body>
 </html>

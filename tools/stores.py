@@ -115,8 +115,26 @@ def _nominatim(params):
 
 
 def clean_city(city):
-    c = re.sub(r"\s*-\s*[^-]*$", "", city) if " - " in city else city
+    # Drop the last " - ..." part (e.g. "תל אביב - יפו - מרכז"); a plain slice instead of a backtracking regex.
+    c = city[:city.rfind("-")] if " - " in city else city
     return CITY_FIX.get(c.strip(), c.strip())
+
+
+def _is_word(ch):
+    return ch.isalnum() or ch == "_"
+
+
+def street_number(main):
+    r"""Street and house number, e.g. "הרצל 12א" -> ("הרצל", "12"). Same result as
+    re.match(r"^(.*?\D)\s*(\d+)\s*([א-ת])?\b", main) but in linear time (that pattern backtracks polynomially):
+    the first run of digits that is not at the very start and ends a word, or is followed by one Hebrew letter."""
+    for m in re.finditer(r"\d+", main):
+        e = m.end()
+        if m.start() == 0:
+            continue
+        if e == len(main) or not _is_word(main[e]) or ("א" <= main[e] <= "ת" and (e + 1 == len(main) or not _is_word(main[e + 1]))):
+            return main[:m.start()].strip(), m.group()
+    return None
 
 
 def split_address(addr):
@@ -124,9 +142,9 @@ def split_address(addr):
     a = re.sub(r"\bשד'?\s+", "שדרות ", a)
     parts = [x.strip() for x in re.split(r"[,/]", a) if x.strip()]
     main = parts[0] if parts else ""
-    m = re.match(r"^(.*?\D)\s*(\d+)\s*([א-ת])?\b", main)
-    street, num = (m.group(1).strip(), m.group(2)) if m else (re.sub(r"\d+", "", main).strip(), None)
-    m2 = re.match(r"^(\d+)\s+(.+)$", main)  # "9 ככר דיזנגוף"
+    sn = street_number(main)
+    street, num = sn if sn else (re.sub(r"\d+", "", main).strip(), None)
+    m2 = re.match(r"^(\d+)\s+(\S.*)$", main)  # "9 ככר דיזנגוף"
     if m2:
         num, street = m2.group(1), m2.group(2)
     place = next((x for x in [addr] if re.search(r"קניון|מרכז|צומת|א\.ת|אזור ה?תעשי|פאואר|ביג|קריון", x)), None)

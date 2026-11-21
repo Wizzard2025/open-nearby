@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.2.0 — 2026-11-21
+
+Security and quality release, checked by the new release scan (`tools/sonar/`: local SonarQube + OSV.dev CVE check).
+
+- MapLibre GL 5.24.0 → 5.24.1: fixes an XSS in map attribution sanitising (CVE-2026-85061 / GHSA-jrc7-96c5-q579).
+- All scripts and styles from CDNs now carry Subresource Integrity; the GoatCounter script is the pinned `count.v5.js`.
+- The vector-tile reader rejects malformed tiles instead of looping for a very long time (tiles come from a third-party server).
+- Opening-hours text, map links and imported store addresses no longer use regular expressions that slow down sharply on crafted input.
+- Async work (map redraws, background loads, buttons) reports failures instead of leaving unhandled errors.
+- Fixed: the shade layer's "sun has set" notice showed the route's wording; the map tooltip decoded "&amp;lt;" twice.
+- Accessibility: labels for the add-a-shop fields and the layers menu, text for the ad form before the script loads.
+- Build: GitHub Actions pinned to commit SHAs, least-privilege workflow permissions, `duckdb` pinned.
+
 ## 1.1.0 — 2026-11-21
 
 - Parking: «Pay for parking» buttons for Pango and Cello in the parking popup. After you report a lot (free, busy or full), the popup reopens with these buttons.

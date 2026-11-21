@@ -254,13 +254,15 @@ def victory():
     out = []
     for block in page.split('class="col-md-12 single-branch')[1:]:
         ll = re.search(r'data-latitude="([\d.]+)"\s+data-longitude="([\d.]+)"', block)
-        name = re.search(r"<h3[^>]*>\s*([^<]+?)\s*</h3>", block)
-        if not ll or not name:
+        # Capture greedily and strip in Python: "\s*([^<]+?)\s*" backtracks polynomially on long whitespace.
+        name = re.search(r"<h3[^>]*>([^<]*)</h3>", block)
+        if not ll or not name or not name.group(1).strip():
             continue
         addr = re.search(r"כתובת:\s*<br\s*/?>\s*([^<]+)", block)
         phone = re.search(r'href="tel:([^"]+)"', block)
         rules = {}
-        for day, o, c in re.findall(r'day-name">\s*([^<]+?)\s*</span>\s*<span class="open-hour">\s*([^<]+?)\s*</span>.*?<span class="close-hour">\s*([^<]+?)\s*</span>', block, re.S):
+        for day, o, c in re.findall(r'day-name">([^<]*)</span>\s*<span class="open-hour">([^<]*)</span>.*?<span class="close-hour">([^<]*)</span>', block, re.S):
+            day, o, c = day.strip(), o.strip(), c.strip()
             d = LETTER.get(day.strip()[:1])
             m_o = re.match(r"(\d{1,2})[:.](\d{2})", o)
             if d is None or not m_o:

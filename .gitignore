@@ -5,3 +5,4 @@ __pycache__/
 .enola/
 .superdesign/
 data/.cache/
+.sonar/

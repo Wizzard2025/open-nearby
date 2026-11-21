@@ -1,0 +1,24 @@
+{
+  "_note": "Human review decisions, re-applied after every analysis. hotspots: reviewed and SAFE. issues: false positives. Each entry matches one finding by rule, file and the exact (trimmed) source line; if the line changes it must be reviewed again. Prefer fixing the code; every entry needs a concrete reason in 'why'.",
+  "hotspots": [],
+  "issues": [
+    {
+      "rule": "javascript:S2189",
+      "file": "route.js",
+      "line": "const packed = (end) => { const a = []; while (p < end) a.push(varint()); if (p !== end) bad(); return a; };",
+      "why": "False positive: the loop advances the shared cursor p inside varint() (a closure), so p < end changes every iteration. end is bounded by the buffer (endOf) and varint() throws at the end of data, so the loop always terminates."
+    },
+    {
+      "rule": "javascript:S2189",
+      "file": "route.js",
+      "line": "while (p < fend) {",
+      "why": "False positive: p is the decoder cursor advanced by varint()/packed()/skip() closures in every iteration; fend is bounded by the buffer (endOf) and every read throws past the end, so the loop terminates."
+    },
+    {
+      "rule": "javascript:S7785",
+      "file": "app.js",
+      "line": "background(init());",
+      "why": "Not applicable: app.js is a classic <script>, where top-level await is a syntax error. The promise is handled by background(), which logs failures."
+    }
+  ]
+}

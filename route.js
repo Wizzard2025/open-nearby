@@ -65,18 +65,33 @@ window.Route = (() => {
     return tileTemplate.replace('{z}', z).replace('{x}', x).replace('{y}', y);
   }
   // Minimal Mapbox Vector Tile (protobuf) reader: only what we need (layer name, features, tags, polygon rings).
+  // Tiles come from a third-party server, so every length in them is untrusted: a field may not run past its
+  // parent or the buffer, a varint is at most 10 bytes, and a truncated or malformed tile throws instead of
+  // looping on garbage (a huge length used to keep the loops below spinning for billions of steps).
   function readTile(buf) {
     const b = new Uint8Array(buf);
     let p = 0;
-    const varint = () => { let r = 0, s = 0, c; do { c = b[p++]; r += (c & 0x7f) * 2 ** s; s += 7; } while (c & 0x80); return r; };
-    const skip = (wt) => { if (wt === 0) varint(); else if (wt === 1) p += 8; else if (wt === 2) p += varint(); else if (wt === 5) p += 4; };
-    const str = (len) => new TextDecoder().decode(b.subarray(p, (p += len)));
-    const packed = (end) => { const a = []; while (p < end) a.push(varint()); return a; };
+    const bad = () => { throw new Error('malformed vector tile'); };
+    const varint = () => {
+      let r = 0, s = 0, c;
+      do { if (p >= b.length || s > 63) bad(); c = b[p++]; r += (c & 0x7f) * 2 ** s; s += 7; } while (c & 0x80);
+      return r;
+    };
+    const endOf = (len) => { const e = p + len; if (e > b.length) bad(); return e; };
+    const skip = (wt) => {
+      if (wt === 0) varint();
+      else if (wt === 1) p = endOf(8);
+      else if (wt === 2) p = endOf(varint());
+      else if (wt === 5) p = endOf(4);
+      else bad();
+    };
+    const str = (len) => { const e = endOf(len); const v = new TextDecoder().decode(b.subarray(p, e)); p = e; return v; };
+    const packed = (end) => { const a = []; while (p < end) a.push(varint()); if (p !== end) bad(); return a; };
     const layers = [];
     while (p < b.length) {
       const tag = varint();
       if (tag >> 3 !== 3) { skip(tag & 7); continue; }
-      const lend = varint() + p;
+      const lend = endOf(varint());
       const L = { name: '', keys: [], values: [], feats: [], extent: 4096 };
       while (p < lend) {
         const t2 = varint(), f = t2 >> 3;
@@ -84,12 +99,12 @@ window.Route = (() => {
         else if (f === 3) L.keys.push(str(varint()));
         else if (f === 5) L.extent = varint();
         else if (f === 4) {
-          const vend = varint() + p; let v = null;
+          const vend = endOf(varint()); let v = null;
           while (p < vend) {
             const t3 = varint(), f3 = t3 >> 3;
             if (f3 === 1) v = str(varint());
-            else if (f3 === 2) { v = new DataView(b.buffer, b.byteOffset + p, 4).getFloat32(0, true); p += 4; }
-            else if (f3 === 3) { v = new DataView(b.buffer, b.byteOffset + p, 8).getFloat64(0, true); p += 8; }
+            else if (f3 === 2) { const e = endOf(4); v = new DataView(b.buffer, b.byteOffset + p, 4).getFloat32(0, true); p = e; }
+            else if (f3 === 3) { const e = endOf(8); v = new DataView(b.buffer, b.byteOffset + p, 8).getFloat64(0, true); p = e; }
             else if (f3 === 6) { const n = varint(); v = (n % 2 ? -(n + 1) : n) / 2; }
             else if (f3 === 4 || f3 === 5) v = varint();
             else if (f3 === 7) v = !!varint();
@@ -97,12 +112,12 @@ window.Route = (() => {
           }
           L.values.push(v);
         } else if (f === 2) {
-          const fend = varint() + p; const F = { tags: [], type: 0, geom: [] };
+          const fend = endOf(varint()); const F = { tags: [], type: 0, geom: [] };
           while (p < fend) {
             const t3 = varint(), f3 = t3 >> 3;
-            if (f3 === 2) F.tags = packed(varint() + p);
+            if (f3 === 2) F.tags = packed(endOf(varint()));
             else if (f3 === 3) F.type = varint();
-            else if (f3 === 4) F.geom = packed(varint() + p);
+            else if (f3 === 4) F.geom = packed(endOf(varint()));
             else skip(t3 & 7);
           }
           L.feats.push(F);
@@ -116,7 +131,7 @@ window.Route = (() => {
   function lines(geom) {
     const out = []; let x = 0, y = 0, cur = null, i = 0;
     while (i < geom.length) {
-      const c = geom[i++], cmd = c & 7, n = c >> 3;
+      const c = geom[i++], cmd = c & 7, n = Math.min(c >> 3, (geom.length - i) >> 1); // a count cannot exceed the data left
       for (let k = 0; k < n; k++) {
         const dx = geom[i++], dy = geom[i++];
         x += (dx >> 1) ^ -(dx & 1); y += (dy >> 1) ^ -(dy & 1);

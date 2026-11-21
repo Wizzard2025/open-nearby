@@ -4,6 +4,7 @@
    Zoom numbers follow Leaflet's 256-px convention (MapLibre zoom + 1), so thresholds like "zoom >= 15" keep their meaning. */
 'use strict';
 window.MK = (() => {
+  const ENTITY = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" };
   const toLL = (a) => (Array.isArray(a) ? { lat: a[0], lng: a[1] } : { lat: a.lat, lng: a.lng ?? a.lon });
 
   class Bounds {
@@ -41,7 +42,8 @@ window.MK = (() => {
     getLatLng() { return this.ll; }
     setIcon(ic) { this.opts.icon = ic; if (this.el) this.el.innerHTML = ic.html; return this; }
     on(ev, f) { (this.handlers[ev] = this.handlers[ev] || []).push(f); return this; }
-    bindTooltip(text) { this.tip = String(text).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'"); if (this.el) this.el.title = this.tip; return this; }
+    // The text arrives HTML-escaped (esc()); decode it in one pass so "&amp;lt;" stays "&lt;" (no double decoding).
+    bindTooltip(text) { this.tip = String(text).replace(/&(amp|lt|gt|quot|#39);/g, (_, e) => ENTITY[e]); if (this.el) this.el.title = this.tip; return this; }
     bindPopup(fn, opts = {}) { this.popupFn = fn; this.popupOpts = opts; return this; }
     openPopup() {
       const map = this.map || this.group?.map; if (!map) return;
@@ -63,7 +65,7 @@ window.MK = (() => {
   }
 
   // The map facade: Leaflet-style calls on top of a MapLibre map (this.gm).
-  class Map {
+  class MapView {
     constructor(container, { center, zoom, style, touch }) {
       this.gm = new maplibregl.Map({
         container, style, center: [center[1], center[0]], zoom: zoom - 1, maxPitch: 70, attributionControl: { compact: true },
@@ -141,7 +143,7 @@ window.MK = (() => {
     return ring;
   }
   return {
-    Map, Group, Marker, Bounds, point, line, poly, circle,
+    Map: MapView, Group, Marker, Bounds, point, line, poly, circle,
     marker: (ll, o) => new Marker(ll, o), group: () => new Group(), divIcon: (o) => o,
   };
 })();

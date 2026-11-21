@@ -14,6 +14,7 @@ Easier on phones.
 - Location on iPhone: the app no longer asks for the location by itself when it opens (only when it was already allowed). A prompt that appears before any tap is easily refused, and Safari then remembers the refusal, so later taps on ➤ failed without asking. Now the question comes when you tap ➤.
 - When GPS cannot get a fix in time (often indoors), the app asks once more for the quicker network-based position instead of failing.
 - If location access is blocked, the message says how to allow it (on iPhone: the Location Services and Safari website settings) instead of a generic error, and it shows in full even when only the map or a map popup is open (the popup closes so the message is seen). The English text of this message was missing.
+- Hebrew place names on the map read right to left again (for example «קריית ים», not «מי תיירק»). The map now loads the right-to-left text plugin (`vendor/mapbox-gl-rtl-text.js`, @mapbox/mapbox-gl-rtl-text 0.3.0).
 
 ## 1.2.0 — 2026-11-21
 

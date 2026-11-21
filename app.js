@@ -387,7 +387,16 @@ const STATUS_VAR = { open: '--open', open24: '--open', soon: '--soon', closed: '
 // Base map: OpenFreeMap vector style without shop/parking icons (free, no key, commercial use allowed), drawn by MapLibre,
 // so the map can tilt into 3D like Google Maps (two-finger drag, or the 3D button).
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
+// Hebrew and Arabic map labels: without this plugin MapLibre lays glyphs out left to right, so «קריית ים» reads «מי תיירק».
+const RTL_PLUGIN = 'vendor/mapbox-gl-rtl-text.js';
+function initRtlText() {
+  try {
+    maplibregl.setRTLTextPlugin(new URL(RTL_PLUGIN, document.baseURI).href, false)
+      .catch((e) => console.error('RTL text plugin failed', e));
+  } catch (e) { console.error('RTL text plugin failed', e); }
+}
 function initMap(center, zoom) {
+  initRtlText();
   const touch = matchMedia('(pointer: coarse)').matches;
   map = new MK.Map('map', { center, zoom, touch, style: { version: 8, sources: {}, layers: [] } });
   // A popup needs map room on a phone: lower the list to its peek state first.

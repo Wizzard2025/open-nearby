@@ -15,7 +15,7 @@ Quality gate **Strict (open-nearby)**: **OK**
 | software_quality_reliability_rating | 1 | GT 1 | OK |
 | software_quality_security_rating | 1 | GT 1 | OK |
 
-Lines of code: 4614. Open issues: 557. Hotspots to review: 0.
+Lines of code: 4622. Open issues: 557. Hotspots to review: 0.
 
 Open issues by quality: maintainability 557.
 Most frequent rules: javascript:S121 (310), javascript:S2681 (22), python:S3776 (17), python:S7498 (16), css:S4664 (16), javascript:S6582 (15), javascript:S134 (15), javascript:S3358 (15).
@@ -33,6 +33,7 @@ SonarQube 26.11.0.134175, profile "Strict (open-nearby)", scanner 12.4.0.4321_8.
 | @supabase/supabase-js | 2.118.0 | npm | index.html:180 (CDN) |
 | opening_hours | 3.14.0 | npm | index.html:179 (vendored vendor/opening_hours.js) |
 | suncalc | 1.9.0 | npm | index.html:178 (vendored vendor/suncalc.js) |
+| @mapbox/mapbox-gl-rtl-text | 0.3.0 | npm | app.js:391 (vendored vendor/mapbox-gl-rtl-text.js) |
 | actions/checkout | 4.4.0 | GitHub Actions | .github/workflows/deploy.yml:15 (workflow) |
 | actions/setup-python | 5.6.0 | GitHub Actions | .github/workflows/deploy.yml:16 (workflow) |
 | actions/upload-pages-artifact | 3.0.1 | GitHub Actions | .github/workflows/deploy.yml:30 (workflow) |

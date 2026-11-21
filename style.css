@@ -496,6 +496,8 @@ body[data-add] #sheet, body[data-add] #glance, body[data-add] .mapctl, body[data
 .addpanel .add-hours::-webkit-scrollbar { display: none; }
 .addpanel .add-hours button { flex: none; min-height: 40px; white-space: nowrap; }
 .addpanel .add-note { font-size: 0.75rem; }
+/* With the keyboard up there is little room: drop the hint line so the field being typed in stays visible. */
+body.kbopen .addpanel .add-hint { display: none; }
 @media (min-width: 860px) {
   .addbox.addpanel { left: max(12px, env(safe-area-inset-left, 0px)); right: auto; bottom: 12px; width: 410px; border-radius: 20px; }
   [dir="rtl"] .addbox.addpanel { left: auto; right: max(12px, env(safe-area-inset-right, 0px)); }

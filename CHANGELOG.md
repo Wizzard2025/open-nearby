@@ -10,6 +10,7 @@ Easier on phones.
 - While a popup on the map is open (parking, payment) the list slides away on phones and comes back when it closes, so the popup's buttons are never under it. The layers menu no longer opens under the top pill.
 - Bigger touch targets: language switch, account and theme buttons, category chips, the list handle, close buttons.
 - The form's «Add to the map» button is styled as the main action.
+- Close (×) buttons are announced in the current language by screen readers.
 
 ## 1.2.0 — 2026-11-21
 

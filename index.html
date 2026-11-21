@@ -108,7 +108,7 @@
       <p class="route-sub" id="routeSub"></p>
     </div>
     <button type="button" class="shadebtn" id="shadeBtn" aria-pressed="false"></button>
-    <button type="button" class="xbtn" id="routeClose" aria-label="Close">×</button>
+    <button type="button" class="xbtn" id="routeClose" aria-label="סגירה" data-i18n-label="closeBtn">×</button>
   </div>
 
   <div class="chips" role="group" id="cats"></div>
@@ -145,7 +145,7 @@
 </div>
 <!-- Submitted by app.js (preventDefault); method is explicit for the no-JS case. -->
 <form class="addbox addpanel" id="addBox" method="get" hidden autocomplete="off">
-  <div class="add-head"><p class="add-title" id="addTitle"></p><button type="button" class="xbtn" id="addClose" aria-label="Close">×</button></div>
+  <div class="add-head"><p class="add-title" id="addTitle"></p><button type="button" class="xbtn" id="addClose" aria-label="סגירה" data-i18n-label="closeBtn">×</button></div>
   <p class="add-hint" id="addHint"></p>
   <div id="addFields" hidden>
     <input id="addName" required maxlength="60" aria-label="שם (למשל «המכולת של משה»)">
@@ -172,7 +172,7 @@
     <div class="ad-actions"><button type="button" class="ghost" data-ad-cancel data-t="adCancel">ביטול</button><button type="submit" class="gobtn" data-t="adSend">לשלוח בקשה</button></div>
   </form>
   <p id="adMsgOut" class="ad-out" role="status"></p>
-  <button type="button" class="adx" data-ad-cancel aria-label="Close">×</button>
+  <button type="button" class="adx" data-ad-cancel aria-label="סגירה" data-i18n-label="closeBtn">×</button>
 </dialog>
 <script src="https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.1/dist/maplibre-gl.js" integrity="sha384-nXMl9YiLoSG5KBPTFgvxVuIqQQcqIvo0bFrvoEaGJC6r7IibIzF1S36Zbf/sKBtL" crossorigin="anonymous"></script>
 <script src="vendor/suncalc.js"></script>

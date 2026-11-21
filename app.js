@@ -628,6 +628,7 @@ function applyLang() {
   document.documentElement.dir = S.lang === 'he' ? 'rtl' : 'ltr';
   document.title = t('title');
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-label]').forEach((el) => { setAriaLabel(el, t(el.dataset.i18nLabel)); });
   document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   $('#kicker').textContent = t('kicker');
   if ($('#accBtn')) $('#accBtn').title = t('acc');
@@ -995,8 +996,10 @@ function trackKeyboard() {
   const update = () => {
     const kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
     document.documentElement.style.setProperty('--kb', kb + 'px');
-    // With the keyboard up the form gets everything below the top bar; without it a strip of map stays visible.
-    document.documentElement.style.setProperty('--add-gap', kb > 0 ? '66px' : '200px');
+    // A strip of map stays above the form so the picked pin is visible: more without the keyboard, less with it
+    // (top bar + the pin, ~150px); the form scrolls within the rest.
+    document.documentElement.style.setProperty('--add-gap', kb > 0 ? '150px' : '200px');
+    document.body.classList.toggle('kbopen', kb > 0);
     if (ADD.on) { requestAnimationFrame(addFitPin); }
   };
   vv.addEventListener('resize', update);

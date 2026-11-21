@@ -192,6 +192,11 @@ create policy "update own profile" on public.profiles for update to authenticate
 drop policy if exists "delete own profile" on public.profiles;
 create policy "delete own profile" on public.profiles for delete to authenticated using (id = (select auth.uid()));
 
+-- The add form offers "shop" (any other shop); the original check left it out, so those were refused.
+alter table public.places drop constraint if exists places_cat_check;
+alter table public.places add constraint places_cat_check
+  check (cat in ('food', 'shop', 'eat', 'bakery', 'pharmacy', 'fuel', 'atm'));
+
 -- ---------- area read: also the ids of hidden shops ----------
 create or replace function public.community_area(s double precision, w double precision, n double precision, e double precision)
 returns jsonb language sql stable set search_path to 'public' as $function$

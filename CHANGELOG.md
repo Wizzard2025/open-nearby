@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.4.0 — 2026-11-21
+
+Accounts, and moderation by staff.
+
+- Browsing stays open to everyone. Adding shops, fixing hours and reporting open, closed or parking now needs an account. A guest who taps one of these sees why, and the sign-in panel opens.
+- New account panel (👤): sign up with a username, email and password, sign in with email and password, «Forgot your password?» sends a reset link. Usernames are 3–20 letters (Hebrew, Russian or English), digits, `_ . -`, and must be unique. Supabase sends one email at sign-up to confirm the address. The old one-time sign-in link is gone.
+- Accounts made earlier with the email link choose a username in the same panel.
+- Staff roles: admins can rename or delete shops added by people, hide any shop from the map (staff still see it, marked, and can bring it back), reset fixed hours and clear open/closed and parking reports. Removing something takes two taps. The superadmin also sees the staff list and gives or takes admin rights by username.
+- The database enforces all of this (row-level security, `supabase/migrations/20261121160000_accounts_roles.sql`). Clients can no longer set the time or author of a report, so a report dated in the future can no longer pin a shop as closed. The "Other shop" type in the add form is accepted by the database again; before, such shops were refused.
+
 ## 1.3.0 — 2026-11-21
 
 Easier on phones.

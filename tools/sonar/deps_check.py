@@ -17,6 +17,8 @@ Exit code 0 always (the gate decides); the script fails only if OSV cannot be re
 import hashlib
 import json
 import re
+import shlex
+import subprocess
 import sys
 import urllib.request
 from pathlib import Path
@@ -32,6 +34,7 @@ CDN_UNVERSIONED_RE = re.compile(r'https://(?:cdn\.jsdelivr\.net/npm/|unpkg\.com/
 EXACT_VER = re.compile(r'^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$')
 # The generic report format needs the legacy severity on each rule too.
 LEGACY_SEV = {'BLOCKER': 'BLOCKER', 'HIGH': 'CRITICAL', 'MEDIUM': 'MAJOR', 'LOW': 'MINOR', 'INFO': 'INFO'}
+HTML = '.html'
 SEV = {'CRITICAL': 'BLOCKER', 'HIGH': 'HIGH', 'MODERATE': 'MEDIUM', 'MEDIUM': 'MEDIUM', 'LOW': 'LOW'}
 
 
@@ -56,10 +59,21 @@ def line_of(text, idx):
     return text.count('\n', 0, idx) + 1
 
 
+def resolve_tag(repo, tag):
+    """Commit SHA a GitHub tag points to (annotated tags are peeled), or None."""
+    try:
+        out = subprocess.run(['git', 'ls-remote', f'https://github.com/{repo}', f'refs/tags/{tag}', f'refs/tags/{tag}^{{}}'],
+                             capture_output=True, text=True, timeout=60).stdout
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+    refs = {name: sha for sha, name in (line.split('\t', 1) for line in out.splitlines() if '\t' in line)}
+    return refs.get(f'refs/tags/{tag}^{{}}') or refs.get(f'refs/tags/{tag}')
+
+
 def discover(root, manifest):
     """Return (packages, findings). A package: dict(ecosystem, name, version, file, line, via)."""
     pkgs, findings = [], []
-    for f in files(root, {'.html', '.js', '.css'}):
+    for f in files(root, {HTML, '.js', '.css'}):
         if 'vendor' in f.relative_to(root).parts:
             continue
         text = f.read_text(encoding='utf-8', errors='replace')
@@ -79,7 +93,7 @@ def discover(root, manifest):
 
     # Subresource Integrity: a script or stylesheet from another origin must carry integrity="sha384-...",
     # so a tampered CDN file is refused by the browser. Google Fonts CSS differs per browser and cannot have one.
-    for f in files(root, {'.html'}):
+    for f in files(root, {HTML}):
         text = f.read_text(encoding='utf-8', errors='replace')
         rel = f.relative_to(root).as_posix()
         for m in re.finditer(r'<(script|link)\b[^>]*>', text, re.I):
@@ -93,6 +107,16 @@ def discover(root, manifest):
                 findings.append(dict(rule='supply-chain-no-sri', sev='MEDIUM', file=rel, line=line_of(text, m.start()),
                                      msg=f'{m.group(1)} from {url.group(2)} has no integrity="sha384-..." (Subresource Integrity); '
                                          'a tampered CDN file would run with full page access.'))
+
+    known = {v['path'] for v in manifest.get('vendored', [])}
+    for f in files(root, {HTML}):
+        text = f.read_text(encoding='utf-8', errors='replace')
+        for m in re.finditer(r'(?:src|href)\s*=\s*["\'](?:\./)?(vendor/[^"\'?#]+)', text):
+            if m.group(1) not in known:
+                findings.append({'rule': 'supply-chain-vendor-unknown', 'sev': 'HIGH', 'file': f.relative_to(root).as_posix(),
+                                 'line': line_of(text, m.start()),
+                                 'msg': f'{m.group(1)} is loaded but not recorded in tools/sonar/dependencies.json, so it is not '
+                                        'checked for known vulnerabilities. Add its package, version and sha256.'})
 
     for v in manifest.get('vendored', []):
         p = root / v['path']
@@ -117,17 +141,34 @@ def discover(root, manifest):
         rel = f.relative_to(root).as_posix()
         for m in re.finditer(r'uses:\s*([\w.-]+/[\w./-]+)@([\w.-]+)', text):
             action, ref, line = m.group(1), m.group(2), line_of(text, m.start())
+            repo = '/'.join(action.split('/')[:2])
+            tag = re.search(r'#\s*(v?\d+(?:\.\d+)*)', text[m.end():text.find('\n', m.end())])
             if not re.fullmatch(r'[0-9a-f]{40}', ref):
                 findings.append(dict(rule='supply-chain-action-unpinned', sev='MEDIUM', file=rel, line=line,
                                      msg=f'{action}@{ref} is pinned to a movable tag; pin it to a full commit SHA (keep the tag in a comment).'))
-            tag = re.search(r'#\s*(v?\d+(?:\.\d+)*)', text[m.end():text.find('\n', m.end())])
-            ver = (tag.group(1) if tag else ref).lstrip('v')
+                ver = ref.lstrip('v')
+            elif not tag:
+                findings.append({'rule': 'supply-chain-action-unverified', 'sev': 'MEDIUM', 'file': rel, 'line': line,
+                                 'msg': f'{action}@{ref[:12]}… has no "# vX.Y.Z" comment, so its release cannot be checked for advisories; add the tag it was pinned from.'})
+                continue
+            else:
+                # The comment is only trusted if the tag really points at the pinned commit.
+                tag_sha = resolve_tag(repo, tag.group(1))
+                if tag_sha != ref:
+                    findings.append({'rule': 'supply-chain-action-unverified', 'sev': 'HIGH', 'file': rel, 'line': line,
+                                     'msg': f'{action}: the pinned commit {ref[:12]}… is not what tag {tag.group(1)} points to '
+                                            f'({(tag_sha or "tag not found")[:12]}); the version comment cannot be trusted.'})
+                    continue
+                ver = tag.group(1).lstrip('v')
             if re.fullmatch(r'\d+(\.\d+)*', ver):
-                pkgs.append(dict(ecosystem='GitHub Actions', name=action.split('/')[0] + '/' + action.split('/')[1],
-                                 version=ver, file=rel, line=line, via='workflow'))
+                pkgs.append({'ecosystem': 'GitHub Actions', 'name': repo, 'version': ver, 'file': rel, 'line': line, 'via': 'workflow'})
         for m in re.finditer(r'pip install([^\n&|;]*)', text):
             line = line_of(text, m.start())
-            for tok in m.group(1).split():
+            try:  # shell-aware: quotes are removed, a trailing "# comment" is ignored
+                toks = shlex.split(m.group(1), comments=True)
+            except ValueError:
+                toks = m.group(1).split()
+            for tok in toks:
                 if tok.startswith('-'):
                     continue
                 pm = re.fullmatch(r'([A-Za-z0-9._-]+)==([\w.]+)', tok)

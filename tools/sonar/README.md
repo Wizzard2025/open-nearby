@@ -5,12 +5,22 @@ Every release (every version bump in `index.html` → `CHANGELOG.md`) must pass 
 ```bash
 python3 tools/sonar/sonar.py up         # once per machine/session: SonarQube Community + Postgres in Docker
 python3 tools/sonar/sonar.py configure  # once (idempotent): strict profiles + quality gate
+python3 tools/sonar/sonar.py baseline <ref-of-previous-release>   # once on a fresh instance
 python3 tools/sonar/sonar.py scan       # each release; exit code 1 = gate failed
 ```
 
 Needs Docker with the compose plugin, Python 3.10+ and internet access (Docker Hub, OSV.dev).
 SonarQube listens on `127.0.0.1:9000` only. Passwords and the scan token are generated into `.sonar/.env`
 (git-ignored, mode 600). The admin password is there if you want to open the web UI.
+
+On a fresh instance (empty Docker volumes) SonarQube has no earlier version to compare with, so the "no new issues"
+conditions would not be evaluated. `scan` refuses to run until an earlier version has been analysed: `baseline` checks
+exports the given git ref (`git archive`) and analyses it with today's settings.
+
+Analyses run without SCM data (`sonar.scm.disabled=true`). With blame, SonarQube backdates a new issue to its line's
+commit date, so an issue committed before the baseline was analysed would not count as new (verified: a back-dated
+probe commit passed `new_violations` with blame and failed it without). Without blame an issue is new exactly when it
+was not in the previous version's analysis. The cost: duplication is gated on the whole code only.
 
 ## What a scan does
 
@@ -19,14 +29,17 @@ SonarQube listens on `127.0.0.1:9000` only. Passwords and the scan token are gen
    * npm packages loaded from a CDN (`<script>`/`<link>` in HTML/JS), vendored files in `vendor/` (identified
      by sha256 in `dependencies.json`), pip installs and GitHub Actions in `.github/workflows`;
    * supply-chain rules: CDN URL without an exact version, external script/stylesheet without
-     Subresource Integrity, unpinned `pip install`, action not pinned to a full commit SHA, vendored file
-     that matches no recorded release.
+     Subresource Integrity, unpinned `pip install`, action not pinned to a full commit SHA, a SHA whose
+     `# vX.Y.Z` comment is missing or does not match the tag (checked with `git ls-remote`), vendored file that
+     matches no recorded release or is loaded without being recorded at all.
 
    Findings go into SonarQube as external **security** issues, so a known CVE fails the gate like any other
    vulnerability.
 2. The SonarQube scanner analyses JS, HTML, CSS, Python, workflows and secrets with the
    **Strict (open-nearby)** profile.
-3. Reviewed decisions from `reviews.json` are applied and the gate is re-evaluated.
+3. Reviewed decisions from `reviews.json` are applied and the gate is re-evaluated. The file is the only source of
+   truth: a false positive or SAFE hotspot in SonarQube with no matching entry (line changed, entry removed, or
+   marked by hand in the UI) is reopened.
 4. Reports: `.sonar/reports/<version>/` (full: `report.md`, `issues.json`, `hotspots.json`, `deps.md`) and, when the
    gate passes, `docs/security/scan-<version>.md` (short record, committed with the release).
 

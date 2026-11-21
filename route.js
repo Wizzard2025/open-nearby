@@ -65,19 +65,33 @@ window.Route = (() => {
     return tileTemplate.replace('{z}', z).replace('{x}', x).replace('{y}', y);
   }
   // Minimal Mapbox Vector Tile (protobuf) reader: only what we need (layer name, features, tags, polygon rings).
-  // Tiles come from a third-party server, so every length in them is untrusted: a field may not run past its
-  // parent or the buffer, a varint is at most 10 bytes, and a truncated or malformed tile throws instead of
-  // looping on garbage (a huge length used to keep the loops below spinning for billions of steps).
+  // Tiles come from a third-party server, so every length in them is untrusted. Every read is bounded by the
+  // message being read (lim): a field may not run past its parent or the buffer, each nested message must end
+  // exactly at its declared length, a varint is at most 10 bytes, and a malformed tile throws instead of looping
+  // on garbage (a huge length used to keep the loops below spinning for billions of steps).
   function readTile(buf) {
     const b = new Uint8Array(buf);
-    let p = 0;
+    let p = 0, lim = b.length;
     const bad = () => { throw new Error('malformed vector tile'); };
     const varint = () => {
       let r = 0, s = 0, c;
-      do { if (p >= b.length || s > 63) bad(); c = b[p++]; r += (c & 0x7f) * 2 ** s; s += 7; } while (c & 0x80);
+      do {
+        if (p >= lim || s > 63) { bad(); }
+        c = b[p++]; r += (c & 0x7f) * 2 ** s; s += 7;
+      } while (c & 0x80);
       return r;
     };
-    const endOf = (len) => { const e = p + len; if (e > b.length) bad(); return e; };
+    const endOf = (len) => {
+      const e = p + len;
+      if (e > lim) { bad(); }
+      return e;
+    };
+    // Enter a nested message of the given length; leave() checks it was consumed exactly and restores the parent.
+    const enter = (len) => { const end = endOf(len), outer = lim; lim = end; return { end, outer }; };
+    const leave = (m) => {
+      if (p !== m.end) { bad(); }
+      lim = m.outer;
+    };
     const skip = (wt) => {
       if (wt === 0) varint();
       else if (wt === 1) p = endOf(8);
@@ -86,43 +100,54 @@ window.Route = (() => {
       else bad();
     };
     const str = (len) => { const e = endOf(len); const v = new TextDecoder().decode(b.subarray(p, e)); p = e; return v; };
-    const packed = (end) => { const a = []; while (p < end) a.push(varint()); if (p !== end) bad(); return a; };
+    const packed = (len) => {
+      const m = enter(len), a = [];
+      while (p < m.end) { a.push(varint()); }
+      leave(m);
+      return a;
+    };
+    // A layer's value message: string, float, double, int, sint or bool.
+    const readValue = (len) => {
+      const m = enter(len); let v = null;
+      while (p < m.end) {
+        const t3 = varint(), f3 = t3 >> 3;
+        if (f3 === 1) v = str(varint());
+        else if (f3 === 2) { const e = endOf(4); v = new DataView(b.buffer, b.byteOffset + p, 4).getFloat32(0, true); p = e; }
+        else if (f3 === 3) { const e = endOf(8); v = new DataView(b.buffer, b.byteOffset + p, 8).getFloat64(0, true); p = e; }
+        else if (f3 === 6) { const n = varint(); v = (n % 2 ? -(n + 1) : n) / 2; }
+        else if (f3 === 4 || f3 === 5) v = varint();
+        else if (f3 === 7) v = !!varint();
+        else skip(t3 & 7);
+      }
+      leave(m);
+      return v;
+    };
+    // A feature message: tag indexes, geometry type and command stream.
+    const readFeature = (len) => {
+      const m = enter(len), F = { tags: [], type: 0, geom: [] };
+      while (p < m.end) {
+        const t3 = varint(), f3 = t3 >> 3;
+        if (f3 === 2) { F.tags = packed(varint()); } else if (f3 === 3) { F.type = varint(); } else if (f3 === 4) { F.geom = packed(varint()); } else { skip(t3 & 7); }
+      }
+      leave(m);
+      return F;
+    };
     const layers = [];
     while (p < b.length) {
       const tag = varint();
       if (tag >> 3 !== 3) { skip(tag & 7); continue; }
-      const lend = endOf(varint());
+      const lm = enter(varint());
       const L = { name: '', keys: [], values: [], feats: [], extent: 4096 };
-      while (p < lend) {
+      while (p < lm.end) {
         const t2 = varint(), f = t2 >> 3;
-        if (f === 1) L.name = str(varint());
-        else if (f === 3) L.keys.push(str(varint()));
-        else if (f === 5) L.extent = varint();
-        else if (f === 4) {
-          const vend = endOf(varint()); let v = null;
-          while (p < vend) {
-            const t3 = varint(), f3 = t3 >> 3;
-            if (f3 === 1) v = str(varint());
-            else if (f3 === 2) { const e = endOf(4); v = new DataView(b.buffer, b.byteOffset + p, 4).getFloat32(0, true); p = e; }
-            else if (f3 === 3) { const e = endOf(8); v = new DataView(b.buffer, b.byteOffset + p, 8).getFloat64(0, true); p = e; }
-            else if (f3 === 6) { const n = varint(); v = (n % 2 ? -(n + 1) : n) / 2; }
-            else if (f3 === 4 || f3 === 5) v = varint();
-            else if (f3 === 7) v = !!varint();
-            else skip(t3 & 7);
-          }
-          L.values.push(v);
-        } else if (f === 2) {
-          const fend = endOf(varint()); const F = { tags: [], type: 0, geom: [] };
-          while (p < fend) {
-            const t3 = varint(), f3 = t3 >> 3;
-            if (f3 === 2) F.tags = packed(endOf(varint()));
-            else if (f3 === 3) F.type = varint();
-            else if (f3 === 4) F.geom = packed(endOf(varint()));
-            else skip(t3 & 7);
-          }
-          L.feats.push(F);
-        } else skip(t2 & 7);
+        if (f === 1) { L.name = str(varint()); }
+        else if (f === 3) { L.keys.push(str(varint())); }
+        else if (f === 5) { L.extent = varint(); }
+        else if (f === 4) { L.values.push(readValue(varint())); }
+        else if (f === 2) { L.feats.push(readFeature(varint())); }
+        else { skip(t2 & 7); }
       }
+      leave(lm);
       layers.push(L);
     }
     return layers;

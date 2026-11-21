@@ -3,6 +3,8 @@
 
   python3 tools/sonar/sonar.py up         start SonarQube + Postgres, set an admin password and a scan token
   python3 tools/sonar/sonar.py configure  create/refresh the strict quality profiles and quality gate (idempotent)
+  python3 tools/sonar/sonar.py baseline REF  analyse an earlier release (git tag/commit) as the "new code" baseline;
+                                          needed once on a fresh instance before the first release scan
   python3 tools/sonar/sonar.py scan       dependency/CVE check + SonarQube analysis of the current version;
                                           writes .sonar/reports/<version>/ and exits 1 if the gate fails
   python3 tools/sonar/sonar.py down       stop the containers (data is kept in Docker volumes)
@@ -26,7 +28,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 HERE = Path(__file__).resolve().parent
-STATE = ROOT / '.sonar'
+STATE_DIR = '.sonar'
+STATE = ROOT / STATE_DIR
 ENV = STATE / '.env'
 COMPOSE = ['docker', 'compose', '-f', str(HERE / 'docker-compose.yml'), '--env-file', str(ENV)]
 URL = 'http://127.0.0.1:9000'
@@ -34,6 +37,7 @@ PROJECT = 'open-nearby'
 SCANNER = 'sonarsource/sonar-scanner-cli:12.4.0.4321_8.4.0'
 NETWORK = 'open-nearby-sonar_default'
 PROFILE = 'Strict (open-nearby)'
+HOTSPOTS_API, ISSUES_API = '/api/hotspots/search', '/api/issues/search'
 GATE = 'Strict (open-nearby)'
 # Languages present in this repo. Each gets a profile built on "Sonar way comprehensive".
 LANGS = ['js', 'css', 'web', 'py', 'secrets', 'yaml', 'json', 'text']
@@ -221,19 +225,34 @@ def configure():
     print(f'quality gate "{GATE}": {len(GATE_CONDITIONS)} conditions, default and assigned to {PROJECT}')
 
 
-def run_scanner(ver):
+def run_scanner(ver, src=ROOT, extra=()):
     tok = env().get('SONAR_TOKEN') or sys.exit('No scan token; run: sonar.py up')
     cmd = ['docker', 'run', '--rm', '--network', NETWORK,
            '-e', 'SONAR_HOST_URL=http://sonarqube:9000', '-e', 'SONAR_TOKEN',
-           '-v', f'{ROOT}:/usr/src', '-w', '/usr/src',
+           '-v', f'{src}:/usr/src', '-w', '/usr/src',
            '--user', f'{os.getuid()}:{os.getgid()}', '-e', 'HOME=/tmp',
            SCANNER, f'-Dsonar.projectVersion={ver}', '-Dsonar.qualitygate.wait=true', '-Dsonar.qualitygate.timeout=600',
-           '-Dsonar.externalIssuesReportPaths=.sonar/external-issues.json', '-Dsonar.working.directory=.sonar/scannerwork']
+           '-Dsonar.externalIssuesReportPaths=.sonar/external-issues.json', '-Dsonar.working.directory=.sonar/scannerwork',
+           # No SCM: SonarQube would otherwise backdate a new issue to its line's commit date, so an issue committed
+           # before the baseline was analysed would not count as new. Without blame an issue is new exactly when it
+           # was not in the previous version's analysis.
+           '-Dsonar.scm.disabled=true', *extra]
     r = subprocess.run(cmd, env={**os.environ, 'SONAR_TOKEN': tok}, capture_output=True, text=True)
     (STATE / 'scanner.log').write_text(r.stdout + r.stderr)
     if 'EXECUTION SUCCESS' not in r.stdout and 'QUALITY GATE STATUS' not in r.stdout + r.stderr:
         print((r.stdout + r.stderr)[-3000:])
         raise SystemExit('Scanner failed (full log: .sonar/scanner.log)')
+
+
+def fetch_all(path, params, key):
+    """Every page of a paged search (issues, hotspots), collected before anything acts on the results."""
+    out, p = [], 1
+    while True:
+        r = api('GET', path, {**params, 'ps': 500, 'p': p})
+        out += r[key]
+        if p * 500 >= r['paging']['total']:
+            return out
+        p += 1
 
 
 def _review_for(reviews, rule, component, line):
@@ -246,22 +265,38 @@ def _review_for(reviews, rule, component, line):
 def apply_reviews():
     """Human decisions live in reviews.json, versioned with the code: security hotspots reviewed as SAFE, and issues
     shown to be false positives. Each entry matches by rule, file and the exact (trimmed) source line, with the
-    reason. When that line changes the entry stops matching and the finding is back for review."""
+    reason. When that line changes the entry stops matching and the finding is back for review.
+    The file is the only source of truth: a decision in SonarQube with no matching entry (the line changed, the entry
+    was removed, or someone clicked it in the UI) is reopened. Returns the number of status changes."""
     rv = json.loads((HERE / 'reviews.json').read_text())
-    applied = 0
-    for h in api('GET', '/api/hotspots/search', {'project': PROJECT, 'status': 'TO_REVIEW', 'ps': 500})['hotspots']:
+    hs_open = fetch_all(HOTSPOTS_API, {'project': PROJECT, 'status': 'TO_REVIEW'}, 'hotspots')
+    hs_safe = fetch_all(HOTSPOTS_API, {'project': PROJECT, 'status': 'REVIEWED', 'resolution': 'SAFE'}, 'hotspots')
+    is_open = fetch_all(ISSUES_API, {'componentKeys': PROJECT, 'issueStatuses': 'OPEN,CONFIRMED'}, 'issues')
+    is_fp = fetch_all(ISSUES_API, {'componentKeys': PROJECT, 'issueStatuses': 'FALSE_POSITIVE'}, 'issues')
+    changed = 0
+    for h in hs_open:
         r = _review_for(rv.get('hotspots', []), h['ruleKey'], h['component'], h.get('line'))
         if r:
             api('POST', '/api/hotspots/change_status', {'hotspot': h['key'], 'status': 'REVIEWED', 'resolution': 'SAFE',
                                                         'comment': f'{r["why"]} (tools/sonar/reviews.json)'})
-            applied += 1
-    for i in api('GET', '/api/issues/search', {'componentKeys': PROJECT, 'issueStatuses': 'OPEN,CONFIRMED', 'ps': 500})['issues']:
+            changed += 1
+    for h in hs_safe:
+        if not _review_for(rv.get('hotspots', []), h['ruleKey'], h['component'], h.get('line')):
+            api('POST', '/api/hotspots/change_status', {'hotspot': h['key'], 'status': 'TO_REVIEW',
+                                                        'comment': 'No matching entry in tools/sonar/reviews.json any more; review again.'})
+            changed += 1
+    for i in is_open:
         r = _review_for(rv.get('issues', []), i['rule'], i['component'], i.get('line'))
         if r:
             api('POST', '/api/issues/add_comment', {'issue': i['key'], 'text': f'{r["why"]} (tools/sonar/reviews.json)'})
             api('POST', '/api/issues/do_transition', {'issue': i['key'], 'transition': 'falsepositive'})
-            applied += 1
-    return applied
+            changed += 1
+    for i in is_fp:
+        if not _review_for(rv.get('issues', []), i['rule'], i['component'], i.get('line')):
+            api('POST', '/api/issues/do_transition', {'issue': i['key'], 'transition': 'reopen'})
+            api('POST', '/api/issues/add_comment', {'issue': i['key'], 'text': 'Reopened: no matching entry in tools/sonar/reviews.json.'})
+            changed += 1
+    return changed
 
 
 def report(ver, deps_md):
@@ -270,12 +305,12 @@ def report(ver, deps_md):
     qg = api('GET', '/api/qualitygates/project_status', {'projectKey': PROJECT})['projectStatus']
     issues, p = [], 1
     while True:
-        r = api('GET', '/api/issues/search', {'componentKeys': PROJECT, 'issueStatuses': 'OPEN,CONFIRMED', 'ps': 500, 'p': p})
+        r = api('GET', ISSUES_API, {'componentKeys': PROJECT, 'issueStatuses': 'OPEN,CONFIRMED', 'ps': 500, 'p': p})
         issues += r['issues']
         if p * 500 >= r['paging']['total']:
             break
         p += 1
-    hs = api('GET', '/api/hotspots/search', {'project': PROJECT, 'status': 'TO_REVIEW', 'ps': 500})['hotspots']
+    hs = api('GET', HOTSPOTS_API, {'project': PROJECT, 'status': 'TO_REVIEW', 'ps': 500})['hotspots']
     measures = {m['metric']: m.get('value', m.get('period', {}).get('value')) for m in api('GET', '/api/measures/component', {
         'component': PROJECT, 'metricKeys': ','.join(sorted({c[0] for c in GATE_CONDITIONS} | {'ncloc', 'security_hotspots', 'violations'}))})['component']['measures']}
     (out / 'issues.json').write_text(json.dumps(issues, indent=1, ensure_ascii=False))
@@ -310,9 +345,45 @@ def report(ver, deps_md):
     return qg['status'], out
 
 
+def analysed_versions():
+    events = fetch_all('/api/project_analyses/search', {'project': PROJECT, 'category': 'VERSION'}, 'analyses')
+    return {e['name'] for a in events for e in a.get('events', []) if e.get('category') == 'VERSION'}
+
+
+def baseline(ref):
+    """Analyse an earlier release (exported with git archive) so the release scan has a "new code" baseline. On a fresh SonarQube the first
+    analysis has no new-code period, so "no new issues" would not be checked at all; scan refuses to certify a
+    release until a different, earlier version has been analysed."""
+    wait_up()
+    src = STATE / 'baseline-src'
+    shutil.rmtree(src, ignore_errors=True)
+    src.mkdir(parents=True)
+    # A plain export of that commit (a git worktree would point the scanner container at a path it cannot see).
+    archive = subprocess.run(['git', '-C', str(ROOT), 'archive', '--format=tar', ref], check=True, capture_output=True).stdout
+    subprocess.run(['tar', '-x', '-C', str(src)], input=archive, check=True)
+    try:
+        m = re.search(r'class="madeby".*?>v(\d+\.\d+\.\d+)<', (src / 'index.html').read_text(encoding='utf-8'))
+        ver = m.group(1) if m else f'baseline-{ref}'
+        if ver == version():
+            raise SystemExit(f'{ref} has the same version ({ver}) as the working tree; pick the previous release.')
+        # Analyse it with today's settings and dependency checks, so the baseline is comparable.
+        shutil.copyfile(ROOT / 'sonar-project.properties', src / 'sonar-project.properties')
+        (src / STATE_DIR).mkdir(exist_ok=True)
+        subprocess.run([sys.executable, '-I', str(HERE / 'deps_check.py'), str(src), str(src / STATE_DIR / 'external-issues.json')],
+                       check=True, stdout=subprocess.DEVNULL)
+        print(f'analysing baseline {ref} as version {ver} …')
+        run_scanner(ver, src=src)
+        print(f'baseline {ver} recorded; now run: sonar.py scan')
+    finally:
+        shutil.rmtree(src, ignore_errors=True)
+
+
 def scan():
     wait_up()
     ver = version()
+    if not analysed_versions() - {ver}:
+        raise SystemExit('No earlier version has been analysed on this SonarQube, so new code cannot be checked.\n'
+                         'Analyse the previous release first, e.g.: python3 tools/sonar/sonar.py baseline <tag or commit of the last release>')
     out = STATE / 'reports' / ver
     out.mkdir(parents=True, exist_ok=True)
     subprocess.run([sys.executable, '-I', str(HERE / 'deps_check.py'), str(ROOT), str(STATE / 'external-issues.json'), str(out / 'deps.md')],
@@ -337,6 +408,9 @@ def down():
 
 if __name__ == '__main__':
     cmds = {'up': up, 'configure': configure, 'scan': scan, 'down': down}
-    if len(sys.argv) != 2 or sys.argv[1] not in cmds:
+    if len(sys.argv) == 3 and sys.argv[1] == 'baseline':
+        baseline(sys.argv[2])
+    elif len(sys.argv) == 2 and sys.argv[1] in cmds:
+        cmds[sys.argv[1]]()
+    else:
         raise SystemExit(__doc__)
-    cmds[sys.argv[1]]()

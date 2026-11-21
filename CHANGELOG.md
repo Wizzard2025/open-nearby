@@ -16,7 +16,7 @@ Security and quality release, checked by the new release scan (`tools/sonar/`: l
 ## 1.1.0 — 2026-11-21
 
 - Parking: «Pay for parking» buttons for Pango and Cello in the parking popup. After you report a lot (free, busy or full), the popup reopens with these buttons.
-- The button opens the app's page in Google Play or the App Store, where «Open» launches the installed app. The app does not pick the zone for you: check the zone and your plate before paying. No payment data passes through בטוח? פתוח!.
+- The button opens the app's page in Google Play or the App Store, where «Open» launches the installed app (or «Install» if it is missing); the note under the buttons says so. The app does not pick the zone for you: check the zone and your plate before paying. No payment data passes through בטוח? פתוח!.
 - Map popups now pan into the visible part of the map (between the top bar and the list) and lower the list on phones, so the payment buttons are not hidden under it. On very small screens (iPhone SE size) the full popup before a report is taller than the free map area: the payment buttons show after you report, or when you drag the list down.
 - In dark mode the parking popup's notes use the theme colours; the payment popup closes when the parking layer is turned off.
 - Version number shown in the footer.

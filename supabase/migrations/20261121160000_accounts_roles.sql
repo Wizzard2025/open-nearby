@@ -1,5 +1,5 @@
 -- Accounts, roles and moderation for «בטוח? פתוח!» (1.4.0).
--- NOT APPLIED YET: waiting for the owner to approve it in Supabase. Tested on the live database in a rolled-back transaction.
+-- Applied to the live database on 2026-11-21 (tested first in a rolled-back transaction).
 --   * Only registered members (a real account with a username, not an anonymous session) add or change data.
 --   * Admins and superadmins can edit or delete anything the community added and hide any shop from the map.
 --   * Only a superadmin can give or take admin rights (set_user_role).

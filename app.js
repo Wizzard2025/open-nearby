@@ -879,7 +879,10 @@ function showLocErr(err) {
   if (err?.code === 1) { key = isIOS() ? 'geoDeniedIOS' : 'geoDenied'; }
   S.notices.loc = { cls: 'err', text: t(key) }; renderNotices();
   // Notices are hidden over the map (peek): bring the list up so the message is actually seen.
-  if (!wide() && sheet().dataset.state === 'peek') { setSheet('half'); }
+  if (wide()) { return; }
+  // An open map popup slides the sheet away (mappop), which would hide the message too.
+  if (document.body.classList.contains('mappop')) { map.closePopup(); document.body.classList.remove('mappop'); }
+  setSheet(sheet().dataset.state === 'peek' ? 'half' : sheet().dataset.state);
 }
 // Ask for the location on start only when the user has already allowed it. Asking before any tap gets refused or
 // dismissed easily, and Safari then remembers the refusal for the site, so a later tap on ➤ fails without asking.

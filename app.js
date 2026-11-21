@@ -74,6 +74,11 @@ const t = (k, vars) => {
   return s;
 };
 const ADD_HOURS_INPUT = '#addHoursText';
+const ARIA_EXPANDED = 'aria-expanded';
+const ADD_FORM_MIN = 130;   // px: add-shop panel title row + name field (+ padding), see trackKeyboard()
+// --sheet-peek: how much of the bottom sheet covers the map on a phone (map buttons and popups keep clear of it).
+const SHEET_PEEK = '--sheet-peek';
+const setSheetPeek = (px) => document.documentElement.style.setProperty(SHEET_PEEK, px + 'px');
 const setAriaLabel = (el, text) => el.setAttribute('aria-label', text);
 // Fire-and-forget async work (redraws, background loads, click handlers): a failure is logged instead of
 // surfacing as an unhandled promise rejection.
@@ -382,19 +387,35 @@ const STATUS_VAR = { open: '--open', open24: '--open', soon: '--soon', closed: '
 // Base map: OpenFreeMap vector style without shop/parking icons (free, no key, commercial use allowed), drawn by MapLibre,
 // so the map can tilt into 3D like Google Maps (two-finger drag, or the 3D button).
 const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
+// Hebrew and Arabic map labels: without this plugin MapLibre lays glyphs out left to right, so «קריית ים» reads «מי תיירק».
+const RTL_PLUGIN = 'vendor/mapbox-gl-rtl-text.js';
+function initRtlText() {
+  try {
+    maplibregl.setRTLTextPlugin(new URL(RTL_PLUGIN, document.baseURI).href, false)
+      .catch((e) => console.error('RTL text plugin failed', e));
+  } catch (e) { console.error('RTL text plugin failed', e); }
+}
 function initMap(center, zoom) {
+  initRtlText();
   const touch = matchMedia('(pointer: coarse)').matches;
   map = new MK.Map('map', { center, zoom, touch, style: { version: 8, sources: {}, layers: [] } });
   // A popup needs map room on a phone: lower the list to its peek state first.
-  map.onPopup = () => { if (!wide() && sheet().dataset.state !== 'peek') setSheet('peek'); };
+  // A map popup on a phone gets the whole map: the list (with its cards) slides away and comes back when it closes.
+  map.onPopup = () => {
+    if (wide()) { return; }
+    if (sheet().dataset.state !== 'peek') { setSheet('peek'); }
+    document.body.classList.add('mappop');
+    setSheetPeek(0);
+  };
   map.popupInset = () => {
     const sh = $('#sheet');
     // Floating things over the top of the map: the top bar and the "N open nearby / 3D" row under it.
     const top = Math.max(0, ...['.topbar', '#glance'].map((q) => { const el = $(q); const r = el && el.getBoundingClientRect(); return r && r.height ? r.bottom : 0; }));
     // The sheet may be mid-animation; use the height it is moving to (set by setSheet) on phones.
-    const peek = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sheet-peek'));
+    const peek = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue(SHEET_PEEK));
     // On a wide screen the list is a side panel, so nothing covers the bottom of the map.
-    const bottom = wide() ? 0 : peek > 0 ? peek : sh ? Math.max(0, innerHeight - sh.getBoundingClientRect().top) : 0;
+    let bottom = 0;
+    if (!wide() && !document.body.classList.contains('mappop')) { bottom = peek > 0 ? peek : Math.max(0, innerHeight - sh.getBoundingClientRect().top); }
     return { top, bottom };
   };
   map.gm.setStyle(STYLE_URL, { transformStyle: (_, next) => ({ ...next, layers: next.layers.filter((l) => l['source-layer'] !== 'poi') }) });
@@ -561,12 +582,14 @@ const wide = () => matchMedia('(min-width: 860px)').matches;
 function setSheet(state) {
   const el = sheet();
   el.dataset.state = state;
-  if (wide()) { document.documentElement.style.setProperty('--sheet-peek', '0px'); return; }
+  if (wide()) { setSheetPeek(0); return; }
   const H = el.offsetHeight, vh = window.innerHeight;
   const peekH = (() => { const c = $('#cards'); if (!c || !c.offsetHeight) return 212; return Math.round(c.getBoundingClientRect().bottom - el.getBoundingClientRect().top + 10); })();
   const visible = state === 'full' ? H : state === 'half' ? Math.min(H, Math.round(vh * 0.55)) : Math.min(H, peekH);
   el.style.setProperty('--sheet-offset', H - visible + 'px');
-  document.documentElement.style.setProperty('--sheet-peek', Math.min(visible, Math.round(vh * 0.5)) + 'px');
+  // Map buttons sit just above the sheet; only a full-height sheet caps them at mid-screen (they are behind it then).
+  const peekPx = state === 'full' ? Math.min(visible, Math.round(vh * 0.5)) : visible;
+  setSheetPeek(document.body.classList.contains('mappop') ? 0 : peekPx);
 }
 function initSheet() {
   const el = sheet(), grab = $('#grab');
@@ -615,18 +638,29 @@ function applyLang() {
   document.documentElement.dir = S.lang === 'he' ? 'rtl' : 'ltr';
   document.title = t('title');
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  document.querySelectorAll('[data-i18n-label]').forEach((el) => { setAriaLabel(el, t(el.dataset.i18nLabel)); });
   document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   $('#kicker').textContent = t('kicker');
-  if ($('#accBtn')) $('#accBtn').title = t('acc');
+  if ($('#accBtn')) $('#accBtn').title = ACC ? (ACC.username || ACC.email) : t('acc');
+  ACCUI.html = ''; background(renderAccount());
   if (typeof applyTheme === 'function' && $('#themeBtn')?.textContent) applyTheme();
   $('#addOpen').textContent = t('addOpen');
   setAriaLabel($('#grab'), t('expand'));
+  setAriaLabel($('#addFab'), t('addTitle')); $('#addFab').title = t('addTitle');
   $('#tiltBtn').title = t('tilt3d');
   $('#city').innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
 }
 function renderNotices() {
   const arr = [...(S.notices.time ? [S.notices.time] : []), ...(S.notices.loc ? [S.notices.loc] : []), ...S.notices.hebcal];
-  $('#notices').innerHTML = arr.map((n) => `<p class="notice ${n.cls}">${esc(n.text)}</p>`).join('');
+  // On phones a notice shows one line; it is a button that expands to the full text.
+  $('#notices').innerHTML = arr.map((n) => `<p class="notice ${n.cls}" role="button" tabindex="0" aria-expanded="false">${esc(n.text)}</p>`).join('');
+}
+function toggleNotice(e) {
+  const n = e.target.closest('#notices .notice');
+  if (!n || (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ')) { return; }
+  e.preventDefault();
+  n.classList.toggle('open');
+  n.setAttribute(ARIA_EXPANDED, String(n.classList.contains('open')));
 }
 // "Fast food · falafel" / "ATM · Bank Leumi" / "Gas station · Paz": what the place is and whose, in one line.
 function kindLine(it, type, name) {
@@ -688,6 +722,7 @@ function shopHTML(it, now) {
   if (st.oh && st.k !== 'open24' && opensOnShabbat(it, st.oh, now)) tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`);
   if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);
   if (it.fixed) tags.push(`<span class="tag user">${esc(t('fixedTag'))}</span>`);
+  if (HIDDEN.has(it.id)) { tags.push(`<span class="tag warn">${esc(t('hiddenTag'))}</span>`); }
   if (tg.cash_in === 'yes') tags.push(`<span class="tag">${esc(t('atmDeposit'))}</span>`);
   if (tg.fee === 'yes') tags.push(`<span class="tag warn">${esc(t('feeYes'))}</span>`);
   else if (tg.fee === 'no' && typeKey(tg) === 'atm') tags.push(`<span class="tag">${esc(t('feeNo'))}</span>`);
@@ -721,6 +756,7 @@ function shopHTML(it, now) {
     more.push(`<div class="ci-row"><span>${esc(t('ciAsk'))}</span><button type="button" class="ci-btn ok" data-ci="${esc(it.id)}" data-v="open">${esc(t('ciOpen'))}</button><button type="button" class="ci-btn bad" data-ci="${esc(it.id)}" data-v="closed">${esc(t('ciClosed'))}</button></div>`);
     if (PARK.on) more.push(`<p class="parkline" data-park-for="${esc(it.id)}">${parkLineHTML(it.id)}</p>`);
     more.push(`<div class="actions">${acts.join('')}</div>`);
+    if (ACC?.admin) { more.push(adminRowHTML(it)); }
   }
   const walk = it.d < 2500 ? `<b>${esc(t('walk', { m: Math.max(1, Math.round(it.d / 80)) }))}</b>` : '';
   return `<li class="shop${S.selected === it.id ? ' sel' : ''}" data-id="${esc(it.id)}" tabindex="0">
@@ -746,11 +782,15 @@ function refresh() {
   const ref = meIn ? S.me : { lat: c.lat, lon: c.lng };
   const pad = b.pad(0.05);
   background(ensureTiles(b.pad(0.3)).then((got) => { if (got) refreshSoon(); }));
-  const inView = z >= 10 ? ALL.concat(USER_SHOPS).filter((s) => pad.contains([s.lat, s.lon])) : [];
+  // Shops hidden by staff disappear for everyone else; staff still see them (marked) so they can bring them back.
+  const inView = z >= 10 ? ALL.concat(USER_SHOPS).filter((s) => pad.contains([s.lat, s.lon]) && (ACC?.admin || !HIDDEN.has(s.id))) : [];
   if (z >= 13) { background(loadUserShops(b)); }
   for (const it of inView) {
     const fx = FIX.get(it.id);
-    if (fx && it.tags.opening_hours !== fx.oh) { it.tags = { ...it.tags, opening_hours: fx.oh }; it.fixed = true; }
+    if (fx && it.tags.opening_hours !== fx.oh) {
+      if (!('origOh' in it)) { it.origOh = it.tags.opening_hours; }   // so staff can undo the fix
+      it.tags = { ...it.tags, opening_hours: fx.oh }; it.fixed = true;
+    }
     it.st = statusOf(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon);
     const ci = ciLatest(it.id);
     if (ci && ci.v === 'open' && it.st.k === 'unknown' && Date.now() / 1000 - ci.time < 3600) it.st = { k: 'ciopen', ci };
@@ -823,23 +863,52 @@ function select(id, fromMap) {
 }
 
 // ---------- location ----------
+// Location. GPS (high accuracy) first; indoors an iPhone often cannot get a GPS fix in time, so on a timeout or
+// "position unavailable" it asks once more for the network-based position, which is quick and good enough to find
+// shops nearby. A refusal (code 1) gets its own message: the browser will not ask again by itself, so the user has
+// to allow it in the settings, and on an iPhone that takes two switches.
+const GEO_FAST = { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 };
+const GEO_PRECISE = { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 };
 function locate(isAuto) {
   const btn = $('#locate');
-  if (!navigator.geolocation) { if (!isAuto) showLocErr(); return; }
+  if (!navigator.geolocation) { if (!isAuto) { showLocErr(); } return; }
   btn.setAttribute('aria-busy', 'true');
-  navigator.geolocation.getCurrentPosition(
-    (p) => {
-      btn.removeAttribute('aria-busy'); btn.classList.add('on');
-      S.me = { lat: p.coords.latitude, lon: p.coords.longitude };
-      S.notices.loc = null; renderNotices(); drawMe();
-      map.setView([S.me.lat, S.me.lon], Math.max(map.getZoom(), 16));
-      background(loadHebcal(S.me.lat, S.me.lon));
-    },
-    () => { btn.removeAttribute('aria-busy'); if (isAuto) { S.notices.loc = { cls: 'info', text: t('demo') }; renderNotices(); } else showLocErr(); },
-    { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
-  );
+  const ok = (p) => {
+    btn.removeAttribute('aria-busy'); btn.classList.add('on');
+    S.me = { lat: p.coords.latitude, lon: p.coords.longitude };
+    S.notices.loc = null; renderNotices(); drawMe();
+    map.setView([S.me.lat, S.me.lon], Math.max(map.getZoom(), 16));
+    background(loadHebcal(S.me.lat, S.me.lon));
+  };
+  const fail = (err) => {
+    btn.removeAttribute('aria-busy');
+    track('geo-error', String(err?.code));
+    if (isAuto) { S.notices.loc = { cls: 'info', text: t('demo') }; renderNotices(); } else { showLocErr(err); }
+  };
+  navigator.geolocation.getCurrentPosition(ok, (err) => {
+    if (err?.code === 1) { fail(err); return; }   // refused: retrying would fail the same way
+    navigator.geolocation.getCurrentPosition(ok, fail, GEO_FAST);
+  }, GEO_PRECISE);
 }
-function showLocErr() { S.notices.loc = { cls: 'err', text: t('geoFail') }; renderNotices(); }
+function showLocErr(err) {
+  let key = 'geoFail';
+  if (err?.code === 1) { key = isIOS() ? 'geoDeniedIOS' : 'geoDenied'; }
+  S.notices.loc = { cls: 'err', text: t(key) }; renderNotices();
+  // Notices are hidden over the map (peek): bring the list up so the message is actually seen.
+  if (wide()) { return; }
+  // An open map popup slides the sheet away (mappop), which would hide the message too.
+  if (document.body.classList.contains('mappop')) { map.closePopup(); document.body.classList.remove('mappop'); }
+  setSheet(sheet().dataset.state === 'peek' ? 'half' : sheet().dataset.state);
+}
+// Ask for the location on start only when the user has already allowed it. Asking before any tap gets refused or
+// dismissed easily, and Safari then remembers the refusal for the site, so a later tap on ➤ fails without asking.
+async function autoLocate(restored) {
+  let state = 'unknown';
+  try { state = (await navigator.permissions.query({ name: 'geolocation' })).state; } catch { /* no Permissions API */ }
+  if (state === 'granted') { locate(true); return; }
+  // "Showing central Tel Aviv" is only true when the map did not reopen where the user left it.
+  S.notices.loc = { cls: 'info', text: t(restored ? 'locTap' : 'demo') }; renderNotices();
+}
 
 // ---------- shops added by people ----------
 // New shops go to our database (community.js). Shops added earlier as OpenStreetMap notes tagged #betachpatuach
@@ -888,23 +957,49 @@ async function loadUserShops(bounds) {
 }
 
 const ADD = { on: false, pin: null, marker: null, hours: '24/7', cat: 'food' };
+// Adding a shop on a phone: step 1 shows only the map with a fixed pin in the middle (the user moves the map under
+// it, which is more precise than tapping), step 2 a compact form panel that sits above the keyboard with the pin
+// still visible. Everything else (list, cards, ads, map buttons) is hidden while adding: body[data-add].
 function addStart() {
+  if (!needMember()) { return; }
   ADD.on = true; ADD.pin = null;
-  $('#addBox').hidden = false; $('#addFields').hidden = true;
-  $('#addTitle').textContent = t('addTitle'); $('#addHint').textContent = t('addHintPin');
-  if (!wide()) setSheet('peek');
+  map.closePopup();
+  document.body.dataset.add = 'pick';
+  $('#addBox').hidden = true; $('#addPick').hidden = false;
+  $('#addPickHint').textContent = t('addHintPin');
+  $('#addPickHere').textContent = t('addHere'); $('#addPickCancel').textContent = t('addCancel');
+  // Start where the user is (a shop they want to add is usually around them), close enough to aim.
+  const c = S.me ? { lat: S.me.lat, lng: S.me.lon } : map.getCenter();
+  map.setView([c.lat, c.lng], Math.max(map.getZoom(), 17));
   track('add-start', 'add shop');
 }
 function addStop() {
   ADD.on = false; ADD.pin = null;
   if (ADD.marker) { ADD.marker.remove(); ADD.marker = null; }
+  delete document.body.dataset.add;
+  $('#addPick').hidden = true;
   $('#addBox').hidden = true; $('#addBox').reset();
+  if (!wide()) { setSheet('peek'); }
+}
+// Keep the picked pin in the free part of the map: below the top bar, above the form panel.
+function addFitPin() {
+  if (!ADD.pin || $('#addBox').hidden) { return; }
+  const p = map.latLngToContainerPoint([ADD.pin.lat, ADD.pin.lng]);
+  const top = $('.topbar').getBoundingClientRect().bottom + 50, bottom = $('#addBox').getBoundingClientRect().top - 16;
+  if (bottom <= top) { return; }
+  if (p.y < top || p.y > bottom) { map.gm.panBy([0, p.y - (top + bottom) / 2], { duration: 250 }); }
 }
 function addPick(latlng) {
   ADD.pin = latlng;
-  if (ADD.marker) ADD.marker.setLatLng(latlng);
-  else ADD.marker = MK.marker(latlng, { draggable: true, icon: MK.divIcon({ html: '<div class="add-pin"></div>', iconSize: [22, 22], iconAnchor: [11, 11] }) })
-    .on('dragend', (e) => { ADD.pin = e.target.getLatLng(); }).addTo(map);
+  if (ADD.marker) { ADD.marker.setLatLng(latlng); }
+  else {
+    ADD.marker = MK.marker(latlng, { draggable: true, icon: MK.divIcon({ html: '<div class="add-pin drop"></div>', iconSize: [30, 36], iconAnchor: [15, 36] }) })
+      .on('dragend', (e) => { ADD.pin = e.target.getLatLng(); }).addTo(map);
+  }
+  if (document.body.dataset.add === 'form') { return; }   // tapping the map again only moves the pin
+  document.body.dataset.add = 'form';
+  $('#addPick').hidden = true; $('#addBox').hidden = false;
+  $('#addTitle').textContent = t('addTitle');
   $('#addHint').textContent = t('addHintForm');
   $('#addFields').hidden = false;
   const addName = $('#addName'), addHours = $(ADD_HOURS_INPUT);
@@ -917,7 +1012,7 @@ function addPick(latlng) {
   setAriaLabel($('#addType'), t('addTypeL'));
   addHours.hidden = ADD.hours !== 'other';
   $('#addSend').textContent = t('addSend'); $('#addCancel').textContent = t('addCancel'); $('#addNote').textContent = t('addNote');
-  if (!wide()) setSheet('half');
+  requestAnimationFrame(addFitPin);
   setTimeout(() => addName.focus(), 50);
 }
 async function addSubmit(e) {
@@ -938,12 +1033,37 @@ async function addSubmit(e) {
     S.notices.loc = { cls: 'info', text: t('addThanks', { n: name }) }; renderNotices();
     refresh();
   } catch (err) {
-    $('#addNote').textContent = t(err.code === 'rate_limited' ? 'tooMany' : 'addFail');
+    $('#addNote').textContent = errText(err);
   } finally { btn.disabled = false; }
+}
+const addGap = (avail, kb) => Math.max(0, Math.min(kb > 0 ? 150 : 200, avail - ADD_FORM_MIN));
+// The on-screen keyboard shrinks the visual viewport: lift the form by that much and keep the pin in view.
+function trackKeyboard() {
+  const vv = window.visualViewport;
+  if (!vv) { return; }
+  const update = () => {
+    const kb = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+    document.documentElement.style.setProperty('--kb', kb + 'px');
+    // A strip of map stays above the form so the picked pin is visible: ~200px without the keyboard, ~150px with it
+    // (top bar + pin). On a short screen (a phone in landscape) the form keeps at least ADD_FORM_MIN for its title
+    // and the name field, and the map strip shrinks instead; the form scrolls within whatever it gets.
+    document.documentElement.style.setProperty('--add-gap', addGap(vv.height, kb) + 'px');
+    document.body.classList.toggle('kbopen', kb > 0);
+    if (ADD.on) { requestAnimationFrame(addFitPin); }
+  };
+  vv.addEventListener('resize', update);
+  vv.addEventListener('scroll', update);
+  update();
 }
 function initAdd() {
   $('#addOpen').addEventListener('click', addStart);
+  $('#addFab').addEventListener('click', addStart);
+  $('#addPickHere').addEventListener('click', () => addPick(map.getCenter()));
+  $('#addPickCancel').addEventListener('click', addStop);
+  $('#addClose').addEventListener('click', addStop);
   $('#addCancel').addEventListener('click', addStop);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && ADD.on) { addStop(); } });
+  trackKeyboard();
   $('#addBox').addEventListener('submit', addSubmit);
   $('#addType').addEventListener('change', (e) => { ADD.cat = e.target.value; });
   $('#addHours').addEventListener('click', (e) => {
@@ -953,7 +1073,7 @@ function initAdd() {
     $(ADD_HOURS_INPUT).hidden = ADD.hours !== 'other';
     if (ADD.hours === 'other') { $(ADD_HOURS_INPUT).focus(); }
   });
-  map.on('click', (e) => { if (ADD.on) addPick(e.latlng); });
+  map.on('click', (e) => { if (ADD.on && ADD.pin) { addPick(e.latlng); } });
 }
 
 // ---------- community data from the database: added shops, hours fixes, check-ins, parking reports ----------
@@ -995,7 +1115,8 @@ async function loadCommunity(bounds) {
     for (const r of d.fixes) { const cur = FIX.get(r.shop_id); if (!cur || toSec(r.created_at) > cur.time) FIX.set(r.shop_id, { oh: r.opening_hours, time: toSec(r.created_at) }); }
     for (const r of d.checkins) ciPut(r.shop_id, r.status, toSec(r.created_at), 'c' + r.id);
     for (const r of d.parking) pkPut(r.parking_id, r.status, toSec(r.created_at), 'k' + r.id);
-    if (d.places.length || d.fixes.length || d.checkins.length || d.parking.length) refreshSoon();
+    for (const id of d.hidden) { HIDDEN.add(id); }
+    if (['places', 'fixes', 'checkins', 'parking', 'hidden'].some((k) => d[k].length)) { refreshSoon(); }
     return true;
   } catch { for (const [la, lo] of stale) comTiles.delete(la + ',' + lo); return false; }
 }
@@ -1004,7 +1125,7 @@ function refreshSoon() { clearTimeout(refreshTimer); refreshTimer = setTimeout(r
 const notify = (text, cls = 'info') => { S.notices.loc = { cls, text }; renderNotices(); };
 async function checkIn(id, v) {
   const it = S.view.find((x) => x.id === id);
-  if (!it) return;
+  if (!it || !needMember()) { return; }
   if (!S.me) { notify(t('ciNeedLoc')); locate(false); return; }
   if (distM(S.me.lat, S.me.lon, it.lat, it.lon) > 300) { notify(t('ciFar')); return; }
   try {
@@ -1013,7 +1134,7 @@ async function checkIn(id, v) {
     track('checkin', `${v} · ${it.cat}`);
     notify(t('ciThanks'));
     refresh();
-  } catch (err) { notify(t(err.code === 'too_soon' ? 'ciTooSoon' : err.code === 'rate_limited' ? 'tooMany' : 'addFail'), err.code ? 'info' : 'err'); }
+  } catch (err) { notify(errText(err), ['too_soon', 'rate_limited'].includes(err.code) ? 'info' : 'err'); }
 }
 
 // ---------- "Wrong hours? Fix them" ----------
@@ -1037,7 +1158,7 @@ async function submitFix(id, value) {
     notify(t('fixThanks'));
     S.fixOpen = null;
     refresh();
-  } catch (err) { notify(t(err.code === 'rate_limited' ? 'tooMany' : 'addFail'), 'err'); }
+  } catch (err) { notify(errText(err), 'err'); }
 }
 function fixFormHTML(it) {
   if (S.fixOpen !== it.id) return `<button type="button" class="fix-open" data-fix-open="${esc(it.id)}">✎ ${esc(t('fixOpen'))}</button>`;
@@ -1089,8 +1210,9 @@ function pkPayHTML() {
 function pkPopupHTML(p, reported = false) {
   const id = pid(p), r = pkLatest(id);
   const btn = (v) => `<button type="button" class="pk-btn pk-${v}" data-pk="${id}" data-v="${v}">${PK_EMOJI[v]} ${esc(t('pk_' + v))}</button>`;
+  const clear = ACC?.admin && r ? ` <button type="button" class="adm-btn danger" data-pk-clear="${id}">${esc(t('admClearCi'))}</button>` : '';
   const head = `<div class="pk-pop"><b>${esc(p.name || t('pkTitle'))}</b>
-    <p class="pk-now">${r ? esc(pkStatusText(r)) : esc(t('pkNoReports'))}</p>`;
+    <p class="pk-now">${r ? esc(pkStatusText(r)) : esc(t('pkNoReports'))}${clear}</p>`;
   if (reported) return `${head}<p class="pk-thanks">${esc(t('pkThanksPay'))}</p>${pkPayHTML()}</div>`;
   return `${head}<p class="pk-ask">${esc(t('pkAsk'))}</p>
     <div class="pk-btns">${btn('free')}${btn('busy')}${btn('full')}${btn('gone')}</div>${pkPayHTML()}</div>`;
@@ -1120,6 +1242,7 @@ async function drawParking() {
 }
 async function pkReport(id, v) {
   const [lat, lon] = id.split(',').map(Number);
+  if (!needMember()) { return; }
   if (!S.me) { notify(t('pkNeedLoc')); locate(false); return; }
   if (distM(S.me.lat, S.me.lon, lat, lon) > 500) { notify(t('pkFar')); return; }
   try {
@@ -1133,7 +1256,7 @@ async function pkReport(id, v) {
     if (lot) map.openPopupAt([lat, lon], pkPopupHTML(lot, true));
     background(drawParking());
     refresh();
-  } catch (err) { notify(t(err.code === 'too_soon' ? 'ciTooSoon' : err.code === 'rate_limited' ? 'tooMany' : 'addFail'), err.code ? 'info' : 'err'); }
+  } catch (err) { notify(errText(err), ['too_soon', 'rate_limited'].includes(err.code) ? 'info' : 'err'); }
 }
 function parkLineHTML(itId) {
   const c = PARK.cache.get(itId);
@@ -1405,41 +1528,237 @@ function initLayers() {
   const sync = () => { $('#lyShops').checked = LY.shops; $('#lyParking').checked = LY.parking; $('#lyRings').checked = LY.rings; $('#lyShade').checked = LY.shade; };
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden));
+    pop.hidden = !pop.hidden; btn.setAttribute(ARIA_EXPANDED, String(!pop.hidden));
+    // The menu opens upwards from the map buttons: on a phone, lower the list first so it fits under the top bar.
+    if (!pop.hidden && !wide() && sheet().dataset.state !== 'peek') { setSheet('peek'); }
     $('#lpTitle').textContent = t('layers'); $('#lyShopsL').textContent = t('lyShops'); $('#lyParkingL').textContent = t('lyParking'); $('#lyRingsL').textContent = t('lyRings'); $('#lyShadeL').textContent = t('lyShade');
     sync();
   });
   for (const [id, k] of [['#lyShops', 'shops'], ['#lyParking', 'parking'], ['#lyRings', 'rings'], ['#lyShade', 'shade']]) {
     $(id).addEventListener('change', (e) => { LY[k] = e.target.checked; track('layer-' + k, LY[k] ? 'on' : 'off'); applyLayers(); refresh(); });
   }
-  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#layersPop, #layersBtn')) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
+  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#layersPop, #layersBtn')) { pop.hidden = true; btn.setAttribute(ARIA_EXPANDED, 'false'); } });
   applyLayers();
 }
 
-// ---------- optional account (email link) ----------
+// ---------- account: sign in / sign up (username, email, password) and staff roles ----------
+// Browsing needs nothing. Adding or changing data needs an account with a username; the database enforces it
+// (row-level security), the app explains it before trying. ACC: the signed-in account, or null for a guest.
+let ACC = null;
+const ACCUI = { mode: 'in', msg: '', msgCls: '', html: '' };
+// A Hebrew username inside a Russian or English sentence (or the reverse) keeps its own direction: «משה_1», not «1_משה».
+const isolate = (s) => `\u2068${s}\u2069`;
+const ERR_KEYS = { rate_limited: 'tooMany', too_soon: 'ciTooSoon', need_account: 'needAcc' };
+function errText(err) {
+  const c = err?.code;
+  if (ERR_KEYS[c]) { return t(ERR_KEYS[c]); }
+  return I18N[S.lang]['err_' + c] ? t('err_' + c) : t('addFail');
+}
+async function loadAccount() {
+  try { ACC = window.DB ? await DB.account() : null; } catch (e) { console.error('account', e); ACC = null; }
+  const btn = $('#accBtn');
+  if (btn) { btn.classList.toggle('on', !!ACC); btn.title = ACC ? (ACC.username || ACC.email) : t('acc'); }
+  refresh();
+  await renderAccount();
+}
+function openAccount() {
+  const pop = $('#accPop'), btn = $('#accBtn');
+  if (!pop || !btn) { return; }
+  pop.hidden = false; btn.setAttribute(ARIA_EXPANDED, 'true');
+  background(renderAccount());
+}
+// Writes are for members only: explain and open the sign-in panel instead of failing later.
+function needMember() {
+  if (ACC?.member) { return true; }
+  notify(t(ACC ? 'needName' : 'needAcc'), 'err');
+  if (!ACC) { ACCUI.mode = 'in'; }
+  // After the current click has finished: the "click outside closes the panel" handler would close it again.
+  setTimeout(openAccount, 0);
+  return false;
+}
+const accField = (id, type, label, ac, extra = '') =>
+  `<label class="acc-f"><span>${esc(label)}</span><input id="${id}" type="${type}" autocomplete="${ac}" required ${extra}></label>`;
+const NAME_ATTRS = 'minlength="3" maxlength="20" dir="auto" autocapitalize="none" spellcheck="false"';
+function accGuestHTML() {
+  const m = ACCUI.mode;
+  if (m === 'forgot') {
+    return `<p class="acc-title">${esc(t('accResetT'))}</p>
+      <form id="accForm" data-mode="forgot">${accField('accEmail', 'email', t('accEmail'), 'email', 'dir="ltr"')}<button type="submit" class="walk">${esc(t('accResetSend'))}</button></form>
+      <button type="button" class="linkbtn" data-acc-mode="in">${esc(t('accBack'))}</button>`;
+  }
+  const tab = (k, key) => `<button type="button" role="tab" aria-selected="${m === k}" data-acc-mode="${k}">${esc(t(key))}</button>`;
+  const tabs = `<div class="acc-tabs" role="tablist">${tab('in', 'accTabIn')}${tab('up', 'accTabUp')}</div>`;
+  if (m === 'up') {
+    return `${tabs}<p class="acc-why">${esc(t('accWhy'))}</p>
+      <form id="accForm" data-mode="up">${accField('accUser', 'text', t('accUser'), 'username', NAME_ATTRS)}<p class="acc-hint">${esc(t('accUserHint'))}</p>
+      ${accField('accEmail', 'email', t('accEmail'), 'email', 'dir="ltr"')}${accField('accPass', 'password', t('accPassNew'), 'new-password', 'minlength="8" dir="ltr"')}
+      <button type="submit" class="walk">${esc(t('accDoUp'))}</button></form>`;
+  }
+  return `${tabs}<p class="acc-why">${esc(t('accWhy'))}</p>
+    <form id="accForm" data-mode="in">${accField('accEmail', 'email', t('accEmail'), 'email', 'dir="ltr"')}${accField('accPass', 'password', t('accPass'), 'current-password', 'dir="ltr"')}
+    <button type="submit" class="walk">${esc(t('accDoIn'))}</button></form>
+    <button type="button" class="linkbtn" data-acc-mode="forgot">${esc(t('accForgot'))}</button>`;
+}
+function accSignedHTML(a) {
+  const role = a.admin ? ` <span class="acc-role">${esc(t('accRole_' + a.role))}</span>` : '';
+  let h = `<p class="acc-title">${esc(t('accIn', { e: isolate(a.username || a.email) }))}${role}</p>`;
+  if (a.username) { h += `<p class="acc-why" dir="ltr">${esc(a.email)}</p>`; }
+  else {
+    h += `<p class="acc-why">${esc(t('accChooseName'))}</p>
+      <form id="accForm" data-mode="name">${accField('accUser', 'text', t('accUser'), 'username', NAME_ATTRS)}<p class="acc-hint">${esc(t('accUserHint'))}</p><button type="submit" class="walk">${esc(t('accSave'))}</button></form>`;
+  }
+  // Back from a password reset email: the link signs the user in, then they choose the new password here.
+  if (ACCUI.mode === 'newpass') {
+    h += `<form id="accPassForm" data-mode="newpass"><p class="acc-title">${esc(t('accNewPassT'))}</p>${accField('accPass', 'password', t('accPassNew'), 'new-password', 'minlength="8" dir="ltr"')}<button type="submit" class="walk">${esc(t('accSave'))}</button></form>`;
+  }
+  if (a.superadmin) {
+    const opt = (v, k) => `<option value="${v}">${esc(t(k))}</option>`;
+    h += `<div class="acc-staff"><p class="acc-title">${esc(t('admStaff'))}</p><ul id="staffList" class="acc-staff-list"><li>…</li></ul>
+      <form id="staffForm" data-mode="staff" class="acc-row"><input id="staffName" required ${NAME_ATTRS} placeholder="${esc(t('admNamePh'))}" aria-label="${esc(t('accUser'))}">
+      <select id="staffRole" aria-label="${esc(t('admRoleL'))}">${opt('admin', 'accRole_admin')}${opt('superadmin', 'accRole_superadmin')}${opt('user', 'admRoleUser')}</select>
+      <button type="submit" class="walk">${esc(t('admGrant'))}</button></form></div>`;
+  }
+  return h + `<button type="button" class="ghost" data-acc-out>${esc(t('accOut'))}</button>`;
+}
 async function renderAccount() {
   const pop = $('#accPop'); if (!pop || pop.hidden) return;
-  const me = window.DB ? await DB.me() : null;
-  if (me && me.email && !me.anonymous) {
-    pop.innerHTML = `<p class="acc-title">${esc(t('accIn', { e: me.email }))}</p><button type="button" class="ghost" id="accOut">${esc(t('accOut'))}</button>`;
-    $('#accOut').onclick = async () => { try { await DB.signOut(); } catch (e) { console.error('sign-out failed', e); } await renderAccount(); };
-  } else {
-    pop.innerHTML = `<p class="acc-title">${esc(t('accTitle'))}</p><p class="acc-why">${esc(t('accWhy'))}</p>
-      <form id="accForm"><input type="email" id="accEmail" required placeholder="${esc(t('accEmail'))}" autocomplete="email"><button type="submit" class="walk">${esc(t('accSend'))}</button></form><p class="acc-msg" id="accMsg" aria-live="polite"></p>`;
-    $('#accForm').onsubmit = async (e) => {
-      e.preventDefault();
-      try { await DB.signInEmail($('#accEmail').value.trim()); $('#accMsg').textContent = t('accSent'); track('account', 'link sent'); }
-      catch { $('#accMsg').textContent = t('addFail'); }
-    };
-  }
+  const html = (ACC ? accSignedHTML(ACC) : accGuestHTML()) + `<p class="acc-msg ${ACCUI.msgCls}" id="accMsg" aria-live="polite">${esc(ACCUI.msg)}</p>`;
+  // Auth events (token refresh) re-render: leave the form alone while it is unchanged, so typing is not lost.
+  if (html === ACCUI.html && pop.firstChild) { return; }
+  ACCUI.html = html; pop.innerHTML = html;
+  if (ACC?.superadmin) { background(fillStaff()); }
+}
+async function fillStaff() {
+  const ul = $('#staffList');
+  if (!ul) { return; }
+  try {
+    const rows = await DB.admin.listStaff();
+    ul.innerHTML = rows.map((r) => `<li><span dir="auto">${esc(r.username)}</span> · ${esc(t('accRole_' + r.role))}</li>`).join('');
+  } catch (e) { ul.textContent = errText(e); }
+}
+// One handler per account form: returns the message to show (and its colour class).
+const ACC_FORMS = {
+  in: async (v) => { await DB.signIn({ email: v.email, password: v.pass }); track('account', 'sign-in'); return ['', '']; },
+  up: async (v) => {
+    const r = await DB.signUp({ email: v.email, password: v.pass, username: v.user });
+    ACCUI.mode = 'in';
+    track('account', 'sign-up');
+    return [r.confirm ? t('accConfirm', { e: isolate(v.email) }) : t('accWelcome', { u: isolate(v.user) }), 'ok'];
+  },
+  forgot: async (v) => { await DB.resetPassword(v.email); return [t('accResetSent'), 'ok']; },
+  newpass: async (v) => { await DB.setPassword(v.pass); ACCUI.mode = 'in'; return [t('accPassSaved'), 'ok']; },
+  name: async (v) => { await DB.setUsername(v.user); return [t('accWelcome', { u: isolate(v.user) }), 'ok']; },
+  staff: async (v) => { await DB.admin.setRole(v.staff, v.role); return [t('admDone'), 'ok']; },
+};
+async function accSubmit(e) {
+  const f = e.target.closest('form');
+  const run = f && ACC_FORMS[f.dataset.mode];
+  if (!run) { return; }
+  e.preventDefault();
+  const val = (id) => (f.querySelector('#' + id)?.value || '').trim();
+  // Passwords are taken exactly as typed.
+  const v = { email: val('accEmail'), user: val('accUser'), staff: val('staffName'), role: val('staffRole'), pass: f.querySelector('#accPass')?.value || '' };
+  const btn = f.querySelector('[type=submit]');
+  if (btn) { btn.disabled = true; }
+  try { [ACCUI.msg, ACCUI.msgCls] = await run(v); }
+  catch (err) { ACCUI.msg = errText(err); ACCUI.msgCls = 'err'; }
+  finally { if (btn) { btn.disabled = false; } }
+  ACCUI.html = '';
+  await loadAccount();
 }
 function initAccount() {
   const btn = $('#accBtn'), pop = $('#accPop');
   if (!btn || !window.DB) { if (btn) btn.hidden = true; return; }
   btn.textContent = '👤';
-  btn.addEventListener('click', (e) => { e.stopPropagation(); pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden)); background(renderAccount()); });
-  document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#accPop, #accBtn')) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
-  DB.onChange(renderAccount);
+  btn.addEventListener('click', (e) => { e.stopPropagation(); pop.hidden = !pop.hidden; btn.setAttribute(ARIA_EXPANDED, String(!pop.hidden)); background(renderAccount()); });
+  // composedPath: a click inside the panel may re-render it, and the clicked button is then no longer in the page.
+  document.addEventListener('click', (e) => { const path = e.composedPath(); if (!pop.hidden && !path.includes(pop) && !path.includes(btn)) { pop.hidden = true; btn.setAttribute(ARIA_EXPANDED, 'false'); } });
+  pop.addEventListener('submit', (e) => { background(accSubmit(e)); });
+  pop.addEventListener('click', async (e) => {
+    const m = e.target.closest('[data-acc-mode]');
+    if (m) { ACCUI.mode = m.dataset.accMode; ACCUI.msg = ''; await renderAccount(); pop.querySelector('input')?.focus(); return; }
+    if (e.target.closest('[data-acc-out]')) {
+      try { await DB.signOut(); } catch (err) { console.error('sign-out failed', err); }
+      ACCUI.mode = 'in'; ACCUI.msg = ''; await loadAccount();
+    }
+  });
+  DB.onChange((event) => {
+    if (event === 'PASSWORD_RECOVERY') { ACCUI.mode = 'newpass'; ACCUI.msg = ''; openAccount(); }
+    background(loadAccount());
+  });
+  background(loadAccount());
+}
+
+// ---------- staff tools in the shop card and the parking popup (the database checks the role again) ----------
+const HIDDEN = new Set();
+const ADM = { armed: null, rename: null };
+const ADM_DANGER = new Set(['delete', 'hide', 'resetHours', 'clearCi']);
+const isDbPlace = (it) => it.user && /^p[0-9a-f]{8}-/.test(it.id);
+function adminRowHTML(it) {
+  const b = (act, key) => {
+    const armed = ADM.armed === act + ':' + it.id;
+    return `<button type="button" class="adm-btn${ADM_DANGER.has(act) ? ' danger' : ''}${armed ? ' armed' : ''}" data-adm="${act}" data-adm-id="${esc(it.id)}">${esc(t(armed ? 'admSure' : key))}</button>`;
+  };
+  const bs = [];
+  if (isDbPlace(it)) { bs.push(b('rename', 'admRename'), b('delete', 'admDelete')); }
+  else if (HIDDEN.has(it.id)) { bs.push(b('unhide', 'admUnhide')); }
+  else { bs.push(b('hide', 'admHide')); }
+  if (it.fixed) { bs.push(b('resetHours', 'admResetHours')); }
+  if (CI.get(it.id)?.length) { bs.push(b('clearCi', 'admClearCi')); }
+  const rename = ADM.rename === it.id
+    ? `<div class="adm-rename"><input id="admName" maxlength="80" dir="auto" value="${esc(it.tags.name || '')}" aria-label="${esc(t('admRename'))}"><button type="button" class="adm-save" data-adm="save" data-adm-id="${esc(it.id)}">${esc(t('accSave'))}</button></div>` : '';
+  return `<div class="adm-row"><span class="adm-label">${esc(t('admTitle'))}</span>${bs.join('')}${rename}</div>`;
+}
+// What each staff button does; true when something changed.
+const ADMIN_ACTS = {
+  save: async (it) => {
+    const name = ($('#admName')?.value || '').trim();
+    if (!name) { return false; }
+    await DB.admin.renamePlace(it.id.slice(1), name);
+    it.tags = { ...it.tags, name }; ADM.rename = null;
+    return true;
+  },
+  delete: async (it) => {
+    await DB.admin.deletePlace(it.id.slice(1));
+    USER_SHOPS = USER_SHOPS.filter((x) => x.id !== it.id); S.selected = null;
+    return true;
+  },
+  hide: async (it) => { await DB.admin.hideShop(it.id, it.lat, it.lon); HIDDEN.add(it.id); return true; },
+  unhide: async (it) => { await DB.admin.unhideShop(it.id); HIDDEN.delete(it.id); return true; },
+  resetHours: async (it) => {
+    await DB.admin.clearFixes(it.id);
+    FIX.delete(it.id);
+    if ('origOh' in it) {
+      it.tags = { ...it.tags, opening_hours: it.origOh };
+      if (it.origOh === undefined) { delete it.tags.opening_hours; }
+      delete it.origOh;
+    }
+    it.fixed = false;
+    return true;
+  },
+  clearCi: async (it) => { await DB.admin.clearCheckins(it.id); CI.delete(it.id); return true; },
+};
+async function adminAction(act, id) {
+  const it = S.view.find((x) => x.id === id);
+  if (!it || !ACC?.admin) { return; }
+  if (act === 'rename') { ADM.rename = ADM.rename === id ? null : id; refresh(); setTimeout(() => $('#admName')?.focus(), 30); return; }
+  // Removing things takes two taps: the first one turns the button into "Sure? Tap again" for 4 seconds.
+  const key = act + ':' + id;
+  if (ADM_DANGER.has(act) && ADM.armed !== key) {
+    ADM.armed = key; refresh();
+    setTimeout(() => { if (ADM.armed === key) { ADM.armed = null; refresh(); } }, 4000);
+    return;
+  }
+  ADM.armed = null;
+  try {
+    if (ADMIN_ACTS[act] && await ADMIN_ACTS[act](it)) { notify(t(act === 'hide' ? 'admHidden' : 'admDone')); track('admin', act); }
+  } catch (err) { notify(errText(err), 'err'); }
+  refresh();
+}
+async function pkClear(id) {
+  if (!ACC?.admin) { return; }
+  try { await DB.admin.clearParking(id); PK.delete(id); map.closePopup(); notify(t('admDone')); background(drawParking()); }
+  catch (err) { notify(errText(err), 'err'); }
 }
 
 // ---------- analytics (GoatCounter: cookie-free, no personal data) ----------
@@ -1485,12 +1804,18 @@ async function init() {
     if (parkPopupOpen()) { PARK.stale = true; } else { background(drawParking()); }
   });
   map.onPopupClose = () => setTimeout(() => {   // next tick: a popup that replaced this one is open by then
+    if (document.querySelector('.maplibregl-popup')) { return; }
+    if (document.body.classList.contains('mappop')) { document.body.classList.remove('mappop'); setSheet(sheet().dataset.state); }
     if (PARK.on && PARK.stale && !parkPopupOpen()) { PARK.stale = false; background(drawParking()); }
   }, 0);
   initAdd();
+  $('#notices').addEventListener('click', toggleNotice);
+  $('#notices').addEventListener('keydown', toggleNotice);
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-pk]');
     if (b) { e.preventDefault(); background(pkReport(b.dataset.pk, b.dataset.v)); return; }
+    const pc = e.target.closest('[data-pk-clear]');
+    if (pc) { e.preventDefault(); background(pkClear(pc.dataset.pkClear)); return; }
     const pay = e.target.closest('[data-pay]');
     if (pay) track('parking-pay', pay.dataset.pay);
   });
@@ -1523,8 +1848,15 @@ async function init() {
       track(`click-${kind}`, `${kind} · ${it ? it.cat : ''}`);
     }
     if (e.target.closest('a')) return;
+    const adm = e.target.closest('[data-adm]');
+    if (adm) { background(adminAction(adm.dataset.adm, adm.dataset.admId)); return; }
+    if (e.target.closest('.adm-rename')) { return; }
     const fo = e.target.closest('[data-fix-open]');
-    if (fo) { S.fixOpen = fo.dataset.fixOpen; refresh(); setTimeout(() => $('#fixInput')?.focus(), 30); return; }
+    if (fo) {
+      if (!needMember()) { return; }
+      S.fixOpen = fo.dataset.fixOpen; refresh(); setTimeout(() => $('#fixInput')?.focus(), 30);
+      return;
+    }
     if (e.target.closest('[data-fix-cancel]')) { S.fixOpen = null; refresh(); return; }
     const fq = e.target.closest('[data-fix-quick]');
     if (fq) { background(submitFix(fq.closest('[data-fix-for]').dataset.fixFor, fq.dataset.fixQuick)); return; }
@@ -1551,6 +1883,6 @@ async function init() {
   try { await loadAll(); S.loaded = true; } catch { S.loaded = true; S.error = true; }
   refresh();
   const c = map.getCenter(); background(loadHebcal(c.lat, c.lng));
-  if (!m) locate(true);
+  if (!m) { background(autoLocate(!!last)); }
 }
 background(init());

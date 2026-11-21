@@ -16,6 +16,14 @@
       "source": "https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js",
       "sha256": "5bfe4127cb91b7436295135d491e2d8abeccacbc8c4d450fb30771183b1e24d2",
       "loaded_from": "index.html"
+    },
+    {
+      "path": "vendor/mapbox-gl-rtl-text.js",
+      "name": "@mapbox/mapbox-gl-rtl-text",
+      "version": "0.3.0",
+      "source": "https://cdn.jsdelivr.net/npm/@mapbox/mapbox-gl-rtl-text@0.3.0/dist/mapbox-gl-rtl-text.js",
+      "sha256": "d1c69035295613baaf83fe23fd9266b0eaed7e5e472e9632b0b5438afc3f589e",
+      "loaded_from": "app.js"
     }
   ],
   "_note_reviewed": "An advisory may be listed here only when the installed version is proven not affected (a backported fix, or vulnerable code not reachable). It applies to that exact package version; any version change re-opens it.",

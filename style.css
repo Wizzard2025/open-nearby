@@ -288,15 +288,15 @@ button, select, input { font: inherit; color: inherit; }
 .pk-pop { font: 14px/1.35 var(--font); min-width: 200px; }
 .pk-pop p { margin: 4px 0; }
 .pk-now { font-weight: 600; }
-.pk-ask { color: #5d6a73; font-size: 0.85rem; }
+.pk-ask { color: var(--muted); font-size: 0.85rem; }
 .pk-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .pk-btn { border: 1px solid #d5dde3; background: #fff; color: #10171c; border-radius: 10px; padding: 7px 8px; font: 600 0.82rem var(--font); cursor: pointer; text-align: start; }
 .pk-btn:hover { background: #f2f5f7; }
-.pk-pay { margin-top: 8px; padding-top: 4px; border-top: 1px solid #e3e8ec; }
+.pk-pay { margin-top: 8px; padding-top: 4px; border-top: 1px solid var(--line); }
 .pk-pay-btn { display: block; border-radius: 10px; padding: 7px 8px; background: #0f5fd6; color: #fff !important; font: 700 0.85rem var(--font); text-align: center; text-decoration: none; }
 .pk-pay-btn:hover { background: #0b4fb3; }
-.pk-pay-note { color: #5d6a73; font-size: 0.72rem; line-height: 1.25; }
-.pk-thanks { color: #16794a; font-weight: 600; }
+.pk-pay-note { color: var(--muted); font-size: 0.72rem; line-height: 1.25; }
+.pk-thanks { color: var(--open); font-weight: 600; }
 
 /* layers menu */
 .layers-pop { position: absolute; right: 64px; bottom: 0; min-width: 220px; padding: 12px 14px; border-radius: 14px;

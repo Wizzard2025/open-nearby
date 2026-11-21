@@ -1050,7 +1050,7 @@ function fixFormHTML(it) {
 }
 
 // ---------- parking (car parks from the map tiles we already load for shade) ----------
-const PARK = { on: false, layer: null, nearMarker: null, cache: new Map(), list: [] };
+const PARK = { on: false, layer: null, nearMarker: null, cache: new Map(), list: [], stale: false };
 const pid = (p) => p.lat.toFixed(5) + ',' + p.lon.toFixed(5);
 
 // Parking reports (database): a report counts for 90 minutes ("no parking here": 12 h).
@@ -1394,6 +1394,8 @@ function applyLayers() {
   drawRings();
   PARK.on = LY.parking;
   if (!PARK.on && PARK.nearMarker) { PARK.nearMarker.remove(); PARK.nearMarker = null; }
+  // The "thanks, pay here" popup is not part of the parking layer, so close it with the layer.
+  if (!PARK.on && document.querySelector('.maplibregl-popup .pk-pop')) { map.closePopup(); }
   background(drawParking());
   shadeToggle(LY.shade);
   store.set('layers', JSON.stringify(LY));
@@ -1475,8 +1477,16 @@ async function init() {
   initLayers();
   initTheme();
   initAccount();
-  // Fitting a parking popup into view pans the map; redrawing the layer then would close that popup.
-  map.on('moveend', () => { if (PARK.on && !document.querySelector('.maplibregl-popup .pk-pop')) { background(drawParking()); } });
+  // While a parking popup is open the layer is not redrawn (that would close the popup, and fitting the popup
+  // into view itself moves the map); the area it missed is redrawn once the popup closes.
+  const parkPopupOpen = () => !!document.querySelector('.maplibregl-popup .pk-pop');
+  map.on('moveend', () => {
+    if (!PARK.on) { return; }
+    if (parkPopupOpen()) { PARK.stale = true; } else { background(drawParking()); }
+  });
+  map.onPopupClose = () => setTimeout(() => {   // next tick: a popup that replaced this one is open by then
+    if (PARK.on && PARK.stale && !parkPopupOpen()) { PARK.stale = false; background(drawParking()); }
+  }, 0);
   initAdd();
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-pk]');

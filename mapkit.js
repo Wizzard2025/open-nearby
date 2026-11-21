@@ -51,6 +51,7 @@ window.MK = (() => {
       if (map.onPopup) map.onPopup();
       this.popup = new maplibregl.Popup({ maxWidth: (this.popupOpts.maxWidth || 260) + 'px', offset: 14, closeButton: true })
         .setLngLat([this.ll.lng, this.ll.lat]).setHTML(typeof this.popupFn === 'function' ? this.popupFn() : this.popupFn).addTo(map.gm);
+      this.popup.on('close', () => { if (map.onPopupClose) { map.onPopupClose(); } });
       map._popup = this.popup;
       map.fitPopup();
     }
@@ -103,6 +104,7 @@ window.MK = (() => {
       this.closePopup();
       if (this.onPopup) this.onPopup();
       this._popup = new maplibregl.Popup({ maxWidth: maxWidth + 'px', offset: 14, closeButton: true }).setLngLat([lng, lat]).setHTML(html).addTo(this.gm);
+      this._popup.on('close', () => { if (this.onPopupClose) { this.onPopupClose(); } });
       this.fitPopup();
       return this;
     }

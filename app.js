@@ -27,7 +27,7 @@ const I18N = {
     themeAuto: 'Тема: как на устройстве', themeLight: 'Тема: светлая', themeDark: 'Тема: тёмная (ночь)',
     lyShade: '☀ Тень от зданий', shadeNow: 'Сейчас', shadeNight: 'Солнце село — тени нет', shadeZoom: 'Приблизьте карту, чтобы увидеть тень',
     layers: 'Что показывать', lyShops: '🛒 Магазины на карте', lyParking: '🅿 Парковки', lyRings: '⭕ Кольца «минут пешком»',
-    pkTitle: 'Парковка', pk_free: 'есть места', pk_busy: 'почти полно', pk_full: 'мест нет', pk_gone: 'парковки нет', pkNoReports: 'Отметок пока нет.', pkAsk: 'Вы здесь? Как сейчас:', pkNeedLoc: 'Чтобы отметить парковку, включите геолокацию ➤', pkFar: 'Отметить парковку можно только рядом (до 500 м).',
+    pkTitle: 'Парковка', pk_free: 'есть места', pk_busy: 'почти полно', pk_full: 'мест нет', pk_gone: 'парковки нет', pkNoReports: 'Отметок пока нет.', pkAsk: 'Вы здесь? Как сейчас:', pkNeedLoc: 'Чтобы отметить парковку, включите геолокацию ➤', pkFar: 'Отметить парковку можно только рядом (до 500 м).', pkPay: 'Оплатить парковку:', pkPayNote: 'Откроется приложение. Проверьте зону и номер машины перед оплатой.', pkThanksPay: 'Спасибо за отметку! Нужно оплатить стоянку?', pay_pango: 'Панго', pay_cello: 'Cello',
     ciAsk: 'Вы здесь? Помогите другим:', ciOpen: '✓ Открыто', ciClosed: '✗ Закрыто', ciOkTag: '✓ подтвердили {m}', ciBadTag: '✗ сообщили: закрыто {m}', ciAgo: '{n} мин назад', ciNow: 'только что', ciThanks: 'Спасибо! Ваша отметка видна всем.', ciFar: 'Отметить можно только рядом с магазином (до 300 м). Подойдите ближе.', ciNeedLoc: 'Чтобы отметить, включите геолокацию ➤', ciTooSoon: 'Вы уже отмечали этот магазин недавно.', ciConfirmedOpen: 'Открыто · подтвердили {m}',
     parkNear: 'Парковка в {d}', parkNone: 'Парковок рядом на карте нет', parkShow: 'показать', parkOn: 'Парковки на карте', parkZoom: 'Приблизьте карту, чтобы увидеть парковки',
     addOpen: '+ Нет нужного магазина? Добавьте', addTitle: 'Добавить магазин', addHintPin: 'Нажмите на карте, где он находится. Можно подвинуть карту.', addHintForm: 'Точка выбрана. Заполните пару полей:', addName: 'Название (например, «Маколет у Моше»)', addHoursOther: 'Свои часы', addHoursPh: 'например: вс–чт 7:00–23:00, пт до 14:00', addSend: 'Добавить на карту', addCancel: 'Отмена', addNote: 'Магазин сразу появится на карте у всех с пометкой «добавлено пользователем» и уйдёт в OpenStreetMap как заметка для проверки.', addThanks: 'Спасибо! «{n}» теперь на карте.', addFail: 'Не удалось отправить. Проверьте интернет и попробуйте ещё раз.', h247: 'Круглосуточно', h246: '24/6 (кроме шаббата)', hUnknown: 'Не знаю', userTag: 'добавлено пользователем',
@@ -56,7 +56,7 @@ const I18N = {
     themeAuto: 'ערכת נושא: כמו במכשיר', themeLight: 'ערכת נושא: בהירה', themeDark: 'ערכת נושא: כהה (לילה)',
     lyShade: '☀ צל מבניינים', shadeNow: 'עכשיו', shadeNight: 'השמש שקעה — אין צל', shadeZoom: 'הגדילו את המפה כדי לראות צל',
     layers: 'מה להציג', lyShops: '🛒 חנויות במפה', lyParking: '🅿 חניות', lyRings: '⭕ טבעות «דקות הליכה»',
-    pkTitle: 'חניה', pk_free: 'יש מקום', pk_busy: 'כמעט מלא', pk_full: 'אין מקום', pk_gone: 'אין כאן חניה', pkNoReports: 'עדיין אין דיווחים.', pkAsk: 'אתם כאן? מה המצב:', pkNeedLoc: 'כדי לדווח על חניה, הפעילו מיקום ➤', pkFar: 'אפשר לדווח רק מקרוב (עד 500 מ׳).',
+    pkTitle: 'חניה', pk_free: 'יש מקום', pk_busy: 'כמעט מלא', pk_full: 'אין מקום', pk_gone: 'אין כאן חניה', pkNoReports: 'עדיין אין דיווחים.', pkAsk: 'אתם כאן? מה המצב:', pkNeedLoc: 'כדי לדווח על חניה, הפעילו מיקום ➤', pkFar: 'אפשר לדווח רק מקרוב (עד 500 מ׳).', pkPay: 'תשלום על החניה:', pkPayNote: 'האפליקציה תיפתח. בדקו את האזור ומספר הרכב לפני התשלום.', pkThanksPay: 'תודה על הדיווח! צריך לשלם על החניה?', pay_pango: 'פנגו', pay_cello: 'Cello',
     ciAsk: 'אתם כאן? עזרו לאחרים:', ciOpen: '✓ פתוח', ciClosed: '✗ סגור', ciOkTag: '✓ אושר {m}', ciBadTag: '✗ דווח: סגור {m}', ciAgo: 'לפני {n} דק׳', ciNow: 'עכשיו', ciThanks: 'תודה! הסימון שלכם גלוי לכולם.', ciFar: 'אפשר לסמן רק ליד החנות (עד 300 מ׳). התקרבו.', ciNeedLoc: 'כדי לסמן, הפעילו מיקום ➤', ciTooSoon: 'כבר סימנתם את החנות הזו לא מזמן.', ciConfirmedOpen: 'פתוח · אושר {m}',
     parkNear: 'חניה במרחק {d}', parkNone: 'אין חניונים קרובים במפה', parkShow: 'להראות', parkOn: 'חניות במפה', parkZoom: 'הגדילו את המפה כדי לראות חניות',
     addOpen: '+ חסרה חנות? הוסיפו אותה', addTitle: 'הוספת חנות', addHintPin: 'הקישו על המפה במקום שבו היא נמצאת.', addHintForm: 'המקום נבחר. מלאו כמה פרטים:', addName: 'שם (למשל «המכולת של משה»)', addHoursOther: 'שעות אחרות', addHoursPh: 'למשל: א׳–ה׳ 7:00–23:00, ו׳ עד 14:00', addSend: 'הוספה למפה', addCancel: 'ביטול', addNote: 'החנות תופיע מיד במפה לכולם עם הסימון «נוסף על ידי משתמש» ותישלח ל-OpenStreetMap כהערה לבדיקה.', addThanks: 'תודה! «{n}» מופיעה עכשיו במפה.', addFail: 'השליחה נכשלה. בדקו את החיבור ונסו שוב.', h247: '24/7', h246: '24/6 (בלי שבת)', hUnknown: 'לא יודע/ת', userTag: 'נוסף על ידי משתמש',
@@ -85,7 +85,7 @@ const I18N = {
     themeAuto: 'Theme: same as device', themeLight: 'Theme: light', themeDark: 'Theme: dark (night)',
     lyShade: '☀ Shade from buildings', shadeNow: 'Now', shadeNight: 'The sun has set — no shade', shadeZoom: 'Zoom in to see shade',
     layers: 'Show on map', lyShops: '🛒 Shops on the map', lyParking: '🅿 Parking', lyRings: '⭕ Walking-time rings',
-    pkTitle: 'Parking', pk_free: 'spaces free', pk_busy: 'almost full', pk_full: 'full', pk_gone: 'no parking here', pkNoReports: 'No reports yet.', pkAsk: 'Here now? How is it:', pkNeedLoc: 'Turn on location ➤ to report parking', pkFar: 'You can only report parking nearby (within 500 m).',
+    pkTitle: 'Parking', pk_free: 'spaces free', pk_busy: 'almost full', pk_full: 'full', pk_gone: 'no parking here', pkNoReports: 'No reports yet.', pkAsk: 'Here now? How is it:', pkNeedLoc: 'Turn on location ➤ to report parking', pkFar: 'You can only report parking nearby (within 500 m).', pkPay: 'Pay for parking:', pkPayNote: 'The app will open. Check the zone and your plate before paying.', pkThanksPay: 'Thanks for the report! Need to pay for parking?', pay_pango: 'Pango', pay_cello: 'Cello',
     ciAsk: 'Here now? Help others:', ciOpen: '✓ Open', ciClosed: '✗ Closed', ciOkTag: '✓ confirmed {m}', ciBadTag: '✗ reported closed {m}', ciAgo: '{n} min ago', ciNow: 'just now', ciThanks: 'Thanks! Everyone can see your check-in.', ciFar: 'You can only check in near the shop (within 300 m). Get a bit closer.', ciNeedLoc: 'Turn on location ➤ to check in', ciTooSoon: 'You checked in here recently.', ciConfirmedOpen: 'Open · confirmed {m}',
     parkNear: 'Parking {d} away', parkNone: 'No car parks nearby on the map', parkShow: 'show', parkOn: 'Parking on the map', parkZoom: 'Zoom in to see parking',
     addOpen: '+ Missing a shop? Add it', addTitle: 'Add a shop', addHintPin: 'Tap the map where it is. You can move the map.', addHintForm: 'Spot picked. Fill in a couple of fields:', addName: "Name (e.g. “Moshe's makolet”)", addHoursOther: 'Other hours', addHoursPh: 'e.g. Sun–Thu 7:00–23:00, Fri until 14:00', addSend: 'Add to the map', addCancel: 'Cancel', addNote: 'It shows on the map for everyone right away, marked “added by a user”, and goes to OpenStreetMap as a note for mappers to check.', addThanks: 'Thanks! “{n}” is on the map now.', addFail: "Couldn't send it. Check your connection and try again.", h247: 'Open 24/7', h246: '24/6 (closed Shabbat)', hUnknown: "Don't know", userTag: 'added by a user',
@@ -785,7 +785,7 @@ async function checkIn(id, v) {
 }
 
 // ---------- parking (car parks from the map tiles we already load for shade) ----------
-const PARK = { on: false, layer: null, nearMarker: null, cache: new Map() };
+const PARK = { on: false, layer: null, nearMarker: null, cache: new Map(), list: [] };
 const pid = (p) => p.lat.toFixed(5) + ',' + p.lon.toFixed(5);
 
 // Parking reports: same approach as check-ins (ntfy.sh topic per ~5 km tile, kept 12 h).
@@ -831,13 +831,37 @@ async function loadParkReports(s, w, n, e) {
   return got;
 }
 function pkStatusText(r) { return `${PK_EMOJI[r.v]} ${t('pk_' + r.v)}, ${ciAgo(r.time)}`; }
-function pkPopupHTML(p) {
+// Parking payment apps. No public deep link opens a payment for a given lot, so we open the app's store
+// page: Google Play / App Store show "Open" when the app is installed and "Install" when it is not.
+const PAY_APPS = {
+  pango: { play: 'com.unicell.pangoandroid', ios: '434818173' },
+  cello: { play: 'air.com.cellogroup.Cellopark', ios: '499993633' },
+};
+const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function payUrl(app) {
+  const a = PAY_APPS[app];
+  return isIOS() ? `https://apps.apple.com/il/app/id${a.ios}` : `https://play.google.com/store/apps/details?id=${a.play}`;
+}
+function pkPayHTML() {
+  const link = (app) => `<a class="pk-pay-btn" href="${payUrl(app)}" target="_blank" rel="noopener" data-pay="${app}">${esc(t('pay_' + app))}</a>`;
+  return `<div class="pk-pay"><p class="pk-ask">${esc(t('pkPay'))}</p>
+    <div class="pk-btns">${Object.keys(PAY_APPS).map(link).join('')}</div>
+    <p class="pk-pay-note">${esc(t('pkPayNote'))}</p></div>`;
+}
+function pkPopupHTML(p, reported = false) {
   const id = pid(p), r = pkLatest(id);
   const btn = (v) => `<button type="button" class="pk-btn pk-${v}" data-pk="${id}" data-v="${v}">${PK_EMOJI[v]} ${esc(t('pk_' + v))}</button>`;
-  return `<div class="pk-pop"><b>${esc(p.name || t('pkTitle'))}</b>
-    <p class="pk-now">${r ? esc(pkStatusText(r)) : esc(t('pkNoReports'))}</p>
-    <p class="pk-ask">${esc(t('pkAsk'))}</p>
-    <div class="pk-btns">${btn('free')}${btn('busy')}${btn('full')}${btn('gone')}</div></div>`;
+  const head = `<div class="pk-pop"><b>${esc(p.name || t('pkTitle'))}</b>
+    <p class="pk-now">${r ? esc(pkStatusText(r)) : esc(t('pkNoReports'))}</p>`;
+  if (reported) return `${head}<p class="pk-thanks">${esc(t('pkThanksPay'))}</p>${pkPayHTML()}</div>`;
+  return `${head}<p class="pk-ask">${esc(t('pkAsk'))}</p>
+    <div class="pk-btns">${btn('free')}${btn('busy')}${btn('full')}${btn('gone')}</div>${pkPayHTML()}</div>`;
+}
+// Pan the popup into the gap between the floating top bar and the bottom sheet, not under them.
+function pkPopupOpts() {
+  const top = $('.topbar') ? $('.topbar').getBoundingClientRect().bottom : 0;
+  const sheet = $('#sheet') ? $('#sheet').getBoundingClientRect().top : innerHeight;
+  return { maxWidth: 260, autoPanPaddingTopLeft: [10, Math.max(10, top + 8)], autoPanPaddingBottomRight: [10, Math.max(10, innerHeight - sheet + 8)] };
 }
 function pkIcon(p) {
   const r = pkLatest(pid(p));
@@ -855,9 +879,10 @@ async function drawParking() {
   if (!PARK.on) return;
   if (PARK.layer) PARK.layer.remove();
   PARK.layer = L.layerGroup().addTo(map);
+  PARK.list = list;
   for (const p of list.slice(0, 300)) {
     L.marker([p.lat, p.lon], { icon: pkIcon(p), keyboard: false })
-      .bindPopup(() => pkPopupHTML(p), { maxWidth: 260 })
+      .bindPopup(() => pkPopupHTML(p), pkPopupOpts())
       .addTo(PARK.layer);
   }
 }
@@ -876,6 +901,9 @@ async function pkReport(id, v) {
     track('parking-report', v);
     note(t('ciThanks'));
     map.closePopup();
+    // Someone who just parked here is the one who may need to pay: reopen the lot with the payment apps.
+    const lot = v !== 'gone' && (PARK.list || []).find((x) => pid(x) === id);
+    if (lot) L.popup(pkPopupOpts()).setLatLng([lat, lon]).setContent(pkPopupHTML(lot, true)).openOn(map);
     drawParking();
     refresh();
   } catch { note(t('addFail'), 'err'); }
@@ -1062,11 +1090,14 @@ async function init() {
   initShade();
   initLayers();
   initTheme();
-  map.on('moveend', () => { if (PARK.on) drawParking(); });
+  // A parking popup pans the map into view; redrawing the layer then would close the popup it just opened.
+  map.on('moveend', () => { if (PARK.on && !document.querySelector('.leaflet-popup .pk-pop')) drawParking(); });
   initAdd();
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-pk]');
-    if (b) { e.preventDefault(); pkReport(b.dataset.pk, b.dataset.v); }
+    if (b) { e.preventDefault(); pkReport(b.dataset.pk, b.dataset.v); return; }
+    const pay = e.target.closest('[data-pay]');
+    if (pay) track('parking-pay', pay.dataset.pay);
   });
   $('#shadeBtn').addEventListener('click', () => {
     RT.wantShade = !RT.wantShade;

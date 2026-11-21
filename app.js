@@ -847,23 +847,49 @@ function select(id, fromMap) {
 }
 
 // ---------- location ----------
+// Location. GPS (high accuracy) first; indoors an iPhone often cannot get a GPS fix in time, so on a timeout or
+// "position unavailable" it asks once more for the network-based position, which is quick and good enough to find
+// shops nearby. A refusal (code 1) gets its own message: the browser will not ask again by itself, so the user has
+// to allow it in the settings, and on an iPhone that takes two switches.
+const GEO_FAST = { enableHighAccuracy: false, timeout: 20000, maximumAge: 300000 };
+const GEO_PRECISE = { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 };
 function locate(isAuto) {
   const btn = $('#locate');
-  if (!navigator.geolocation) { if (!isAuto) showLocErr(); return; }
+  if (!navigator.geolocation) { if (!isAuto) { showLocErr(); } return; }
   btn.setAttribute('aria-busy', 'true');
-  navigator.geolocation.getCurrentPosition(
-    (p) => {
-      btn.removeAttribute('aria-busy'); btn.classList.add('on');
-      S.me = { lat: p.coords.latitude, lon: p.coords.longitude };
-      S.notices.loc = null; renderNotices(); drawMe();
-      map.setView([S.me.lat, S.me.lon], Math.max(map.getZoom(), 16));
-      background(loadHebcal(S.me.lat, S.me.lon));
-    },
-    () => { btn.removeAttribute('aria-busy'); if (isAuto) { S.notices.loc = { cls: 'info', text: t('demo') }; renderNotices(); } else showLocErr(); },
-    { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
-  );
+  const ok = (p) => {
+    btn.removeAttribute('aria-busy'); btn.classList.add('on');
+    S.me = { lat: p.coords.latitude, lon: p.coords.longitude };
+    S.notices.loc = null; renderNotices(); drawMe();
+    map.setView([S.me.lat, S.me.lon], Math.max(map.getZoom(), 16));
+    background(loadHebcal(S.me.lat, S.me.lon));
+  };
+  const fail = (err) => {
+    btn.removeAttribute('aria-busy');
+    track('geo-error', String(err?.code));
+    if (isAuto) { S.notices.loc = { cls: 'info', text: t('demo') }; renderNotices(); } else { showLocErr(err); }
+  };
+  navigator.geolocation.getCurrentPosition(ok, (err) => {
+    if (err?.code === 1) { fail(err); return; }   // refused: retrying would fail the same way
+    navigator.geolocation.getCurrentPosition(ok, fail, GEO_FAST);
+  }, GEO_PRECISE);
 }
-function showLocErr() { S.notices.loc = { cls: 'err', text: t('geoFail') }; renderNotices(); }
+function showLocErr(err) {
+  let key = 'geoFail';
+  if (err?.code === 1) { key = isIOS() ? 'geoDeniedIOS' : 'geoDenied'; }
+  S.notices.loc = { cls: 'err', text: t(key) }; renderNotices();
+  // Notices are hidden over the map (peek): bring the list up so the message is actually seen.
+  if (!wide() && sheet().dataset.state === 'peek') { setSheet('half'); }
+}
+// Ask for the location on start only when the user has already allowed it. Asking before any tap gets refused or
+// dismissed easily, and Safari then remembers the refusal for the site, so a later tap on ➤ fails without asking.
+async function autoLocate(restored) {
+  let state = 'unknown';
+  try { state = (await navigator.permissions.query({ name: 'geolocation' })).state; } catch { /* no Permissions API */ }
+  if (state === 'granted') { locate(true); return; }
+  // "Showing central Tel Aviv" is only true when the map did not reopen where the user left it.
+  S.notices.loc = { cls: 'info', text: t(restored ? 'locTap' : 'demo') }; renderNotices();
+}
 
 // ---------- shops added by people ----------
 // New shops go to our database (community.js). Shops added earlier as OpenStreetMap notes tagged #betachpatuach
@@ -1631,6 +1657,6 @@ async function init() {
   try { await loadAll(); S.loaded = true; } catch { S.loaded = true; S.error = true; }
   refresh();
   const c = map.getCenter(); background(loadHebcal(c.lat, c.lng));
-  if (!m) locate(true);
+  if (!m) { background(autoLocate(!!last)); }
 }
 background(init());

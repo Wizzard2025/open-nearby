@@ -531,7 +531,7 @@ body.kbopen .addpanel .add-hint { display: none; }
   .sheet .where { margin-top: 2px; font-size: 0.8rem; }
   /* Notices (Shabbat, location) take one line each; a tap shows the whole text. */
   #notices .notice { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
-  #notices .notice.open { white-space: normal; }
+  #notices .notice.open, #notices .notice.err { white-space: normal; }   /* errors (e.g. how to allow location) in full */
   /* The ad banner keeps its place but uses one line, as it does over the map. */
   .sheet .adbanner { min-height: 40px; padding: 6px 34px 6px 44px; }
   .sheet .adbanner .adtext { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

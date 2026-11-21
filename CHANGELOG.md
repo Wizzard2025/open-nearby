@@ -11,6 +11,9 @@ Easier on phones.
 - Bigger touch targets: language switch, account and theme buttons, category chips, the list handle, close buttons.
 - The form's «Add to the map» button is styled as the main action.
 - Close (×) buttons are announced in the current language by screen readers.
+- Location on iPhone: the app no longer asks for the location by itself when it opens (only when it was already allowed). A prompt that appears before any tap is easily refused, and Safari then remembers the refusal, so later taps on ➤ failed without asking. Now the question comes when you tap ➤.
+- When GPS cannot get a fix in time (often indoors), the app asks once more for the quicker network-based position instead of failing.
+- If location access is blocked, the message says how to allow it (on iPhone: the Location Services and Safari website settings) instead of a generic error, and it shows in full even when only the map is open. The English text of this message was missing.
 
 ## 1.2.0 — 2026-11-21
 

@@ -1,0 +1,32 @@
+{
+  "_note": "Libraries copied into vendor/. deps_check.py hashes each file; when you update one, set the new version and sha256 here (sha256sum vendor/<file>).",
+  "vendored": [
+    {
+      "path": "vendor/opening_hours.js",
+      "name": "opening_hours",
+      "version": "3.14.0",
+      "source": "https://cdn.jsdelivr.net/npm/opening_hours@3.14.0/build/opening_hours.js",
+      "sha256": "990ca01739bf66934e829fd692415b7d3b1fac613322fbb915f511ec3ee77a8d",
+      "loaded_from": "index.html"
+    },
+    {
+      "path": "vendor/suncalc.js",
+      "name": "suncalc",
+      "version": "1.9.0",
+      "source": "https://cdn.jsdelivr.net/npm/suncalc@1.9.0/suncalc.js",
+      "sha256": "5bfe4127cb91b7436295135d491e2d8abeccacbc8c4d450fb30771183b1e24d2",
+      "loaded_from": "index.html"
+    }
+  ],
+  "_note_reviewed": "An advisory may be listed here only when the installed version is proven not affected (a backported fix, or vulnerable code not reachable). It applies to that exact package version; any version change re-opens it.",
+  "reviewed_advisories": [
+    {
+      "id": "GHSA-jrc7-96c5-q579",
+      "package": "maplibre-gl",
+      "version": "5.24.1",
+      "reviewed": "2026-11-21",
+      "reason": "OSV marks every version below 6.4.1 as affected, but 5.24.1 (latest-5 line) ships a rewritten DOM.sanitize(): an element/attribute allow list that iterates a snapshot from getAttributeNames(), so the live NamedNodeMap skip is gone. 6.x is ESM-only and would need the app to switch to ES modules.",
+      "evidence": "https://cdn.jsdelivr.net/npm/maplibre-gl@5.24.1/src/util/dom.ts (sanitize, removeDisallowedAttributes)"
+    }
+  ]
+}

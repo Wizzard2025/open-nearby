@@ -4,6 +4,7 @@
    Zoom numbers follow Leaflet's 256-px convention (MapLibre zoom + 1), so thresholds like "zoom >= 15" keep their meaning. */
 'use strict';
 window.MK = (() => {
+  const ENTITY = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'" };
   const toLL = (a) => (Array.isArray(a) ? { lat: a[0], lng: a[1] } : { lat: a.lat, lng: a.lng ?? a.lon });
 
   class Bounds {
@@ -41,14 +42,18 @@ window.MK = (() => {
     getLatLng() { return this.ll; }
     setIcon(ic) { this.opts.icon = ic; if (this.el) this.el.innerHTML = ic.html; return this; }
     on(ev, f) { (this.handlers[ev] = this.handlers[ev] || []).push(f); return this; }
-    bindTooltip(text) { this.tip = String(text).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'"); if (this.el) this.el.title = this.tip; return this; }
+    // The text arrives HTML-escaped (esc()); decode it in one pass so "&amp;lt;" stays "&lt;" (no double decoding).
+    bindTooltip(text) { this.tip = String(text).replace(/&(amp|lt|gt|quot|#39);/g, (_, e) => ENTITY[e]); if (this.el) this.el.title = this.tip; return this; }
     bindPopup(fn, opts = {}) { this.popupFn = fn; this.popupOpts = opts; return this; }
     openPopup() {
       const map = this.map || this.group?.map; if (!map) return;
       map.closePopup();
+      if (map.onPopup) map.onPopup();
       this.popup = new maplibregl.Popup({ maxWidth: (this.popupOpts.maxWidth || 260) + 'px', offset: 14, closeButton: true })
         .setLngLat([this.ll.lng, this.ll.lat]).setHTML(typeof this.popupFn === 'function' ? this.popupFn() : this.popupFn).addTo(map.gm);
+      this.popup.on('close', () => { if (map.onPopupClose) { map.onPopupClose(); } });
       map._popup = this.popup;
+      map.fitPopup();
     }
   }
 
@@ -61,7 +66,7 @@ window.MK = (() => {
   }
 
   // The map facade: Leaflet-style calls on top of a MapLibre map (this.gm).
-  class Map {
+  class MapView {
     constructor(container, { center, zoom, style, touch }) {
       this.gm = new maplibregl.Map({
         container, style, center: [center[1], center[0]], zoom: zoom - 1, maxPitch: 70, attributionControl: { compact: true },
@@ -93,6 +98,30 @@ window.MK = (() => {
       return this;
     }
     closePopup() { if (this._popup) { this._popup.remove(); this._popup = null; } return this; }
+    // A popup not tied to a marker (it stays open when a marker layer is redrawn).
+    openPopupAt(p, html, maxWidth = 260) {
+      const { lat, lng } = toLL(p);
+      this.closePopup();
+      if (this.onPopup) this.onPopup();
+      this._popup = new maplibregl.Popup({ maxWidth: maxWidth + 'px', offset: 14, closeButton: true }).setLngLat([lng, lat]).setHTML(html).addTo(this.gm);
+      this._popup.on('close', () => { if (this.onPopupClose) { this.onPopupClose(); } });
+      this.fitPopup();
+      return this;
+    }
+    // Pan so the open popup sits inside the visible part of the map. this.popupInset() → {top, bottom} px
+    // covered by the app's floating bars (Leaflet's autoPan did this; MapLibre popups do not pan).
+    fitPopup() {
+      const el = this._popup && this._popup.getElement();
+      if (!el) return;
+      const box = this.gm.getContainer().getBoundingClientRect(), r = el.getBoundingClientRect();
+      const inset = this.popupInset ? this.popupInset() : { top: 0, bottom: 0 };
+      // inset.top is a viewport y; inset.bottom is the height covered at the bottom of the viewport.
+      const top = Math.max(box.top, inset.top) + 8, bottom = Math.min(box.bottom, innerHeight - inset.bottom) - 8;
+      let dy = 0;
+      if (r.bottom > bottom) dy = r.bottom - bottom;
+      if (r.top - dy < top) dy = r.top - top; // the top (title, close button) wins when it cannot all fit
+      if (Math.abs(dy) > 1) this.gm.panBy([0, dy], { duration: 300 });
+    }
     on(evs, f) {
       for (const ev of evs.split(/\s+/)) {
         if (ev === 'click') this.gm.on('click', (e) => f({ latlng: { lat: e.lngLat.lat, lng: e.lngLat.lng }, original: e }));
@@ -116,7 +145,7 @@ window.MK = (() => {
     return ring;
   }
   return {
-    Map, Group, Marker, Bounds, point, line, poly, circle,
+    Map: MapView, Group, Marker, Bounds, point, line, poly, circle,
     marker: (ll, o) => new Marker(ll, o), group: () => new Group(), divIcon: (o) => o,
   };
 })();

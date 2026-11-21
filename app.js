@@ -2,120 +2,7 @@
    Data: data/shops.json (OpenStreetMap + official chain hours, refreshed daily) + Hebcal (Shabbat/holidays). */
 'use strict';
 
-// ---------- i18n ----------
-const I18N = {
-  ru: {
-    title: 'בטוח? פתוח! · Точно открыто', tagline: 'Точно открыто', pickCity: 'Город…', kicker: 'Сейчас открыто',
-    units: ['место', 'места', 'мест'], whereMe: 'рядом с вами', whereMap: 'в этой части карты',
-    zoomIn: 'Приблизьте карту, чтобы увидеть магазины',
-    source: 'Данные: OpenStreetMap, Overture Maps, официальные реестры и сайты сетей, обновляются каждый день.', madeBy: 'Сделано в',
-    cats: { all: 'Всё', food: 'Продукты', bakery: 'Пекарни', pharmacy: 'Аптеки', fuel: 'Заправки', atm: 'Банкоматы', eat: 'Поесть', shop: 'Магазины' },
-    types: { supermarket: 'Супермаркет', convenience: 'Минимаркет', kiosk: 'Киоск', grocery: 'Продукты', greengrocer: 'Овощи и фрукты', deli: 'Деликатесы', alcohol: 'Алкоголь', bakery: 'Пекарня', pastry: 'Кондитерская', pharmacy: 'Аптека', chemist: 'Аптека и косметика', fuel: 'Заправка', atm: 'Банкомат', bank: 'Банк с банкоматом', restaurant: 'Ресторан', fast_food: 'Фастфуд, забегаловка', cafe: 'Кафе', food_court: 'Фудкорт', ice_cream: 'Мороженое', clothes: 'Одежда', shoes: 'Обувь', mobile_phone: 'Телефоны', electronics: 'Электроника', computer: 'Компьютеры', jewelry: 'Ювелирный', florist: 'Цветы', gift: 'Подарки', furniture: 'Мебель', houseware: 'Товары для дома', hardware: 'Хозтовары, инструменты', doityourself: 'Стройматериалы', trade: 'Стройматериалы', optician: 'Оптика', bicycle: 'Велосипеды', sports: 'Спорттовары', tobacco: 'Табак', cosmetics: 'Косметика', books: 'Книги', toys: 'Игрушки', pet: 'Зоотовары', lighting: 'Освещение', bed: 'Матрасы', carpet: 'Ковры', garden_centre: 'Сад и растения', nutrition_supplements: 'Витамины', variety_store: 'Всё по дешёвке', department_store: 'Универмаг', mall: 'Торговый центр', stationery: 'Канцтовары', appliance: 'Бытовая техника', baby_goods: 'Детские товары', second_hand: 'Секонд-хенд', musical_instrument: 'Музыкальный', photo: 'Фото', watches: 'Часы', boutique: 'Бутик', butcher: 'Мясная лавка', seafood: 'Рыба', health_food: 'Здоровое питание', confectionery: 'Сладости', bureau_de_change: 'Обмен валюты', money_transfer: 'Денежные переводы', hairdresser: 'Парикмахерская', beauty: 'Салон красоты', laundry: 'Прачечная', dry_cleaning: 'Химчистка', car_repair: 'Автосервис', yes: 'Магазин' },
-    open24: 'Круглосуточно', open: 'Открыто', until: 'до {t}', soon: 'Закроется через {m} мин',
-    closed: 'Закрыто', opensAt: 'откроется в {t}', opensTomorrow: 'завтра в {t}', opensDay: '{d} в {t}',
-    unknown: 'Часы не указаны', allDay: 'круглосуточно', dayOff: 'закрыто',
-    unknownTitle: 'Часы не указаны · {n}', unknownNote: 'Эти места есть на карте, но их часы работы нам пока неизвестны.',
-    closedTitle: 'Сейчас закрыты · {n}', more: 'Показать ещё {n}',
-    empty: 'В этой части карты открытых мест нет.', zoomOut: 'Отдалить карту',
-    walk: '{m} мин', shabbat: 'Шаббат', route: 'Маршрут', waze: 'Waze', call: 'Позвонить',
-    geoFail: 'Не получилось определить местоположение. Выберите город или подвиньте карту.',
-    demo: 'Показан центр Тель-Авива. Нажмите ➤, чтобы найти места рядом с вами.',
-    netFail: 'Не удалось загрузить данные. Проверьте интернет.', retry: 'Повторить',
-    holiday: 'Сегодня {h}. Многие магазины закрыты или работают по-другому.',
-    shabbatNote: 'Шаббат: свечи {c}, исход {h}. Большинство сетей в это время закрыты.',
-    m: 'м', km: 'км', expand: 'Развернуть список',
-    srcConfirmed: '✓ Подтверждено: {s}', srcSingle: 'Один источник: {s} — на месте не проверено', srcOld: 'данные от {y} г. — могли устареть', srcNames: { osm: 'OpenStreetMap', chain: 'данные самой сети', boi: 'реестр Банка Израиля', moe: 'реестр Минэнергетики', ovt: 'Overture Maps (Meta, Microsoft и др.)', user: 'посетитель' }, srcAsOf: 'от {d}', srcEst: 'Часы оценены: банкомат на стене отделения обычно работает круглосуточно', feeYes: 'комиссия', feeNo: 'без комиссии', atmInside: 'внутри отделения — по часам отделения', atmCount: '{n} банкомата', oldTag: '⚠ данные {y} г.', approxLoc: '≈ место на карте приблизительно (центр посёлка), адрес: {a}', approxStreet: '≈ на нужной улице, дом точно не найден, адрес: {a}', approxPlace: '≈ по названию места (торговый центр, промзона), адрес: {a}',
-    openNear: 'открыто рядом', go: 'Идти', adLabel: 'Реклама', adBanner: 'Здесь может быть ваша реклама — её видят те, кто ищет открытое рядом', adCardTitle: 'Ваш бизнес здесь', adCardSub: 'Покажитесь тем, кто рядом и ищет открытое', adClose: 'Скрыть рекламу', adCta: 'Разместить рекламу', adFormTitle: 'Реклама в «Точно открыто»', adFormHint: 'Оставьте контакт — мы свяжемся и расскажем об условиях. Ваши данные видит только владелец сайта.', adBiz: 'Бизнес', adBizPh: 'Например: Кафе «Утро», Хайфа', adContact: 'Телефон или e-mail', adMsg: 'Что хотите показать (необязательно)', adSend: 'Отправить заявку', adCancel: 'Отмена', adSent: 'Спасибо! Заявка отправлена, мы скоро свяжемся.', adFail: 'Не получилось отправить. Проверьте интернет и попробуйте ещё раз.', adLimit: 'Вы уже отправили несколько заявок сегодня — мы их получили.', noneCard: 'Здесь ничего не открыто. Отдалите карту.', tilt3d: 'Наклонить карту (3D)', tilt2d: 'Вид сверху (2D)', listAll: 'Весь список',
-    kickerAt: 'Открыто в {t}',
-    srcChain: 'Часы с официального сайта сети', srcUser: 'Часы указал посетитель', srcOsm: 'Часы из OpenStreetMap — могут быть устаревшими', doubtClosed: 'посетитель: закрыто ({m})', doubtOpen: 'посетитель: открыто ({m})', showingAt: 'Показываю, что открыто в {t}. Нажмите «Сейчас», чтобы вернуться.',
-    kosher: 'кошерно', takeaway: 'с собой', delivery: 'доставка', privAtm: 'частный банкомат, обычно с комиссией', ownerOf: '{o}',
-    fixOpen: 'Неверные часы? Исправить', fixTitle: 'Как работает этот магазин?', fixPh: 'например: 7:00-23:00 или Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'Сохранить часы', fixThanks: 'Спасибо! Новые часы видны всем.', fixBad: 'Не понял часы. Напишите, например, 7:00-23:00 или выберите 24/7.', fixedTag: 'часы исправлены пользователем', tooMany: 'Слишком много отметок за час. Попробуйте позже.', acc: 'Вход', accTitle: 'Вход (необязательно)', accWhy: 'Ваши отметки и исправления уже работают и без входа. С входом они сохранятся за вами на всех устройствах.', accEmail: 'Ваш email', accSend: 'Прислать ссылку для входа', accSent: 'Готово! Откройте письмо и нажмите на ссылку.', accIn: 'Вы вошли как {e}', accOut: 'Выйти',
-    atmDeposit: 'можно внести',
-    nowLabel: 'сейчас',
-    themeAuto: 'Тема: как на устройстве', themeLight: 'Тема: светлая', themeDark: 'Тема: тёмная (ночь)',
-    lyShade: '☀ Тень от зданий', shadeNow: 'Сейчас', shadeNight: 'Солнце село — тени нет', shadeZoom: 'Приблизьте карту, чтобы увидеть тень',
-    layers: 'Что показывать', lyShops: '🛒 Магазины на карте', lyParking: '🅿 Парковки', lyRings: '⭕ Кольца «минут пешком»',
-    pkTitle: 'Парковка', pk_free: 'есть места', pk_busy: 'почти полно', pk_full: 'мест нет', pk_gone: 'парковки нет', pkNoReports: 'Отметок пока нет.', pkAsk: 'Вы здесь? Как сейчас:', pkNeedLoc: 'Чтобы отметить парковку, включите геолокацию ➤', pkFar: 'Отметить парковку можно только рядом (до 500 м).',
-    ciAsk: 'Вы здесь? Помогите другим:', ciOpen: '✓ Открыто', ciClosed: '✗ Закрыто', ciOkTag: '✓ подтвердили {m}', ciBadTag: '✗ сообщили: закрыто {m}', ciAgo: '{n} мин назад', ciNow: 'только что', ciThanks: 'Спасибо! Ваша отметка видна всем.', ciFar: 'Отметить можно только рядом с магазином (до 300 м). Подойдите ближе.', ciNeedLoc: 'Чтобы отметить, включите геолокацию ➤', ciTooSoon: 'Вы уже отмечали этот магазин недавно.', ciConfirmedOpen: 'Открыто · подтвердили {m}',
-    parkNear: 'Парковка в {d}', parkNone: 'Парковок рядом на карте нет', parkShow: 'показать', parkOn: 'Парковки на карте', parkZoom: 'Приблизьте карту, чтобы увидеть парковки',
-    addOpen: '+ Нет нужного магазина? Добавьте', addTitle: 'Добавить магазин', addHintPin: 'Нажмите на карте, где он находится. Можно подвинуть карту.', addHintForm: 'Точка выбрана. Заполните пару полей:', addName: 'Название (например, «Маколет у Моше»)', addHoursOther: 'Свои часы', addHoursPh: 'например: вс–чт 7:00–23:00, пт до 14:00', addSend: 'Добавить на карту', addCancel: 'Отмена', addNote: 'Магазин сразу появится на карте у всех с пометкой «добавлено пользователем» и уйдёт в OpenStreetMap как заметка для проверки.', addThanks: 'Спасибо! «{n}» теперь на карте.', addFail: 'Не удалось отправить. Проверьте интернет и попробуйте ещё раз.', h247: 'Круглосуточно', h246: '24/6 (кроме шаббата)', hUnknown: 'Не знаю', userTag: 'добавлено пользователем',
-    walkBtn: 'Пешком', routeTitle: '{m} мин пешком · {d}', fromCenter: 'от центра карты — включите геолокацию ➤', shadeBtn: '☀ По тени', shadeCalc: 'Считаю тень…', shadePct: 'в тени ≈ {p}%', shadeFail: 'тень сейчас посчитать не удалось', shadeNight: 'солнца нет — тень не нужна', hotNote: 'жарко {t}° — выбран путь по тени', routeFail: 'Не удалось построить маршрут. Попробуйте ещё раз.', ringMin: '{m} мин',
-  },
-  he: {
-    title: 'בטוח? פתוח!', tagline: "Betcha it's open", pickCity: 'עיר…', kicker: 'פתוח עכשיו',
-    units: ['מקום', 'מקומות', 'מקומות'], whereMe: 'לידך', whereMap: 'באזור המפה',
-    zoomIn: 'הגדילו את המפה כדי לראות חנויות',
-    source: 'נתונים: OpenStreetMap, Overture Maps, מאגרים רשמיים ואתרי הרשתות, מתעדכנים מדי יום.', madeBy: 'נבנה ב-',
-    cats: { all: 'הכל', food: 'מזון', bakery: 'מאפיות', pharmacy: 'בתי מרקחת', fuel: 'דלק', atm: 'כספומטים', eat: 'אוכל', shop: 'חנויות' },
-    types: { supermarket: 'סופרמרקט', convenience: 'מכולת', kiosk: 'קיוסק', grocery: 'מכולת', greengrocer: 'ירקן', deli: 'מעדנייה', alcohol: 'משקאות', bakery: 'מאפייה', pastry: 'קונדיטוריה', pharmacy: 'בית מרקחת', chemist: 'פארם', fuel: 'תחנת דלק', atm: 'כספומט', bank: 'בנק עם כספומט', restaurant: 'מסעדה', fast_food: 'אוכל מהיר', cafe: 'בית קפה', food_court: 'מתחם מזון', ice_cream: 'גלידריה', clothes: 'ביגוד', shoes: 'נעליים', mobile_phone: 'סלולר', electronics: 'אלקטרוניקה', computer: 'מחשבים', jewelry: 'תכשיטים', florist: 'פרחים', gift: 'מתנות', furniture: 'רהיטים', houseware: 'כלי בית', hardware: 'כלי עבודה', doityourself: 'חומרי בניין', trade: 'חומרי בניין', optician: 'אופטיקה', bicycle: 'אופניים', sports: 'ספורט', tobacco: 'טבק', cosmetics: 'קוסמטיקה', books: 'ספרים', toys: 'צעצועים', pet: 'חיות מחמד', lighting: 'תאורה', bed: 'מזרנים', carpet: 'שטיחים', garden_centre: 'משתלה', nutrition_supplements: 'תוספי תזונה', variety_store: 'הכל בזול', department_store: 'כלבו', mall: 'קניון', stationery: 'כלי כתיבה', appliance: 'מוצרי חשמל', baby_goods: 'מוצרי תינוקות', second_hand: 'יד שנייה', musical_instrument: 'כלי נגינה', photo: 'צילום', watches: 'שעונים', boutique: 'בוטיק', butcher: 'אטליז', seafood: 'דגים', health_food: 'טבע', confectionery: 'ממתקים', bureau_de_change: 'המרת מטבע', money_transfer: 'העברות כספים', hairdresser: 'מספרה', beauty: 'מכון יופי', laundry: 'מכבסה', dry_cleaning: 'ניקוי יבש', car_repair: 'מוסך', yes: 'חנות' },
-    open24: '24 שעות', open: 'פתוח', until: 'עד {t}', soon: 'נסגר בעוד {m} דק׳',
-    closed: 'סגור', opensAt: 'ייפתח ב-{t}', opensTomorrow: 'מחר ב-{t}', opensDay: '{d} ב-{t}',
-    unknown: 'אין שעות', allDay: '24 שעות', dayOff: 'סגור',
-    unknownTitle: 'בלי שעות · {n}', unknownNote: 'המקומות האלה מופיעים במפה, אבל שעות הפתיחה שלהם עדיין לא ידועות לנו.',
-    closedTitle: 'סגורים עכשיו · {n}', more: 'עוד {n}',
-    empty: 'אין מקומות פתוחים באזור הזה של המפה.', zoomOut: 'להרחיק את המפה',
-    walk: '{m} דק׳', shabbat: 'שבת', route: 'ניווט', waze: 'Waze', call: 'חיוג',
-    geoFail: 'לא הצלחנו לאתר את המיקום. בחרו עיר או הזיזו את המפה.',
-    demo: 'מוצג מרכז תל אביב. הקישו ➤ כדי למצוא מקומות לידכם.',
-    netFail: 'לא הצלחנו לטעון נתונים. בדקו את החיבור.', retry: 'נסו שוב',
-    holiday: 'היום {h}. חנויות רבות סגורות או פועלות בשעות שונות.',
-    shabbatNote: 'שבת: הדלקת נרות {c}, צאת שבת {h}. רוב הרשתות סגורות.',
-    m: 'מ׳', km: 'ק״מ', expand: 'להרחיב את הרשימה',
-    srcConfirmed: '✓ מאומת: {s}', srcSingle: 'מקור אחד: {s} — לא נבדק בשטח', srcOld: 'נתונים משנת {y} — ייתכן שהתיישנו', srcNames: { osm: 'OpenStreetMap', chain: 'נתוני הרשת עצמה', boi: 'מאגר בנק ישראל', moe: 'מאגר משרד האנרגיה', ovt: 'Overture Maps (Meta, Microsoft ועוד)', user: 'מבקר' }, srcAsOf: 'מ-{d}', srcEst: 'השעות משוערות: כספומט בקיר הסניף פועל בדרך כלל מסביב לשעון', feeYes: 'בעמלה', feeNo: 'ללא עמלה', atmInside: 'בתוך הסניף — לפי שעות הסניף', atmCount: '{n} כספומטים', oldTag: '⚠ נתונים מ-{y}', approxLoc: '≈ המיקום במפה משוער (מרכז היישוב), כתובת: {a}', approxStreet: '≈ ברחוב הנכון, הבית המדויק לא נמצא, כתובת: {a}', approxPlace: '≈ לפי שם המקום (מרכז מסחרי, אזור תעשייה), כתובת: {a}',
-    openNear: 'פתוחים לידך', go: 'ללכת', adLabel: 'מודעה', adBanner: 'כאן יכולה להיות המודעה שלכם — רואים אותה מי שמחפשים מה פתוח בסביבה', adCardTitle: 'העסק שלכם כאן', adCardSub: 'הופיעו מול מי שנמצא קרוב ומחפש מה פתוח', adClose: 'להסתיר מודעה', adCta: 'לפרסם כאן', adFormTitle: 'פרסום ב«בטוח? פתוח!»', adFormHint: 'השאירו פרטים ונחזור אליכם עם התנאים. את הפרטים רואה רק בעל האתר.', adBiz: 'שם העסק', adBizPh: 'למשל: קפה בוקר, חיפה', adContact: 'טלפון או אימייל', adMsg: 'מה תרצו להציג (לא חובה)', adSend: 'לשלוח בקשה', adCancel: 'ביטול', adSent: 'תודה! הבקשה נשלחה, נחזור אליכם בקרוב.', adFail: 'השליחה לא הצליחה. בדקו את החיבור ונסו שוב.', adLimit: 'כבר שלחתם כמה בקשות היום — קיבלנו אותן.', noneCard: 'אין כאן מקומות פתוחים. הרחיקו את המפה.', tilt3d: 'להטות את המפה (3D)', tilt2d: 'מבט מלמעלה (2D)', listAll: 'כל הרשימה',
-    kickerAt: 'פתוח ב-{t}',
-    srcChain: 'שעות מהאתר הרשמי של הרשת', srcUser: 'שעות שעדכן מבקר', srcOsm: 'שעות מ-OpenStreetMap — ייתכן שאינן מעודכנות', doubtClosed: 'מבקר: סגור ({m})', doubtOpen: 'מבקר: פתוח ({m})', showingAt: 'מוצג מה פתוח ב-{t}. לחצו «עכשיו» כדי לחזור.',
-    kosher: 'כשר', takeaway: 'טייק אווי', delivery: 'משלוחים', privAtm: 'כספומט פרטי, בדרך כלל בעמלה', ownerOf: '{o}',
-    fixOpen: 'שעות לא נכונות? לתקן', fixTitle: 'מתי החנות פתוחה?', fixPh: 'למשל: 7:00-23:00 או Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'שמירת שעות', fixThanks: 'תודה! השעות החדשות גלויות לכולם.', fixBad: 'לא הצלחנו להבין את השעות. כתבו למשל 7:00-23:00 או בחרו 24/7.', fixedTag: 'שעות תוקנו על ידי משתמש', tooMany: 'יותר מדי סימונים בשעה האחרונה. נסו מאוחר יותר.', acc: 'כניסה', accTitle: 'כניסה (לא חובה)', accWhy: 'הסימונים והתיקונים שלכם עובדים גם בלי כניסה. עם כניסה הם יישמרו אצלכם בכל המכשירים.', accEmail: 'האימייל שלכם', accSend: 'שלחו לי קישור כניסה', accSent: 'נשלח! פתחו את המייל ולחצו על הקישור.', accIn: 'מחוברים בתור {e}', accOut: 'יציאה',
-    atmDeposit: 'אפשר להפקיד',
-    nowLabel: 'עכשיו',
-    themeAuto: 'ערכת נושא: כמו במכשיר', themeLight: 'ערכת נושא: בהירה', themeDark: 'ערכת נושא: כהה (לילה)',
-    lyShade: '☀ צל מבניינים', shadeNow: 'עכשיו', shadeNight: 'השמש שקעה — אין צל', shadeZoom: 'הגדילו את המפה כדי לראות צל',
-    layers: 'מה להציג', lyShops: '🛒 חנויות במפה', lyParking: '🅿 חניות', lyRings: '⭕ טבעות «דקות הליכה»',
-    pkTitle: 'חניה', pk_free: 'יש מקום', pk_busy: 'כמעט מלא', pk_full: 'אין מקום', pk_gone: 'אין כאן חניה', pkNoReports: 'עדיין אין דיווחים.', pkAsk: 'אתם כאן? מה המצב:', pkNeedLoc: 'כדי לדווח על חניה, הפעילו מיקום ➤', pkFar: 'אפשר לדווח רק מקרוב (עד 500 מ׳).',
-    ciAsk: 'אתם כאן? עזרו לאחרים:', ciOpen: '✓ פתוח', ciClosed: '✗ סגור', ciOkTag: '✓ אושר {m}', ciBadTag: '✗ דווח: סגור {m}', ciAgo: 'לפני {n} דק׳', ciNow: 'עכשיו', ciThanks: 'תודה! הסימון שלכם גלוי לכולם.', ciFar: 'אפשר לסמן רק ליד החנות (עד 300 מ׳). התקרבו.', ciNeedLoc: 'כדי לסמן, הפעילו מיקום ➤', ciTooSoon: 'כבר סימנתם את החנות הזו לא מזמן.', ciConfirmedOpen: 'פתוח · אושר {m}',
-    parkNear: 'חניה במרחק {d}', parkNone: 'אין חניונים קרובים במפה', parkShow: 'להראות', parkOn: 'חניות במפה', parkZoom: 'הגדילו את המפה כדי לראות חניות',
-    addOpen: '+ חסרה חנות? הוסיפו אותה', addTitle: 'הוספת חנות', addHintPin: 'הקישו על המפה במקום שבו היא נמצאת.', addHintForm: 'המקום נבחר. מלאו כמה פרטים:', addName: 'שם (למשל «המכולת של משה»)', addHoursOther: 'שעות אחרות', addHoursPh: 'למשל: א׳–ה׳ 7:00–23:00, ו׳ עד 14:00', addSend: 'הוספה למפה', addCancel: 'ביטול', addNote: 'החנות תופיע מיד במפה לכולם עם הסימון «נוסף על ידי משתמש» ותישלח ל-OpenStreetMap כהערה לבדיקה.', addThanks: 'תודה! «{n}» מופיעה עכשיו במפה.', addFail: 'השליחה נכשלה. בדקו את החיבור ונסו שוב.', h247: '24/7', h246: '24/6 (בלי שבת)', hUnknown: 'לא יודע/ת', userTag: 'נוסף על ידי משתמש',
-    walkBtn: 'ברגל', routeTitle: '{m} דק׳ הליכה · {d}', fromCenter: 'ממרכז המפה — הפעילו מיקום ➤', shadeBtn: '☀ בצל', shadeCalc: 'מחשב צל…', shadePct: 'בצל ≈ {p}%', shadeFail: 'לא הצלחנו לחשב צל כרגע', shadeNight: 'אין שמש — אין צורך בצל', hotNote: 'חם {t}° — נבחר מסלול מוצל', routeFail: 'לא הצלחנו לבנות מסלול. נסו שוב.', ringMin: '{m} דק׳',
-  },
-  en: {
-    title: "בטוח? פתוח! · Betcha it's open", tagline: "Betcha it's open", pickCity: 'City…', kicker: 'Open right now',
-    units: ['place', 'places', 'places'], whereMe: 'near you', whereMap: 'in this part of the map',
-    zoomIn: 'Zoom in to see shops',
-    source: 'Data: OpenStreetMap, Overture Maps, official registries and the chains\' own data, refreshed daily.', madeBy: 'Made by',
-    cats: { all: 'All', food: 'Groceries', bakery: 'Bakeries', pharmacy: 'Pharmacies', fuel: 'Gas', atm: 'ATMs', eat: 'Eat', shop: 'Shops' },
-    types: { supermarket: 'Supermarket', convenience: 'Convenience store', kiosk: 'Kiosk', grocery: 'Grocery', greengrocer: 'Greengrocer', deli: 'Deli', alcohol: 'Liquor store', bakery: 'Bakery', pastry: 'Pastry shop', pharmacy: 'Pharmacy', chemist: 'Drugstore', fuel: 'Gas station', atm: 'ATM', bank: 'Bank with ATM', restaurant: 'Restaurant', fast_food: 'Fast food', cafe: 'Café', food_court: 'Food court', ice_cream: 'Ice cream', clothes: 'Clothes', shoes: 'Shoes', mobile_phone: 'Phones', electronics: 'Electronics', computer: 'Computers', jewelry: 'Jewellery', florist: 'Flowers', gift: 'Gifts', furniture: 'Furniture', houseware: 'Housewares', hardware: 'Hardware', doityourself: 'DIY & building', trade: 'Building supplies', optician: 'Optician', bicycle: 'Bikes', sports: 'Sports', tobacco: 'Tobacco', cosmetics: 'Cosmetics', books: 'Books', toys: 'Toys', pet: 'Pet shop', lighting: 'Lighting', bed: 'Mattresses', carpet: 'Carpets', garden_centre: 'Garden centre', nutrition_supplements: 'Supplements', variety_store: 'Variety store', department_store: 'Department store', mall: 'Mall', stationery: 'Stationery', appliance: 'Appliances', baby_goods: 'Baby goods', second_hand: 'Second hand', musical_instrument: 'Music', photo: 'Photo', watches: 'Watches', boutique: 'Boutique', butcher: 'Butcher', seafood: 'Fish', health_food: 'Health food', confectionery: 'Sweets', bureau_de_change: 'Currency exchange', money_transfer: 'Money transfer', hairdresser: 'Hairdresser', beauty: 'Beauty salon', laundry: 'Laundry', dry_cleaning: 'Dry cleaning', car_repair: 'Car repair', yes: 'Shop' },
-    open24: 'Open 24 hours', open: 'Open', until: 'until {t}', soon: 'Closes in {m} min',
-    closed: 'Closed', opensAt: 'opens at {t}', opensTomorrow: 'tomorrow {t}', opensDay: '{d} {t}',
-    unknown: 'No hours listed', allDay: '24 hours', dayOff: 'closed',
-    unknownTitle: 'No hours listed · {n}', unknownNote: 'These places are on the map, but we don\'t know their hours yet.',
-    closedTitle: 'Closed now · {n}', more: 'Show {n} more',
-    empty: 'Nothing open in this part of the map.', zoomOut: 'Zoom out',
-    walk: '{m} min', shabbat: 'Shabbat', route: 'Directions', waze: 'Waze', call: 'Call',
-    geoFail: "Couldn't get your location. Pick a city or move the map.",
-    demo: 'Showing central Tel Aviv. Tap ➤ to find places near you.',
-    netFail: "Couldn't load data. Check your connection.", retry: 'Try again',
-    holiday: 'Today is {h}. Many shops are closed or keep different hours.',
-    shabbatNote: 'Shabbat: candles {c}, ends {h}. Most chains are closed.',
-    m: 'm', km: 'km', expand: 'Expand the list',
-    srcConfirmed: '✓ Confirmed by: {s}', srcSingle: 'Single source: {s} — not checked on the spot', srcOld: 'data from {y} — may be out of date', srcNames: { osm: 'OpenStreetMap', chain: "the chain's own data", boi: 'Bank of Israel registry', moe: 'Ministry of Energy registry', ovt: 'Overture Maps (Meta, Microsoft and others)', user: 'a visitor' }, srcAsOf: 'as of {d}', srcEst: 'Estimated hours: an ATM on the branch wall usually works around the clock', feeYes: 'fee', feeNo: 'no fee', atmInside: 'inside the branch — branch hours', atmCount: '{n} ATMs', oldTag: '⚠ data from {y}', approxLoc: '≈ map position is approximate (town centre), address: {a}', approxStreet: '≈ on the right street, exact building not found, address: {a}', approxPlace: '≈ placed by the name of the area (mall, industrial zone), address: {a}',
-    openNear: 'open nearby', go: 'Go', adLabel: 'Ad', adBanner: "Your ad here — seen by people looking for what's open nearby", adCardTitle: 'Your business here', adCardSub: "Get seen by people nearby looking for what's open", adClose: 'Hide ad', adCta: 'Advertise here', adFormTitle: "Advertise on Betcha it's open", adFormHint: "Leave a contact and we'll get back to you with the terms. Only the site owner sees your details.", adBiz: 'Business', adBizPh: 'For example: Morning Cafe, Haifa', adContact: 'Phone or email', adMsg: 'What you would like to show (optional)', adSend: 'Send request', adCancel: 'Cancel', adSent: "Thanks! Request sent, we'll be in touch soon.", adFail: "Couldn't send. Check your connection and try again.", adLimit: "You've already sent a few requests today — we have them.", noneCard: 'Nothing open here. Zoom out.', tilt3d: 'Tilt the map (3D)', tilt2d: 'Top view (2D)', listAll: 'Full list',
-    kickerAt: 'Open at {t}',
-    srcChain: "Hours from the chain's official site", srcUser: 'Hours from a visitor', srcOsm: 'Hours from OpenStreetMap — may be out of date', doubtClosed: 'visitor: closed ({m})', doubtOpen: 'visitor: open ({m})', showingAt: "Showing what's open at {t}. Tap Now to go back.",
-    kosher: 'kosher', takeaway: 'takeaway', delivery: 'delivery', privAtm: 'private ATM, usually charges a fee', ownerOf: '{o}',
-    fixOpen: 'Wrong hours? Fix them', fixTitle: 'When is this shop open?', fixPh: 'e.g. 7:00-23:00 or Su-Th 07:00-22:00; Fr 07:00-14:00', fixSend: 'Save hours', fixThanks: 'Thanks! Everyone sees the new hours now.', fixBad: "Couldn't read those hours. Try 7:00-23:00 or pick 24/7.", fixedTag: 'hours fixed by a user', tooMany: 'Too many updates in the last hour. Try again later.', acc: 'Sign in', accTitle: 'Sign in (optional)', accWhy: 'Your check-ins and fixes already work without signing in. Signing in keeps them yours on every device.', accEmail: 'Your email', accSend: 'Email me a sign-in link', accSent: 'Sent! Open the email and tap the link.', accIn: 'Signed in as {e}', accOut: 'Sign out',
-    atmDeposit: 'deposits',
-    nowLabel: 'now',
-    themeAuto: 'Theme: same as device', themeLight: 'Theme: light', themeDark: 'Theme: dark (night)',
-    lyShade: '☀ Shade from buildings', shadeNow: 'Now', shadeNight: 'The sun has set — no shade', shadeZoom: 'Zoom in to see shade',
-    layers: 'Show on map', lyShops: '🛒 Shops on the map', lyParking: '🅿 Parking', lyRings: '⭕ Walking-time rings',
-    pkTitle: 'Parking', pk_free: 'spaces free', pk_busy: 'almost full', pk_full: 'full', pk_gone: 'no parking here', pkNoReports: 'No reports yet.', pkAsk: 'Here now? How is it:', pkNeedLoc: 'Turn on location ➤ to report parking', pkFar: 'You can only report parking nearby (within 500 m).',
-    ciAsk: 'Here now? Help others:', ciOpen: '✓ Open', ciClosed: '✗ Closed', ciOkTag: '✓ confirmed {m}', ciBadTag: '✗ reported closed {m}', ciAgo: '{n} min ago', ciNow: 'just now', ciThanks: 'Thanks! Everyone can see your check-in.', ciFar: 'You can only check in near the shop (within 300 m). Get a bit closer.', ciNeedLoc: 'Turn on location ➤ to check in', ciTooSoon: 'You checked in here recently.', ciConfirmedOpen: 'Open · confirmed {m}',
-    parkNear: 'Parking {d} away', parkNone: 'No car parks nearby on the map', parkShow: 'show', parkOn: 'Parking on the map', parkZoom: 'Zoom in to see parking',
-    addOpen: '+ Missing a shop? Add it', addTitle: 'Add a shop', addHintPin: 'Tap the map where it is. You can move the map.', addHintForm: 'Spot picked. Fill in a couple of fields:', addName: "Name (e.g. “Moshe's makolet”)", addHoursOther: 'Other hours', addHoursPh: 'e.g. Sun–Thu 7:00–23:00, Fri until 14:00', addSend: 'Add to the map', addCancel: 'Cancel', addNote: 'It shows on the map for everyone right away, marked “added by a user”, and goes to OpenStreetMap as a note for mappers to check.', addThanks: 'Thanks! “{n}” is on the map now.', addFail: "Couldn't send it. Check your connection and try again.", h247: 'Open 24/7', h246: '24/6 (closed Shabbat)', hUnknown: "Don't know", userTag: 'added by a user',
-    walkBtn: 'Walk', routeTitle: '{m} min walk · {d}', fromCenter: 'from the map centre — turn on location ➤', shadeBtn: '☀ Shady way', shadeCalc: 'Working out shade…', shadePct: '≈ {p}% in shade', shadeFail: "couldn't work out shade right now", shadeNight: 'no sun — no shade needed', hotNote: 'hot {t}° — shady path chosen', routeFail: "Couldn't build a route. Try again.", ringMin: '{m} min',
-  },
-};
+// ---------- i18n ---------- (tables in i18n.js)
 const CITIES = [
   ['tlv', 32.0853, 34.7818, { ru: 'Тель-Авив', he: 'תל אביב', en: 'Tel Aviv' }],
   ['jlm', 31.7767, 35.2345, { ru: 'Иерусалим', he: 'ירושלים', en: 'Jerusalem' }],
@@ -159,14 +46,13 @@ const dotIcon = (it) => (it.st.k === 'closed' ? 'g-' : 'i-') + kindOf(it);
 function addDotIcons(gm) {
   const all = { ...ICONS, ...DOT_ICONS };
   return Promise.all(Object.entries(all).map(([k, body]) => new Promise((res) => {
-    const img = new Image(48, 48);
     const add = (pre, col) => new Promise((ok) => {
       const img = new Image(48, 48);
       img.onload = () => { try { if (!gm.hasImage(pre + k)) gm.addImage(pre + k, img, { pixelRatio: 2 }); } catch {} ok(); };
       img.onerror = () => ok();
       img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" color="${col}">${body}</svg>`);
     });
-    Promise.all([add('i-', '#fff'), add('g-', '#7b8791')]).then(res);
+    Promise.all([add('i-', '#fff'), add('g-', '#7b8791')]).then(res, res); // add() never rejects; resolve either way
   })));
 }
 const svg = (k) => `<svg viewBox="0 0 24 24" aria-hidden="true">${ICONS[k] || DOT_ICONS[k]}</svg>`;
@@ -187,6 +73,11 @@ const t = (k, vars) => {
   if (vars) for (const [a, b] of Object.entries(vars)) s = s.replace('{' + a + '}', b);
   return s;
 };
+const ADD_HOURS_INPUT = '#addHoursText';
+const setAriaLabel = (el, text) => el.setAttribute('aria-label', text);
+// Fire-and-forget async work (redraws, background loads, click handlers): a failure is logged instead of
+// surfacing as an unhandled promise rejection.
+function background(promise) { Promise.resolve(promise).catch((e) => console.error('[background]', e)); }
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const locale = () => ({ ru: 'ru-RU', he: 'he-IL', en: 'en-GB' }[S.lang]);
 const fmtTime = (d) => new Intl.DateTimeFormat(locale(), { hour: '2-digit', minute: '2-digit', hour12: false }).format(d);
@@ -207,7 +98,8 @@ function normalizeHours(v) {
 }
 function stripPH(v) {
   // opening_hours.js has no Israeli holiday calendar; drop PH rules (holidays are flagged via Hebcal).
-  return v.replace(/\bPH\s*,\s*/g, '').replace(/\s*,\s*PH\b/g, '')
+  // Commas are normalised first (split/trim is linear), so the PH patterns need no \s* on both sides.
+  return v.split(',').map((x) => x.trim()).join(',').replace(/\bPH,/g, '').replace(/,PH\b/g, '')
     .split(';').map((r) => r.trim()).filter((r) => r && !/^PH\b/i.test(r)).join('; ')
     .replace(/,\s*PH\s+[^,;]*/g, '');
 }
@@ -338,7 +230,7 @@ const CUISINE = {
   en: { coffee_shop: 'coffee', middle_eastern: 'Middle Eastern', steak_house: 'steakhouse' },
 };
 const cuisineText = (tg) => (tg.cuisine || '').split(/[;,]/).map((c) => c.trim()).filter(Boolean).slice(0, 3)
-  .map((c) => CUISINE[S.lang][c] || c.replace(/_/g, ' ')).join(', ');
+  .map((c) => CUISINE[S.lang][c] || c.replaceAll('_', ' ')).join(', ');
 const nameOf = (it) => it.tags['name:' + S.lang] || it.tags['brand:' + S.lang] || it.tags.name || it.tags.brand || ownerOf(it.tags)?.name || I18N[S.lang].types[typeKey(it.tags)] || '';
 function distM(aLat, aLon, bLat, bLon) {
   const R = 6371e3, r = Math.PI / 180;
@@ -408,7 +300,7 @@ const BRANDS = [
   [/טיב טעם|tiv ?taam/i, 'טיב טעם', '#d0021b', '#fff'], [/מגה|mega/i, 'MEGA', '#e30613', '#fff'],
   [/am:?pm/i, 'am:pm', '#111111', '#ff7a00'], [/קרפור|carrefour/i, 'C', '#0055a4', '#fff'], [/יינות ביתן|yeinot/i, 'ביתן', '#7a1f2b', '#fff'],
   [/סופר.?פארם|super.?pharm/i, 'SUPER PHARM', '#003da5', '#fff'], [/be\b|בי פארם/i, 'BE', '#00a19a', '#fff'], [/גוד ?פארם|good ?pharm/i, 'GOOD', '#ec008c', '#fff'],
-  [/^yellow|ילו/i, 'yellow', '#ffd200', '#1a1a1a'], [/^פז$|^paz\b/i, 'פז', '#ffd100', '#0033a0'], [/סונול|sonol/i, 'sonol', '#ffcc00', '#d6001c'],
+  [/(?:^yellow)|ילו/i, 'yellow', '#ffd200', '#1a1a1a'], [/^פז$|^paz\b/i, 'פז', '#ffd100', '#0033a0'], [/סונול|sonol/i, 'sonol', '#ffcc00', '#d6001c'],
   [/דור אלון|dor ?alon|אלונית|alonit/i, 'אלון', '#0072bc', '#fff'], [/^דלק|^delek/i, 'דלק', '#e31e24', '#fff'], [/^טן$|^ten\b/i, 'TEN', '#e4002b', '#fff'],
   [/פועלים|hapoalim/i, 'פועלים', '#e30613', '#fff'], [/לאומי|leumi/i, 'לאומי', '#003f87', '#fff'], [/דיסקונט|discount/i, 'דיסקונט', '#00843d', '#fff'],
   [/מזרחי|mizrahi/i, 'מזרחי', '#f58220', '#fff'], [/בינלאומי|first international|fibi/i, 'הבינ"ל', '#0c3c78', '#fff'],
@@ -493,14 +385,26 @@ const STYLE_URL = 'https://tiles.openfreemap.org/styles/liberty';
 function initMap(center, zoom) {
   const touch = matchMedia('(pointer: coarse)').matches;
   map = new MK.Map('map', { center, zoom, touch, style: { version: 8, sources: {}, layers: [] } });
+  // A popup needs map room on a phone: lower the list to its peek state first.
+  map.onPopup = () => { if (!wide() && sheet().dataset.state !== 'peek') setSheet('peek'); };
+  map.popupInset = () => {
+    const sh = $('#sheet');
+    // Floating things over the top of the map: the top bar and the "N open nearby / 3D" row under it.
+    const top = Math.max(0, ...['.topbar', '#glance'].map((q) => { const el = $(q); const r = el && el.getBoundingClientRect(); return r && r.height ? r.bottom : 0; }));
+    // The sheet may be mid-animation; use the height it is moving to (set by setSheet) on phones.
+    const peek = Number.parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sheet-peek'));
+    // On a wide screen the list is a side panel, so nothing covers the bottom of the map.
+    const bottom = wide() ? 0 : peek > 0 ? peek : sh ? Math.max(0, innerHeight - sh.getBoundingClientRect().top) : 0;
+    return { top, bottom };
+  };
   map.gm.setStyle(STYLE_URL, { transformStyle: (_, next) => ({ ...next, layers: next.layers.filter((l) => l['source-layer'] !== 'poi') }) });
   map.styled = new Promise((res) => map.gm.on('style.load', () => { if (map.gm.getStyle().layers.length > 5) res(); }));
   map.styled.then(() => {
     addAppLayers();
     setGLNight(document.documentElement.classList.contains('night-map'));
-    drawLights();
+    background(drawLights());
     if (S.loaded) refresh();
-    if (SH.on) drawShade();
+    if (SH.on) { background(drawShade()); }
   });
   pinLayer = MK.group().addTo(map);
   let timer;
@@ -528,7 +432,7 @@ function addAppLayers() {
   gm.addLayer({ id: 'dot-icons', type: 'symbol', source: 'dots', minzoom: 14, layout: {
     'icon-image': ['get', 'k'], 'icon-size': ['interpolate', ['linear'], ['zoom'], 14, 0.45, 14.6, ['case', ['==', ['get', 's'], 1], 0.5, 0.58], 16.5, ['case', ['==', ['get', 's'], 1], 0.7, 0.8]], 'symbol-sort-key': ['-', 0, ['get', 's']],
     'icon-allow-overlap': true, 'icon-ignore-placement': true }, paint: { 'icon-opacity': ['get', 'o'] } });
-  addDotIcons(gm);
+  background(addDotIcons(gm));
   for (const ly of ['dots', 'dot-icons']) {
     gm.on('click', ly, (e) => { const f = e.features?.[0]; if (f) select(f.properties.id, true); });
     gm.on('mouseenter', ly, (e) => { gm.getCanvas().style.cursor = 'pointer'; gm.getCanvas().title = e.features?.[0]?.properties.n || ''; });
@@ -645,7 +549,7 @@ async function showRoute(it) {
   const sub = [];
   if (!S.me) sub.push(t('fromCenter'));
   if (shady) sub.push((res.hot && !RT.wantShade ? t('hotNote', { t: res.temp }) + ' · ' : '') + t('shadePct', { p: Math.round(res.shade * 100) }));
-  else if ((RT.wantShade || res.hot) && !res.sunUp) sub.push(t('shadeNight'));
+  else if ((RT.wantShade || res.hot) && !res.sunUp) sub.push(t('routeNoSun'));
   else if (res.shadeFailed) sub.push(t('shadeFail'));
   $('#routeSub').textContent = sub.join(' · ');
   track('route-inapp', `walk · ${it.cat}${shady ? ' · shade' : ''}`);
@@ -659,7 +563,7 @@ function setSheet(state) {
   el.dataset.state = state;
   if (wide()) { document.documentElement.style.setProperty('--sheet-peek', '0px'); return; }
   const H = el.offsetHeight, vh = window.innerHeight;
-  const peekH = (() => { const c = $('#cards'); if (!c || !c.offsetHeight) return 212; return Math.round(c.getBoundingClientRect().bottom - el.getBoundingClientRect().top + 10 - (parseFloat(getComputedStyle(el).getPropertyValue('--sheet-offset')) ? 0 : 0)); })();
+  const peekH = (() => { const c = $('#cards'); if (!c || !c.offsetHeight) return 212; return Math.round(c.getBoundingClientRect().bottom - el.getBoundingClientRect().top + 10); })();
   const visible = state === 'full' ? H : state === 'half' ? Math.min(H, Math.round(vh * 0.55)) : Math.min(H, peekH);
   el.style.setProperty('--sheet-offset', H - visible + 'px');
   document.documentElement.style.setProperty('--sheet-peek', Math.min(visible, Math.round(vh * 0.5)) + 'px');
@@ -675,7 +579,7 @@ function initSheet() {
   const start = (e) => {
     if (wide() || e.target.closest('select,button:not(.grab),a')) return;
     drag.on = true; drag.moved = false; drag.y0 = e.clientY;
-    drag.off0 = parseFloat(getComputedStyle(el).getPropertyValue('--sheet-offset')) || 0;
+    drag.off0 = Number.parseFloat(getComputedStyle(el).getPropertyValue('--sheet-offset')) || 0;
     el.classList.add('dragging');
     el.setPointerCapture?.(e.pointerId);
   };
@@ -691,7 +595,7 @@ function initSheet() {
     drag.on = false; el.classList.remove('dragging');
     if (!drag.moved) return;
     const H = el.offsetHeight, vh = window.innerHeight;
-    const visible = H - (parseFloat(el.style.getPropertyValue('--sheet-offset')) || 0);
+    const visible = H - (Number.parseFloat(el.style.getPropertyValue('--sheet-offset')) || 0);
     const targets = { peek: 212, half: vh * 0.5, full: H };
     const best = Object.entries(targets).sort((a, b) => Math.abs(a[1] - visible) - Math.abs(b[1] - visible))[0][0];
     setSheet(best);
@@ -716,7 +620,7 @@ function applyLang() {
   if ($('#accBtn')) $('#accBtn').title = t('acc');
   if (typeof applyTheme === 'function' && $('#themeBtn')?.textContent) applyTheme();
   $('#addOpen').textContent = t('addOpen');
-  $('#grab').setAttribute('aria-label', t('expand'));
+  setAriaLabel($('#grab'), t('expand'));
   $('#tiltBtn').title = t('tilt3d');
   $('#city').innerHTML = `<option value="">${esc(t('pickCity'))}</option>` + CITIES.map(([id, , , n]) => `<option value="${id}">${esc(n[S.lang])}</option>`).join('');
 }
@@ -841,9 +745,9 @@ function refresh() {
   const meIn = S.me && b.contains([S.me.lat, S.me.lon]);
   const ref = meIn ? S.me : { lat: c.lat, lon: c.lng };
   const pad = b.pad(0.05);
-  ensureTiles(b.pad(0.3)).then((got) => { if (got) refreshSoon(); });
+  background(ensureTiles(b.pad(0.3)).then((got) => { if (got) refreshSoon(); }));
   const inView = z >= 10 ? ALL.concat(USER_SHOPS).filter((s) => pad.contains([s.lat, s.lon])) : [];
-  if (z >= 13) loadUserShops(b);
+  if (z >= 13) { background(loadUserShops(b)); }
   for (const it of inView) {
     const fx = FIX.get(it.id);
     if (fx && it.tags.opening_hours !== fx.oh) { it.tags = { ...it.tags, opening_hours: fx.oh }; it.fixed = true; }
@@ -853,7 +757,7 @@ function refresh() {
     // A visitor in the last 2 hours said the opposite of the hours: show it as doubtful, never hide it.
     else if (ci && SH.live !== false && Date.now() / 1000 - ci.time < 7200 && it.st.k !== 'unknown' && (ci.v === 'closed') === isOpen(it.st.k)) it.st.doubt = ci;
   }
-  if (z >= 13) loadCommunity(b);
+  if (z >= 13) { background(loadCommunity(b)); }
   S.view = inView;
   history.replaceState(null, '', `#${c.lat.toFixed(5)},${c.lng.toFixed(5)},${Math.round(z * 10) / 10}`);
   store.set('lastView', JSON.stringify([c.lat, c.lng, z]));
@@ -912,7 +816,7 @@ function select(id, fromMap) {
     }
   }
   refresh();
-  if (S.selected && it && PARK.on) fillParkLine(it);
+  if (S.selected && it && PARK.on) { background(fillParkLine(it)); }
   const el = document.querySelector(`.shop[data-id="${CSS.escape(id)}"]`);
   if (el && fromMap) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   if (!fromMap && S.selected && it && !map.getBounds().pad(-0.15).contains([it.lat, it.lon])) map.panTo([it.lat, it.lon]);
@@ -929,7 +833,7 @@ function locate(isAuto) {
       S.me = { lat: p.coords.latitude, lon: p.coords.longitude };
       S.notices.loc = null; renderNotices(); drawMe();
       map.setView([S.me.lat, S.me.lon], Math.max(map.getZoom(), 16));
-      loadHebcal(S.me.lat, S.me.lon);
+      background(loadHebcal(S.me.lat, S.me.lon));
     },
     () => { btn.removeAttribute('aria-busy'); if (isAuto) { S.notices.loc = { cls: 'info', text: t('demo') }; renderNotices(); } else showLocErr(); },
     { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 },
@@ -1003,21 +907,26 @@ function addPick(latlng) {
     .on('dragend', (e) => { ADD.pin = e.target.getLatLng(); }).addTo(map);
   $('#addHint').textContent = t('addHintForm');
   $('#addFields').hidden = false;
-  $('#addName').placeholder = t('addName');
+  const addName = $('#addName'), addHours = $(ADD_HOURS_INPUT);
+  const nameHint = t('addName');
+  addName.placeholder = nameHint; setAriaLabel(addName, nameHint);
   $('#addType').innerHTML = ['food', 'shop', 'eat', 'bakery', 'pharmacy', 'fuel', 'atm'].map((k) => `<option value="${k}"${k === ADD.cat ? ' selected' : ''}>${esc(I18N[S.lang].cats[k])}</option>`).join('');
   const opts = [['24/7', t('h247')], ['24/6', t('h246')], ['?', t('hUnknown')], ['other', t('addHoursOther')]];
   $('#addHours').innerHTML = opts.map(([v, l]) => `<button type="button" role="radio" data-h="${v}" aria-checked="${v === ADD.hours}">${esc(l)}</button>`).join('');
-  $('#addHoursText').placeholder = t('addHoursPh');
-  $('#addHoursText').hidden = ADD.hours !== 'other';
+  addHours.placeholder = t('addHoursPh'); setAriaLabel(addHours, t('addHoursOther'));
+  setAriaLabel($('#addType'), t('addTypeL'));
+  addHours.hidden = ADD.hours !== 'other';
   $('#addSend').textContent = t('addSend'); $('#addCancel').textContent = t('addCancel'); $('#addNote').textContent = t('addNote');
   if (!wide()) setSheet('half');
-  setTimeout(() => $('#addName').focus(), 50);
+  setTimeout(() => addName.focus(), 50);
 }
 async function addSubmit(e) {
   e.preventDefault();
   const name = $('#addName').value.trim();
   if (!name || !ADD.pin) return;
-  const hours = ADD.hours === 'other' ? normalizeUserHours($('#addHoursText').value) : ADD.hours === '?' ? null : ADD.hours;
+  // ADD.hours: '24/7', '24/6', '?' (unknown) or 'other' (typed in)
+  let hours;
+  if (ADD.hours === 'other') { hours = normalizeUserHours($(ADD_HOURS_INPUT).value); } else { hours = ADD.hours === '?' ? null : ADD.hours; }
   if (ADD.hours === 'other' && !hours) { $('#addNote').textContent = t('fixBad'); return; }
   const cat = $('#addType').value;
   const btn = $('#addSend'); btn.disabled = true;
@@ -1041,8 +950,8 @@ function initAdd() {
     const b = e.target.closest('[data-h]'); if (!b) return;
     ADD.hours = b.dataset.h;
     document.querySelectorAll('#addHours [data-h]').forEach((x) => x.setAttribute('aria-checked', String(x === b)));
-    $('#addHoursText').hidden = ADD.hours !== 'other';
-    if (ADD.hours === 'other') $('#addHoursText').focus();
+    $(ADD_HOURS_INPUT).hidden = ADD.hours !== 'other';
+    if (ADD.hours === 'other') { $(ADD_HOURS_INPUT).focus(); }
   });
   map.on('click', (e) => { if (ADD.on) addPick(e.latlng); });
 }
@@ -1141,7 +1050,7 @@ function fixFormHTML(it) {
 }
 
 // ---------- parking (car parks from the map tiles we already load for shade) ----------
-const PARK = { on: false, layer: null, nearMarker: null, cache: new Map() };
+const PARK = { on: false, layer: null, nearMarker: null, cache: new Map(), list: [], stale: false };
 const pid = (p) => p.lat.toFixed(5) + ',' + p.lon.toFixed(5);
 
 // Parking reports (database): a report counts for 90 minutes ("no parking here": 12 h).
@@ -1160,13 +1069,31 @@ function pkLatest(id) {
   return age < (r.v === 'gone' ? 12 * 3600 : 90 * 60) ? r : null;
 }
 function pkStatusText(r) { return `${PK_EMOJI[r.v]} ${t('pk_' + r.v)}, ${ciAgo(r.time)}`; }
-function pkPopupHTML(p) {
+// Parking payment apps. No public deep link opens a payment for a given lot, so we open the app's store
+// page: Google Play / App Store show "Open" when the app is installed and "Install" when it is not.
+const PAY_APPS = {
+  pango: { play: 'com.unicell.pangoandroid', ios: '434818173' },
+  cello: { play: 'air.com.cellogroup.Cellopark', ios: '499993633' },
+};
+const isIOS = () => /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function payUrl(app) {
+  const a = PAY_APPS[app];
+  return isIOS() ? `https://apps.apple.com/il/app/id${a.ios}` : `https://play.google.com/store/apps/details?id=${a.play}`;
+}
+function pkPayHTML() {
+  const link = (app) => `<a class="pk-pay-btn" href="${payUrl(app)}" target="_blank" rel="noopener" data-pay="${app}">${esc(t('pay_' + app))}</a>`;
+  return `<div class="pk-pay"><p class="pk-ask">${esc(t('pkPay'))}</p>
+    <div class="pk-btns">${Object.keys(PAY_APPS).map(link).join('')}</div>
+    <p class="pk-pay-note">${esc(t('pkPayNote'))}</p></div>`;
+}
+function pkPopupHTML(p, reported = false) {
   const id = pid(p), r = pkLatest(id);
   const btn = (v) => `<button type="button" class="pk-btn pk-${v}" data-pk="${id}" data-v="${v}">${PK_EMOJI[v]} ${esc(t('pk_' + v))}</button>`;
-  return `<div class="pk-pop"><b>${esc(p.name || t('pkTitle'))}</b>
-    <p class="pk-now">${r ? esc(pkStatusText(r)) : esc(t('pkNoReports'))}</p>
-    <p class="pk-ask">${esc(t('pkAsk'))}</p>
-    <div class="pk-btns">${btn('free')}${btn('busy')}${btn('full')}${btn('gone')}</div></div>`;
+  const head = `<div class="pk-pop"><b>${esc(p.name || t('pkTitle'))}</b>
+    <p class="pk-now">${r ? esc(pkStatusText(r)) : esc(t('pkNoReports'))}</p>`;
+  if (reported) return `${head}<p class="pk-thanks">${esc(t('pkThanksPay'))}</p>${pkPayHTML()}</div>`;
+  return `${head}<p class="pk-ask">${esc(t('pkAsk'))}</p>
+    <div class="pk-btns">${btn('free')}${btn('busy')}${btn('full')}${btn('gone')}</div>${pkPayHTML()}</div>`;
 }
 function pkIcon(p) {
   const r = pkLatest(pid(p));
@@ -1184,6 +1111,7 @@ async function drawParking() {
   if (!PARK.on) return;
   if (PARK.layer) PARK.layer.remove();
   PARK.layer = MK.group().addTo(map);
+  PARK.list = list;
   for (const p of list.slice(0, 300)) {
     MK.marker([p.lat, p.lon], { icon: pkIcon(p) })
       .bindPopup(() => pkPopupHTML(p), { maxWidth: 260 })
@@ -1200,7 +1128,10 @@ async function pkReport(id, v) {
     track('parking-report', v);
     notify(t('ciThanks'));
     map.closePopup();
-    drawParking();
+    // Someone who just parked here is the one who may need to pay: reopen the lot with the payment apps.
+    const lot = v !== 'gone' && (PARK.list || []).find((x) => pid(x) === id);
+    if (lot) map.openPopupAt([lat, lon], pkPopupHTML(lot, true));
+    background(drawParking());
     refresh();
   } catch (err) { notify(t(err.code === 'too_soon' ? 'ciTooSoon' : err.code === 'rate_limited' ? 'tooMany' : 'addFail'), err.code ? 'info' : 'err'); }
 }
@@ -1248,14 +1179,14 @@ function shadeToggle(on) {
   if (!on) { if (glReady()) map.setData('shade', []); return; }
   if (!SH.time) shadeNowClick(false);
   $('#shadeNow').textContent = t('shadeNow');
-  drawShade();
+  background(drawShade());
 }
 // "Now" follows the real clock (updated every minute) until the person drags the slider.
 function shadeNowClick(redraw = true) {
   SH.live = true;
   const min = shadeMinutes(new Date());
   $('#shadeTime').value = min; shadeSetTime(min);
-  if (redraw) { drawShade(); applyTheme(); refreshSoon(); }
+  if (redraw) { background(drawShade()); applyTheme(); refreshSoon(); }
 }
 // Convex hull of a building and its copy moved along the shadow: one small polygon per building.
 function hull(pts) {
@@ -1301,11 +1232,11 @@ function initShade() {
   $('#shadeTime').addEventListener('input', (e) => {
     SH.live = false;
     shadeSetTime(+e.target.value);
-    if (!SH.raf) SH.raf = requestAnimationFrame(() => { SH.raf = 0; drawShade(); applyTheme(); refreshSoon(); });
+    if (!SH.raf) SH.raf = requestAnimationFrame(() => { SH.raf = 0; background(drawShade()); applyTheme(); refreshSoon(); });
   });
-  $('#shadeTime').addEventListener('change', () => { track('shade-time', fmtTime(SH.time)); if (RT.target) showRoute(RT.target); });
-  $('#shadeNow').addEventListener('click', () => { shadeNowClick(); if (RT.target) showRoute(RT.target); });
-  map.on('moveend', () => { if (SH.on) drawShade(); });
+  $('#shadeTime').addEventListener('change', () => { track('shade-time', fmtTime(SH.time)); if (RT.target) { background(showRoute(RT.target)); } });
+  $('#shadeNow').addEventListener('click', () => { shadeNowClick(); if (RT.target) { background(showRoute(RT.target)); } });
+  map.on('moveend', () => { if (SH.on) { background(drawShade()); } });
   setInterval(() => { if (SH.on && SH.live) shadeNowClick(); }, 60000);
 }
 
@@ -1324,7 +1255,7 @@ function applyTheme() {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a0f13' : '#0e141a');
   const b = $('#themeBtn');
   if (b) { b.textContent = THEME_ICON[THEME]; const label = t({ auto: 'themeAuto', light: 'themeLight', dark: 'themeDark' }[THEME]); b.title = label; b.setAttribute('aria-label', label); }
-  if (changed || !applyTheme.done) { if (S.loaded) refresh(); drawLights(); } // marker colours come from CSS variables
+  if (changed || !applyTheme.done) { if (S.loaded) { refresh(); } background(drawLights()); } // marker colours come from CSS variables
   applyTheme.done = true;
 }
 // Real darkness where the map is: the sun more than 4 degrees below the horizon (end of civil twilight-ish).
@@ -1463,7 +1394,9 @@ function applyLayers() {
   drawRings();
   PARK.on = LY.parking;
   if (!PARK.on && PARK.nearMarker) { PARK.nearMarker.remove(); PARK.nearMarker = null; }
-  drawParking();
+  // The "thanks, pay here" popup is not part of the parking layer, so close it with the layer.
+  if (!PARK.on && document.querySelector('.maplibregl-popup .pk-pop')) { map.closePopup(); }
+  background(drawParking());
   shadeToggle(LY.shade);
   store.set('layers', JSON.stringify(LY));
 }
@@ -1489,7 +1422,7 @@ async function renderAccount() {
   const me = window.DB ? await DB.me() : null;
   if (me && me.email && !me.anonymous) {
     pop.innerHTML = `<p class="acc-title">${esc(t('accIn', { e: me.email }))}</p><button type="button" class="ghost" id="accOut">${esc(t('accOut'))}</button>`;
-    $('#accOut').onclick = async () => { await DB.signOut(); renderAccount(); };
+    $('#accOut').onclick = async () => { try { await DB.signOut(); } catch (e) { console.error('sign-out failed', e); } await renderAccount(); };
   } else {
     pop.innerHTML = `<p class="acc-title">${esc(t('accTitle'))}</p><p class="acc-why">${esc(t('accWhy'))}</p>
       <form id="accForm"><input type="email" id="accEmail" required placeholder="${esc(t('accEmail'))}" autocomplete="email"><button type="submit" class="walk">${esc(t('accSend'))}</button></form><p class="acc-msg" id="accMsg" aria-live="polite"></p>`;
@@ -1504,7 +1437,7 @@ function initAccount() {
   const btn = $('#accBtn'), pop = $('#accPop');
   if (!btn || !window.DB) { if (btn) btn.hidden = true; return; }
   btn.textContent = '👤';
-  btn.addEventListener('click', (e) => { e.stopPropagation(); pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden)); renderAccount(); });
+  btn.addEventListener('click', (e) => { e.stopPropagation(); pop.hidden = !pop.hidden; btn.setAttribute('aria-expanded', String(!pop.hidden)); background(renderAccount()); });
   document.addEventListener('click', (e) => { if (!pop.hidden && !e.target.closest('#accPop, #accBtn')) { pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); } });
   DB.onChange(renderAccount);
 }
@@ -1517,7 +1450,7 @@ function track(path, title) {
 // ---------- wire up ----------
 async function init() {
   applyLang();
-  const m = location.hash.match(/^#(-?\d+\.?\d*),(-?\d+\.?\d*)(?:,(\d+\.?\d*))?$/);
+  const m = location.hash.match(/^#(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)(?:,(\d+(?:\.\d+)?))?$/);
   let last = null; try { last = JSON.parse(store.get('lastView') || 'null'); } catch {}
   const start = m ? [+m[1], +m[2], +(m[3] || 16)] : last || [32.0853, 34.7818, 15];
   initMap([start[0], start[1]], start[2]);
@@ -1530,7 +1463,7 @@ async function init() {
   $('#tiltBtn').addEventListener('click', toggleTilt);
   $('#cards').addEventListener('click', (e) => {
     const w = e.target.closest('[data-walk]');
-    if (w) { const it = S.view.find((x) => x.id === w.dataset.walk); if (it) { track('card-go', it.cat); showRoute(it); } return; }
+    if (w) { const it = S.view.find((x) => x.id === w.dataset.walk); if (it) { track('card-go', it.cat); background(showRoute(it)); } return; }
     if (e.target.closest('[data-zoomout]')) { map.zoomOut(2); return; }
     if (e.target.closest('a')) { track('ad-click', 'card'); return; }
     const c = e.target.closest('[data-card]'); if (!c) return;
@@ -1544,19 +1477,30 @@ async function init() {
   initLayers();
   initTheme();
   initAccount();
-  map.on('moveend', () => { if (PARK.on) drawParking(); });
+  // While a parking popup is open the layer is not redrawn (that would close the popup, and fitting the popup
+  // into view itself moves the map); the area it missed is redrawn once the popup closes.
+  const parkPopupOpen = () => !!document.querySelector('.maplibregl-popup .pk-pop');
+  map.on('moveend', () => {
+    if (!PARK.on) { return; }
+    if (parkPopupOpen()) { PARK.stale = true; } else { background(drawParking()); }
+  });
+  map.onPopupClose = () => setTimeout(() => {   // next tick: a popup that replaced this one is open by then
+    if (PARK.on && PARK.stale && !parkPopupOpen()) { PARK.stale = false; background(drawParking()); }
+  }, 0);
   initAdd();
   document.addEventListener('click', (e) => {
     const b = e.target.closest('[data-pk]');
-    if (b) { e.preventDefault(); pkReport(b.dataset.pk, b.dataset.v); }
+    if (b) { e.preventDefault(); background(pkReport(b.dataset.pk, b.dataset.v)); return; }
+    const pay = e.target.closest('[data-pay]');
+    if (pay) track('parking-pay', pay.dataset.pay);
   });
   $('#shadeBtn').addEventListener('click', () => {
     RT.wantShade = !RT.wantShade;
-    if (RT.target) showRoute(RT.target);
+    if (RT.target) { background(showRoute(RT.target)); }
   });
   $('#city').addEventListener('change', (e) => {
     const c = CITIES.find((x) => x[0] === e.target.value);
-    if (c) { map.setView([c[1], c[2]], 15); loadHebcal(c[1], c[2]); }
+    if (c) { map.setView([c[1], c[2]], 15); background(loadHebcal(c[1], c[2])); }
     e.target.value = '';
   });
   $('#cats').addEventListener('click', (e) => {
@@ -1567,7 +1511,7 @@ async function init() {
     const b = e.target.closest('[data-lang]'); if (!b) return;
     S.lang = b.dataset.lang; store.set('lang', S.lang);
     applyLang(); refresh();
-    const c = S.me || { lat: map.getCenter().lat, lon: map.getCenter().lng }; loadHebcal(c.lat, c.lon);
+    const c = S.me || { lat: map.getCenter().lat, lon: map.getCenter().lng }; background(loadHebcal(c.lat, c.lon));
   });
   for (const id of ['#unknownBox', '#closedBox']) $(id).addEventListener('toggle', refresh);
   $('#scroller').addEventListener('click', (e) => {
@@ -1583,15 +1527,15 @@ async function init() {
     if (fo) { S.fixOpen = fo.dataset.fixOpen; refresh(); setTimeout(() => $('#fixInput')?.focus(), 30); return; }
     if (e.target.closest('[data-fix-cancel]')) { S.fixOpen = null; refresh(); return; }
     const fq = e.target.closest('[data-fix-quick]');
-    if (fq) { submitFix(fq.closest('[data-fix-for]').dataset.fixFor, fq.dataset.fixQuick); return; }
-    if (e.target.closest('[data-fix-send]')) { const f = e.target.closest('[data-fix-for]'); submitFix(f.dataset.fixFor, $('#fixInput').value); return; }
+    if (fq) { background(submitFix(fq.closest('[data-fix-for]').dataset.fixFor, fq.dataset.fixQuick)); return; }
+    if (e.target.closest('[data-fix-send]')) { const f = e.target.closest('[data-fix-for]'); background(submitFix(f.dataset.fixFor, $('#fixInput').value)); return; }
     if (e.target.closest('.fix-form')) return;
     const cb = e.target.closest('[data-ci]');
-    if (cb) { checkIn(cb.dataset.ci, cb.dataset.v); return; }
+    if (cb) { background(checkIn(cb.dataset.ci, cb.dataset.v)); return; }
     const pg = e.target.closest('[data-park-go]');
     if (pg) { const [la, lo] = pg.dataset.parkGo.split(',').map(Number); showParkSpot(la, lo); return; }
     const walk = e.target.closest('[data-walk]');
-    if (walk) { const it = S.view.find((x) => x.id === walk.dataset.walk); if (it) showRoute(it); return; }
+    if (walk) { const it = S.view.find((x) => x.id === walk.dataset.walk); if (it) { background(showRoute(it)); } return; }
     const more = e.target.closest('[data-more]');
     if (more) { S.limits[more.dataset.more] += 60; refresh(); return; }
     if (e.target.closest('[data-zoomout]')) { map.zoomOut(2); return; }
@@ -1606,7 +1550,7 @@ async function init() {
 
   try { await loadAll(); S.loaded = true; } catch { S.loaded = true; S.error = true; }
   refresh();
-  const c = map.getCenter(); loadHebcal(c.lat, c.lng);
+  const c = map.getCenter(); background(loadHebcal(c.lat, c.lng));
   if (!m) locate(true);
 }
-init();
+background(init());

@@ -713,11 +713,21 @@ function renderTimeNote(at) {
   S.notices.time = SH.on && !SH.live && SH.time ? { cls: 'info', text: t('showingAt', { t: fmtTime(at) }) } : null;
   if ((old && old.text) !== (S.notices.time && S.notices.time.text)) renderNotices();
 }
+// Shops inside a shopping centre: which centre and which floor (from the centre's own directory, tools/malls.py).
+function mallLine(tg) {
+  if (!tg.mall) { return ''; }
+  const mall = S.lang === 'he' ? tg.mall : tg['mall:en'] || tg.mall;
+  if (!tg.level) { return mall; }
+  const key = 'floor' + tg.level;
+  const floor = I18N[S.lang][key] ? t(key) : t('floorN', { f: tg.level });
+  return t('mallAt', { m: mall, f: floor });
+}
 function shopHTML(it, now) {
   const tg = it.tags, st = it.st;
   const type = I18N[S.lang].types[typeKey(tg)] || '';
   const name = nameOf(it);
-  const addr = [tg['addr:street'], tg['addr:housenumber']].filter(Boolean).join(' ');
+  // Inside a shopping centre the centre and floor say more than a street address.
+  const addr = mallLine(tg) || [tg['addr:street'], tg['addr:housenumber']].filter(Boolean).join(' ');
   const tags = [];
   if (st.oh && st.k !== 'open24' && opensOnShabbat(it, st.oh, now)) tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`);
   if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);

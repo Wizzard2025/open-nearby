@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.5.0 — 2026-11-22
+
+Shops inside shopping centres.
+
+- BIG Fashion Glilot: all 160 shops, restaurants and cafés from the centre's own directory are on the map, each at its unit, with its floor ("BIG Fashion Glilot, first floor") and the Hebrew and English name. Shops that were already on the map got the floor and moved to their unit; nothing appears twice.
+- The directory does not include opening hours, so these places are listed under "hours unknown" until hours are added.
+- `tools/malls.py` turns a centre's indoor-map export into a small facts file (`data/malls/<centre>.json`: names, kind, floor, position, phone, website; no map drawings or logos). The nightly data update merges every file in `data/malls/`, so more centres can be added the same way.
+- The shop card shows the centre and floor in the user's language; "the shopping centre's directory" is listed among the sources.
+
 ## 1.4.0 — 2026-11-21
 
 Accounts, and moderation by staff.

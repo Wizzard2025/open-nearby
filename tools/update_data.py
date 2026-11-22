@@ -8,6 +8,7 @@ import chains  # noqa: E402
 import registries  # noqa: E402
 import stores  # noqa: E402
 import overture  # noqa: E402
+import malls  # noqa: E402
 
 OUT = pathlib.Path(__file__).resolve().parent.parent / "data" / "shops.json"
 RAW = pathlib.Path(__file__).resolve().parent.parent / "data" / "osm_raw.json"
@@ -89,6 +90,9 @@ def main():
         print(f"  stores {name}: {st}")
     # Overture Maps (open data from Meta, Microsoft, Foursquare, AllThePlaces): confirm and add shops and food places.
     print(f"  overture: {overture.merge_into(out)}")
+    # Shopping-centre directories (data/malls/*.json): floor and centre for shops already known, the rest added.
+    for name, st in malls.merge_into(out).items():
+        print(f"  mall {name}: {st}")
     for name, st in stats.items():
         print(f"  {name}: {st}")
 

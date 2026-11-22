@@ -113,5 +113,51 @@ class Merge(unittest.TestCase):
         self.assertEqual((branch[3].get("amenity"), branch[3].get("shop")), ("pharmacy", None))
 
 
+class MergeIntoTwice(unittest.TestCase):
+    """merge_into() with a temporary centre file, run on the result of an earlier run."""
+
+    def setUp(self):
+        import json
+        import tempfile
+        self.tmp = tempfile.TemporaryDirectory()
+        self.dir = pathlib.Path(self.tmp.name)
+        self.json = json
+        self.old, malls.MALLS = malls.MALLS, self.dir
+
+    def tearDown(self):
+        malls.MALLS = self.old
+        self.tmp.cleanup()
+
+    def write(self, tenants, hours=None):
+        doc = {"slug": "x", "name": "מרכז טסט", "name:en": "Test Centre", "fetched": "2026-11-22",
+               "opening_hours": hours, "tenants": tenants}
+        (self.dir / "x.json").write_text(self.json.dumps(doc), encoding="utf-8")
+
+    def test_kind_change_across_groups_updates_the_same_record(self):
+        t = {"id": "1", "lat": 32.1, "lon": 34.8, "name": "Derma", "level": "GF"}
+        shops = []
+        self.write([dict(t, shop="cosmetics")])
+        malls.merge_into(shops)
+        self.write([dict(t, amenity="pharmacy")])
+        stats = malls.merge_into(shops)
+        self.assertEqual([s[0] for s in shops], ["mx-1"])
+        self.assertEqual((shops[0][3].get("amenity"), shops[0][3].get("shop")), ("pharmacy", None))
+        self.assertEqual(stats["x"]["added"], 0)
+
+    def test_centre_hours_are_refreshed_but_chain_hours_stay(self):
+        shops = [["csuperpharm1", 32.1, 34.8, {"name": "סופר-פארם מרכז טסט", "brand": "Super-Pharm", "amenity": "pharmacy",
+                                               "opening_hours": "Su-Th 09:00-23:00", "source:hours": "superpharm"}]]
+        tenants = [{"id": "1", "lat": 32.1, "lon": 34.8, "name": "Derma", "shop": "cosmetics"},
+                   {"id": "2", "lat": 32.1, "lon": 34.8, "name": "Super-pharm test", "shop": "cosmetics"}]
+        self.write(tenants, hours="Mo-Su 10:00-22:00")
+        malls.merge_into(shops)
+        self.write(tenants, hours="Mo-Su 09:00-23:00")
+        malls.merge_into(shops)
+        by_id = {s[0]: s[3] for s in shops}
+        self.assertEqual(by_id["mx-1"]["opening_hours"], "Mo-Su 09:00-23:00")
+        self.assertEqual(by_id["csuperpharm1"]["opening_hours"], "Su-Th 09:00-23:00")
+        self.assertEqual(len(shops), 2)
+
+
 if __name__ == "__main__":
     unittest.main()

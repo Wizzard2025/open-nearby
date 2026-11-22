@@ -22,6 +22,7 @@ import registries  # noqa: E402
 DATA = pathlib.Path(__file__).resolve().parent.parent / "data"
 MALLS = DATA / "malls"
 NAME_HE, NAME_EN = "name:he", "name:en"
+HOURS_SRC = "source:hours"
 HEBREW = re.compile(r"[\u0590-\u05ff]")
 
 # Directory categories (Hebrew names, as the centres enter them) -> OpenStreetMap tags. The first match wins, so
@@ -301,10 +302,21 @@ def _enrich(shop, t, d, doc, extra):
     for k in ("phone", "website", NAME_HE, NAME_EN):   # contacts and names: only fill what other sources lack
         tags[k] = tags.get(k) or t.get(k)
         _set_or_drop(tags, k, tags[k])
-    if doc.get("opening_hours") and not tags.get("opening_hours"):
+    # The centre's hours fill a gap, and replace hours this centre set before; hours from elsewhere (a chain) stay.
+    mine = tags.get(HOURS_SRC) == _hours_source(doc)
+    if doc.get("opening_hours") and (mine or not tags.get("opening_hours")):
         tags["opening_hours"] = doc["opening_hours"]
-        tags["source:hours"] = "mall:" + doc["slug"]
+        tags[HOURS_SRC] = _hours_source(doc)
     return moved
+
+
+def _hours_source(doc):
+    return "mall:" + doc["slug"]
+
+
+def _own_id(doc, t):
+    """The id of the place this importer adds for a tenant: m<centre>-<directory id>."""
+    return f"m{doc['slug']}-{t['id']}"[:60]
 
 
 def _new_place(t, doc, extra, src):
@@ -312,9 +324,9 @@ def _new_place(t, doc, extra, src):
     tags.update({k: v for k, v in extra.items() if v})
     if doc.get("opening_hours"):
         tags["opening_hours"] = doc["opening_hours"]
-        tags["source:hours"] = "mall:" + doc["slug"]
+        tags[HOURS_SRC] = _hours_source(doc)
     tags["src"] = src
-    return [f"m{doc['slug']}-{t['id']}"[:60], t["lat"], t["lon"], tags]
+    return [_own_id(doc, t), t["lat"], t["lon"], tags]
 
 
 # Words shared by many centres' names (chain and kind of centre), which say nothing about which centre it is.
@@ -345,10 +357,14 @@ def merge_into(shops):
         st = {"tenants": 0, "matched": 0, "added": 0, "moved": 0}
         src = f"mall:{doc['slug']}@{doc['fetched']}"
         here = _place_words(doc)
+        prefix = f"m{doc['slug']}-"
+        ids = {s[0]: s for s in shops if s[0].startswith(prefix)}
         for t in doc["tenants"]:
             st["tenants"] += 1
             extra = {"level": t.get("level"), "mall": doc["name"], "mall:en": doc.get(NAME_EN)}
-            shop, d = _known(grid, t, here)
+            # A place this importer added is found by its id, whatever its kind became since; others by name.
+            own = ids.get(_own_id(doc, t))
+            shop, d = (own, registries.dist(t["lat"], t["lon"], own[1], own[2])) if own else _known(grid, t, here)
             if shop:
                 st["matched"] += 1
                 st["moved"] += _enrich(shop, t, d, doc, extra)
@@ -356,6 +372,7 @@ def merge_into(shops):
             else:
                 item = _new_place(t, doc, extra, src)
                 shops.append(item)
+                ids[item[0]] = item
                 grid.setdefault((round(t["lat"] * 200), round(t["lon"] * 200)), []).append(item)
                 st["added"] += 1
         stats[doc["slug"]] = st

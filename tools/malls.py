@@ -60,20 +60,32 @@ def _crossings(rings, y):
     return sorted(xs)
 
 
+def _scan_height(rings, y):
+    """A height near y that passes through no vertex, so no edge of the unit or of a hole runs along the line."""
+    heights = sorted({p[1] for r in rings for p in r})
+    if y not in heights:
+        return y
+    if len(heights) == 1:
+        return y
+    i = heights.index(y)
+    other = heights[i + 1] if i + 1 < len(heights) else heights[i - 1]
+    return (y + other) / 2
+
+
 def _centroid(geom):
-    """A point inside a unit (the point itself for a Point). The average of the outer ring when that lies inside the
-    shape; otherwise (an L-shaped or ring-shaped unit) the middle of the widest inside stretch of the horizontal
-    line through that average, so the pin never lands in the next shop or the corridor."""
+    """A point inside a unit (the point itself for a Point). The average of the outer ring when that lies strictly
+    inside the shape; otherwise (an L-shaped unit, or one with a hole) the middle of the widest inside stretch of a
+    horizontal line at about that height, so the pin never lands in the next shop, the corridor or on an edge."""
     if geom["type"] == "Point":
         return geom["coordinates"]
     rings = geom["coordinates"] if geom["type"] == "Polygon" else geom["coordinates"][0]
     rings = [r[:-1] if len(r) > 1 and r[0] == r[-1] else r for r in rings]
     outer = rings[0]
     x = sum(p[0] for p in outer) / len(outer)
-    y = sum(p[1] for p in outer) / len(outer)
+    y = _scan_height(rings, sum(p[1] for p in outer) / len(outer))
     xs = _crossings(rings, y)
     spans = list(zip(xs[0::2], xs[1::2]))   # inside stretches: between the 1st and 2nd crossing, 3rd and 4th...
-    if not spans or any(a <= x <= b for a, b in spans):
+    if not spans or any(a < x < b for a, b in spans):
         return [x, y]
     a, b = max(spans, key=lambda ab: ab[1] - ab[0])
     return [(a + b) / 2, y]
@@ -223,18 +235,26 @@ def _match(tags, item, chain=False, here=()):
     if any(a == b for a in theirs for b in mine) or _branch_of_brand(tags, mine, here):
         return "exact"
     # A brand alone is never a name match ("Zara Home" may carry brand=Zara). The prefix rule is only for branches
-    # from a chain's official list (ids "c..."), whose names are "<chain> <branch>": "Super-pharm gallery".
+    # from a chain's official list, named "<chain> <branch>", and tenants named "<chain> <branch>" too:
+    # "Super-pharm gallery" and "סופר-פארם גאלרי ביג גלילות". A record named just the brand, or a tenant named just
+    # the brand, is never matched this way ("Example" and "Example Home" are two shops).
     brand = _names(tags, ("brand",))
-    if chain and brand and len(brand[0]) >= 5 and any(b.startswith(brand[0]) for b in mine):
+    if chain and brand and len(brand[0]) >= 5 and brand[0] not in _names(tags, ("name",)) \
+            and any(b.startswith(brand[0]) and b != brand[0] for b in mine):
         return "brand"
     if any(_close(a, b) for a in theirs for b in mine):
         return "close"
     return None
 
 
+def _is_chain_branch(shop):
+    """From a chain's official branch list: added by it (ids "c...") or an OSM place it confirmed (src "chain:...")."""
+    return shop[0].startswith("c") or any(x.startswith("chain:") for x in (shop[3].get("src") or "").split(";"))
+
+
 def _same_place(shop, t, d, here):
     """Is the known place `shop`, d metres away, this tenant? `here`: words of the centre's name."""
-    how = _match(shop[3], t, chain=shop[0].startswith("c"), here=here)
+    how = _match(shop[3], t, chain=_is_chain_branch(shop), here=here)
     same_kind = overture.group(shop[3]) == overture.group(t)
     if how == "brand" or (how == "exact" and shop[3].get("brand") and not same_kind):
         return d < 120   # a chain branch keeps its own kind (Super-Pharm is a pharmacy, not "beauty")
@@ -256,22 +276,34 @@ def _known(grid, t, here):
     return next(((s, d) for d, _, s in found if d < 350 and _same_place(s, t, d, here)), (None, None))
 
 
+KIND_KEYS = ("shop", "amenity", "clothes")
+
+
+def _set_or_drop(tags, key, value):
+    if value:
+        tags[key] = value
+    else:
+        tags.pop(key, None)
+
+
 def _enrich(shop, t, d, doc, extra):
-    """Floor, centre and contacts for a place already on the map; it moves to its unit when pinned 40+ m away."""
+    """Floor, centre and contacts for a place already on the map; it moves to its unit when pinned 40+ m away.
+    A place this importer added itself also takes the directory's current kind; others keep their own."""
+    tags = shop[3]
+    if shop[0].startswith(f"m{doc['slug']}-"):
+        for k in KIND_KEYS:
+            _set_or_drop(tags, k, t.get(k))
     moved = d > 40
     if moved:
         shop[1], shop[2] = t["lat"], t["lon"]
     for k, v in extra.items():   # floor and centre come from the directory: always its current values
-        if v:
-            shop[3][k] = v
-        else:
-            shop[3].pop(k, None)
+        _set_or_drop(tags, k, v)
     for k in ("phone", "website", NAME_HE, NAME_EN):   # contacts and names: only fill what other sources lack
-        if t.get(k) and not shop[3].get(k):
-            shop[3][k] = t[k]
-    if doc.get("opening_hours") and not shop[3].get("opening_hours"):
-        shop[3]["opening_hours"] = doc["opening_hours"]
-        shop[3]["source:hours"] = "mall:" + doc["slug"]
+        tags[k] = tags.get(k) or t.get(k)
+        _set_or_drop(tags, k, tags[k])
+    if doc.get("opening_hours") and not tags.get("opening_hours"):
+        tags["opening_hours"] = doc["opening_hours"]
+        tags["source:hours"] = "mall:" + doc["slug"]
     return moved
 
 
@@ -283,6 +315,17 @@ def _new_place(t, doc, extra, src):
         tags["source:hours"] = "mall:" + doc["slug"]
     tags["src"] = src
     return [f"m{doc['slug']}-{t['id']}"[:60], t["lat"], t["lon"], tags]
+
+
+# Words shared by many centres' names (chain and kind of centre), which say nothing about which centre it is.
+CENTRE_WORDS = {"big", "fashion", "mall", "center", "centre", "outlet", "power", "shopping", "park",
+                "ביג", "פאשן", "קניון", "מרכז", "אאוטלט", "פאוור", "סנטר", "פארק", "מסחרי"}
+
+
+def _place_words(doc):
+    """Distinctive words of the centre's name ("glilot", "גלילות"), to recognise "<brand> <this centre>" names."""
+    return {w for n in (doc["name"], doc.get(NAME_EN)) for w in overture.norm(n).split()
+            if len(w) >= 4 and w not in CENTRE_WORDS}
 
 
 def merge_into(shops):
@@ -301,8 +344,7 @@ def merge_into(shops):
         doc = json.loads(path.read_text(encoding="utf-8"))
         st = {"tenants": 0, "matched": 0, "added": 0, "moved": 0}
         src = f"mall:{doc['slug']}@{doc['fetched']}"
-        # Distinctive words of the centre's name ("Glilot", "גלילות"), to recognise "<brand> <centre>" names.
-        here = {w for n in (doc["name"], doc.get(NAME_EN)) for w in overture.norm(n).split() if len(w) >= 4}
+        here = _place_words(doc)
         for t in doc["tenants"]:
             st["tenants"] += 1
             extra = {"level": t.get("level"), "mall": doc["name"], "mall:en": doc.get(NAME_EN)}

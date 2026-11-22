@@ -127,7 +127,7 @@
   {
    "id": "239",
    "lat": 32.149683,
-   "lon": 34.805903,
+   "lon": 34.805856,
    "name": "HStern Jewelry",
    "shop": "jewelry",
    "level": "FF",
@@ -1034,8 +1034,7 @@
    "lat": 32.148226,
    "lon": 34.804664,
    "name": "LEGO",
-   "shop": "clothes",
-   "clothes": "children",
+   "shop": "toys",
    "level": "GF",
    "name:he": "לגו סטור",
    "name:en": "LEGO",

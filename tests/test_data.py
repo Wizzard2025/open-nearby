@@ -42,6 +42,29 @@ class BranchIds(unittest.TestCase):
         self.assertEqual(chains.branch_ids(self.ROWS)[2], 'חדרה תרנ"א 20 חדרה')
 
 
+class RamiLevyPage(unittest.TestCase):
+    """ramilevy() end to end on a stub page, with one branch failing to geocode."""
+    PAGE = "".join(
+        f'<h2 class="mt-1 mb-0 title-list">{name}<small>{addr}</small></h2>'
+        for name, addr in (("חדרה", "השלום 1, חדרה"), ("חדרה", 'תרנ"א 20, חדרה'), ("בת ים", "העמל 20, בת ים")))
+
+    def setUp(self):
+        self.old = chains.get, chains.geocode
+        chains.get = lambda url, *a, **k: self.PAGE
+
+    def tearDown(self):
+        chains.get, chains.geocode = self.old
+
+    def ids(self, failing=()):
+        chains.geocode = lambda street, city: None if street in failing else [32.4, 34.9]
+        return sorted(b["id"] for b in chains.ramilevy())
+
+    def test_failed_geocode_does_not_move_an_id(self):
+        both = self.ids()
+        self.assertEqual(both, ["בת ים", "חדרה השלום 1", 'חדרה תרנ"א 20'])
+        self.assertEqual(self.ids(failing=("השלום 1",)), ["בת ים", 'חדרה תרנ"א 20'])
+
+
 class SharedPins(unittest.TestCase):
     def setUp(self):
         self.old = chains.geocode

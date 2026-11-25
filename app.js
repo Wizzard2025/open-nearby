@@ -372,7 +372,7 @@ function cardsHTML(openL, now) {
     const st = it.st, mins = Math.max(1, Math.round(it.d / 80));
     return `<article class="pcard${S.selected === it.id ? ' sel' : ''}" data-card="${esc(it.id)}">
       <div class="pc-top">${brandTile(it)}<div class="pc-name"><b>${esc(nameOf(it))}</b><small>${it.d < 2500 ? `<b>${esc(t('walk', { m: mins }))}</b> · ` : ''}${esc(fmtDist(it.d))}</small></div></div>
-      <div class="pc-bottom"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && ['osm', 'est'].includes(trustOf(it)) ? ' approx' : ''}">${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>
+      <div class="pc-bottom"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${approxHours(it) ? ' approx' : ''}">${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>
       <button type="button" class="gobtn" data-walk="${esc(it.id)}">${esc(t('go'))}</button></div></article>`;
   });
   out.splice(Math.min(1, out.length), 0, adCardHTML());
@@ -639,6 +639,11 @@ function applyLang() {
   document.title = t('title');
   document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
   document.querySelectorAll('[data-i18n-label]').forEach((el) => { setAriaLabel(el, t(el.dataset.i18nLabel)); });
+  const searchInput = $(SEARCH_INPUT);
+  if (searchInput) {
+    searchInput.placeholder = t('searchPh');
+    if ($(SEARCH_POP).open) { runSearch(); }
+  }
   document.querySelectorAll('.langs button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === S.lang)));
   $('#kicker').textContent = t('kicker');
   if ($('#accBtn')) $('#accBtn').title = ACC ? (ACC.username || ACC.email) : t('acc');
@@ -676,8 +681,13 @@ function trustOf(it) {
   const src = it.tags['source:hours'];
   if (it.fixed || src === 'user') return 'user';
   if (src === 'estimate') return 'est';
+  if (src?.startsWith('mall:')) { return 'mall'; }   // the shopping centre's general hours (tools/malls.py)
   return src ? 'chain' : 'osm';
 }
+// Where the hours come from, in words; the less certain kinds get a dashed status pill.
+const SRC_TEXT = { chain: 'srcChain', user: 'srcUser', osm: 'srcOsm', est: 'srcEst', mall: 'srcMall' };
+const APPROX_HOURS = new Set(['osm', 'est', 'mall']);
+const approxHours = (it) => !!it.st.oh && APPROX_HOURS.has(trustOf(it));
 // Is the place really there? Independent sources that list it (OpenStreetMap, the chain's site, official registries,
 // a visitor's check-in) and how fresh each one is.
 function sourcesOf(it) {
@@ -729,7 +739,8 @@ function shopHTML(it, now) {
   // Inside a shopping centre the centre and floor say more than a street address.
   const addr = mallLine(tg) || [tg['addr:street'], tg['addr:housenumber']].filter(Boolean).join(' ');
   const tags = [];
-  if (st.oh && st.k !== 'open24' && opensOnShabbat(it, st.oh, now)) tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`);
+  // A centre's general hours say the centre opens on Shabbat, not that this shop does.
+  if (st.oh && st.k !== 'open24' && trustOf(it) !== 'mall' && opensOnShabbat(it, st.oh, now)) { tags.push(`<span class="tag shab">${esc(t('shabbat'))} ✓</span>`); }
   if (it.user) tags.push(`<span class="tag user">${esc(t('userTag'))}</span>`);
   if (it.fixed) tags.push(`<span class="tag user">${esc(t('fixedTag'))}</span>`);
   if (HIDDEN.has(it.id)) { tags.push(`<span class="tag warn">${esc(t('hiddenTag'))}</span>`); }
@@ -753,7 +764,7 @@ function shopHTML(it, now) {
   const more = [];
   if (S.selected === it.id) {
     if (st.oh && st.k !== 'open24') more.push(weekTable(st.oh, now));
-    if (tg.opening_hours) more.push(`<p class="raw">${esc(tg.opening_hours)}</p><p class="src src-${trustOf(it)}">${esc(t({ chain: 'srcChain', user: 'srcUser', osm: 'srcOsm', est: 'srcEst' }[trustOf(it)]))}</p>`);
+    if (tg.opening_hours) { more.push(`<p class="raw">${esc(tg.opening_hours)}</p><p class="src src-${trustOf(it)}">${esc(t(SRC_TEXT[trustOf(it)]))}</p>`); }
     more.push(sourcesLine(it));
     more.push(fixFormHTML(it));
     const acts = [
@@ -769,11 +780,15 @@ function shopHTML(it, now) {
     if (ACC?.admin) { more.push(adminRowHTML(it)); }
   }
   const walk = it.d < 2500 ? `<b>${esc(t('walk', { m: Math.max(1, Math.round(it.d / 80)) }))}</b>` : '';
+  // Approximate hours: a dashed pill, and its tooltip says where the hours come from.
+  const pillApprox = approxHours(it) ? ` approx" title="${esc(t(SRC_TEXT[trustOf(it)]))}"` : '"';
+  const doubtKey = st.doubt?.v === 'closed' ? 'doubtClosed' : 'doubtOpen';
+  const doubtTag = st.doubt ? `<span class="tag ci-bad">${esc(t(doubtKey, { m: ciAgo(st.doubt.time) }))}</span>` : '';
   return `<li class="shop${S.selected === it.id ? ' sel' : ''}" data-id="${esc(it.id)}" tabindex="0">
     ${brandTile(it)}
     <span class="name">${esc(name)}</span>
     <span class="dist">${walk}${fmtDist(it.d)}</span>
-    <span class="meta"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${st.oh && ['osm', 'est'].includes(trustOf(it)) ? ' approx' : ''}"${st.oh && ['osm', 'est'].includes(trustOf(it)) ? ` title="${esc(t(trustOf(it) === 'est' ? 'srcEst' : 'srcOsm'))}"` : ''}>${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>${st.doubt ? `<span class="tag ci-bad">${esc(t(st.doubt.v === 'closed' ? 'doubtClosed' : 'doubtOpen', { m: ciAgo(st.doubt.time) }))}</span>` : ''}${tags.join('')}${kindLine(it, type, name)}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
+    <span class="meta"><span class="pill ${st.k}${st.doubt ? ' doubt' : ''}${pillApprox}>${esc(statusText(st, now))}${st.doubt ? ' ?' : ''}</span>${doubtTag}${tags.join('')}${kindLine(it, type, name)}${addr ? `<span>${esc(addr)}</span>` : ''}</span>
     <div class="more">${more.join('')}</div>
   </li>`;
 }
@@ -1771,6 +1786,82 @@ async function pkClear(id) {
   catch (err) { notify(errText(err), 'err'); }
 }
 
+// ---------- search a place by name ----------
+// Searches the places of the map tiles loaded so far (the area around everything the user has looked at), in every
+// language the data has, nearest first. Choosing a result flies there and opens its card.
+const SEARCH_MAX = 30;
+const SEARCH_INPUT = '#searchInput', SEARCH_POP = '#searchPop';
+const SEARCH_KEYS = ['name', 'name:he', 'name:en', 'name:ru', 'brand', 'brand:he', 'brand:en', 'brand:ru'];
+// Words of a name, case, accents, Hebrew vowel points and punctuation aside: "Super-Pharm" -> ["super", "pharm"].
+const foldWords = (s) => (s || '').toLowerCase().normalize('NFKD').replace(/[̀-֑ͯ-ׇ]/g, '')
+  .replace(/['"`׳״]/g, '').split(/[\s.,\-–&()/]+/).filter(Boolean);
+// The query matches from the start of a word, with or without the spaces: "zara", "superpharm", "super ph" all find
+// "Super-Pharm" / "Zara Home", but "זארה" does not find "בזאר הצעצועים" (that match would start inside a word).
+function nameMatches(name, q) {
+  const w = foldWords(name);
+  for (let i = 0; i < w.length; i++) { if (w.slice(i).join('').startsWith(q)) { return true; } }
+  return false;
+}
+function searchPlaces(q) {
+  const f = foldWords(q).join('');
+  if (f.length < 2) { return []; }
+  const c = S.me || { lat: map.getCenter().lat, lon: map.getCenter().lng };
+  const seen = new Set(), out = [];
+  for (const it of ALL.concat(USER_SHOPS)) {
+    if (seen.has(it.id) || (HIDDEN.has(it.id) && !ACC?.admin)) { continue; }
+    if (!SEARCH_KEYS.some((k) => nameMatches(it.tags[k], f))) { continue; }
+    seen.add(it.id);
+    out.push({ it, d: distM(c.lat, c.lon, it.lat, it.lon) });
+  }
+  out.sort((a, b) => a.d - b.d);
+  return out.slice(0, SEARCH_MAX);
+}
+function searchResultHTML({ it, d }, now) {
+  const st = statusOf(it, now);
+  const type = I18N[S.lang].types[typeKey(it.tags)] || '';
+  const where = mallLine(it.tags) || [it.tags['addr:street'], it.tags['addr:housenumber']].filter(Boolean).join(' ');
+  return `<li><button type="button" data-search-id="${esc(it.id)}">
+    <span class="sr-name" dir="auto">${esc(nameOf(it))}</span>
+    <span class="pill ${st.k}">${esc(statusText(st, now))}</span>
+    <span class="sr-meta">${esc([type, fmtDist(d), where].filter(Boolean).join(' · '))}</span>
+  </button></li>`;
+}
+function runSearch() {
+  const q = $(SEARCH_INPUT).value;
+  const hits = searchPlaces(q), now = sceneTime();
+  $('#searchResults').innerHTML = hits.map((h) => searchResultHTML(h, now)).join('');
+  const short = foldWords(q).join('').length < 2;
+  const none = hits.length ? '' : t('searchNone');
+  $('#searchNote').textContent = short ? t('searchHint') : none;
+}
+function setSearchOpen(open) {
+  const pop = $(SEARCH_POP), btn = $('#searchBtn');
+  if (open) { pop.show(); } else { pop.close(); }
+  btn.setAttribute(ARIA_EXPANDED, String(open));
+  if (open) { runSearch(); $(SEARCH_INPUT).focus(); }
+}
+function goToPlace(id) {
+  const it = ALL.find((x) => x.id === id) || USER_SHOPS.find((x) => x.id === id);
+  if (!it) { return; }
+  setSearchOpen(false);
+  track('search', 'open result');
+  let done = false;
+  const open = () => { if (done) { return; } done = true; refresh(); select(id, true); };
+  map.gm.once('moveend', () => setTimeout(open, 60));
+  map.setView([it.lat, it.lon], Math.max(map.getZoom(), 17));
+  setTimeout(open, 900);   // in case the map was already there and did not move
+}
+function initSearch() {
+  const pop = $(SEARCH_POP), btn = $('#searchBtn'), input = $(SEARCH_INPUT);
+  if (!pop || !btn) { return; }
+  let timer = null;
+  btn.addEventListener('click', (e) => { e.stopPropagation(); setSearchOpen(!pop.open); });
+  input.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(runSearch, 150); });
+  pop.addEventListener('click', (e) => { const b = e.target.closest('[data-search-id]'); if (b) { goToPlace(b.dataset.searchId); } });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && pop.open) { setSearchOpen(false); btn.focus(); } });
+  document.addEventListener('click', (e) => { const path = e.composedPath(); if (pop.open && !path.includes(pop) && !path.includes(btn)) { setSearchOpen(false); } });
+}
+
 // ---------- analytics (GoatCounter: cookie-free, no personal data) ----------
 function track(path, title) {
   try { window.goatcounter?.count?.({ path, title, event: true }); } catch {}
@@ -1806,6 +1897,7 @@ async function init() {
   initLayers();
   initTheme();
   initAccount();
+  initSearch();
   // While a parking popup is open the layer is not redrawn (that would close the popup, and fitting the popup
   // into view itself moves the map); the area it missed is redrawn once the popup closes.
   const parkPopupOpen = () => !!document.querySelector('.maplibregl-popup .pk-pop');

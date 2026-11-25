@@ -5,7 +5,8 @@
  "name:en": "BIG Fashion Glilot",
  "source": "https://web.mappedin.com/big-centers/big-centers-big-fashion-galilot.html",
  "fetched": "2026-11-22",
- "opening_hours": null,
+ "opening_hours": "Su-Th 09:30-22:00; Fr 09:00-15:00; Sa 10:00-23:00",
+ "hours_source": "https://www.bigcenters.co.il/language/en/properties/big-fashion-glilot/ (checked 2026-11-22; shops closed on Shabbat open half an hour after it ends)",
  "tenants": [
   {
    "id": "242",

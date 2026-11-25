@@ -23,6 +23,8 @@ DATA = pathlib.Path(__file__).resolve().parent.parent / "data"
 MALLS = DATA / "malls"
 NAME_HE, NAME_EN = "name:he", "name:en"
 HOURS_SRC = "source:hours"
+MAX_ID = 64          # hidden_shops.shop_id in the database
+SLUG = re.compile(r"^[a-z0-9-]{1,40}$")
 HEBREW = re.compile(r"[\u0590-\u05ff]")
 
 # Directory categories (Hebrew names, as the centres enter them) -> OpenStreetMap tags. The first match wins, so
@@ -184,6 +186,8 @@ def _tenant(loc, kind, geo, level):
 
 
 def convert(bundle, slug, name_he, name_en, source):
+    if not SLUG.match(slug):
+        raise ValueError("slug: 1-40 lowercase letters, digits and '-', e.g. big-fashion-glilot")
     b = _Bundle(bundle)
     out, skipped = [], []
     for loc in b.locations:
@@ -197,10 +201,14 @@ def convert(bundle, slug, name_he, name_en, source):
         else:
             skipped.append(loc["name"])
     MALLS.mkdir(parents=True, exist_ok=True)
+    path = MALLS / f"{slug}.json"
+    # The export has no opening hours; the centre's own hours are added to the file by hand (with their source),
+    # and a new import keeps them.
+    old = json.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
     doc = {"_note": "Tenant list of a shopping centre (facts only), converted by tools/malls.py from its indoor-map export.",
            "slug": slug, "name": name_he, NAME_EN: name_en, "source": source, "fetched": date.today().isoformat(),
-           "opening_hours": None, "tenants": sorted(out, key=lambda t: (str(t.get("level")), t["name"].lower()))}
-    path = MALLS / f"{slug}.json"
+           "opening_hours": old.get("opening_hours"), "hours_source": old.get("hours_source"),
+           "tenants": sorted(out, key=lambda t: (str(t.get("level")), t["name"].lower()))}
     path.write_text(json.dumps(doc, ensure_ascii=False, indent=1), encoding="utf-8")
     print(f"{path.name}: {len(out)} tenants; skipped {len(skipped)}: {', '.join(skipped)}")
     return doc
@@ -216,32 +224,67 @@ def _close(a, b):
     return min(len(a), len(b)) >= 5 and a not in b and b not in a and SequenceMatcher(None, a, b).ratio() >= 0.85
 
 
+# Words after a brand that make a separate shop of the same brand ("Zara Home", "Golf Kids"), not a branch name.
+PRODUCT_LINES = {"home", "kids", "kid", "baby", "junior", "beauty", "sport", "sports", "men", "women", "man",
+                 "woman", "outlet", "living", "lingerie", "shoes", "kitchen", "הום", "קידס", "בייבי", "ביוטי",
+                 "ספורט", "גברים", "נשים", "אאוטלט", "לייף"}
+
+
+def _words_after(name, brand):
+    """The words of a name after its leading brand ([] for the brand alone), or None when it does not start so."""
+    n, b = overture.norm(name).split(), overture.norm(brand).split()
+    if not b or not n:
+        return None
+    if n[:len(b)] == b:
+        return n[len(b):]
+    joined, bj = "".join(n), "".join(b)
+    if joined.startswith(bj):   # spelled together: "SuperPharm Gallery", "ZaraHome"
+        rest = joined[len(bj):]
+        return [rest] if rest else []
+    return None
+
+
+def _product_line(words):
+    return any(w in PRODUCT_LINES for w in words)
+
+
 def _branch_of_brand(tags, mine, here):
     """A place named "<brand> <this centre>" ("The North Face Glilot Tel Aviv") for a tenant named just the brand.
-    "Zara Home" with brand=Zara is not "Zara": what follows the brand there is a product line, not the place."""
-    brand = _names(tags, ("brand",))
-    if not brand or brand[0] not in mine:
+    "Zara Home" with brand=Zara is not "Zara", and neither is "Zara Home Glilot": a product line, not the place."""
+    brand = tags.get("brand")
+    if not brand or "".join(overture.norm(brand).split()) not in mine:
         return False
-    rest = [n[len(brand[0]):] for n in _names(tags, ("name", NAME_HE, NAME_EN)) if n.startswith(brand[0])]
-    return any(w in r for r in rest for w in here)
+    for name in (tags.get(k) for k in ("name", NAME_HE, NAME_EN)):
+        rest = _words_after(name, brand) if name else None
+        if rest and not _product_line(rest) and any(w in "".join(rest) for w in here):
+            return True
+    return False
+
+
+def _brand_prefix(tags, item):
+    """A tenant named "<chain brand> <branch>" ("Super-pharm gallery") for a branch of that chain, but not a
+    product line of the brand ("Example Home")."""
+    brand = tags.get("brand")
+    if not brand or len("".join(overture.norm(brand).split())) < 5:
+        return False
+    for name in (item.get(k) for k in ("name", NAME_HE, NAME_EN)):
+        rest = _words_after(name, brand) if name else None
+        if rest and not _product_line(rest):
+            return True
+    return False
 
 
 def _match(tags, item, chain=False, here=()):
     """'exact' when a name is the same in some language (case, spaces and punctuation aside), 'brand' when the
-    tenant's name starts with the chain brand of a known branch ("Super-pharm gallery" and Super-Pharm), 'close'
-    for a very similar spelling, else None. Stricter than the Overture matcher: a mall has many short brand names
-    side by side."""
+    tenant's name is the chain brand of a known branch plus a branch name ("Super-pharm gallery" and Super-Pharm),
+    'close' for a very similar spelling, else None. Stricter than the Overture matcher: a mall has many short brand
+    names side by side. A brand alone is never a name match ("Zara Home" may carry brand=Zara), and the prefix rule
+    is only for branches from a chain's official list."""
     keys = ("name", NAME_HE, NAME_EN)
     mine, theirs = _names(item, keys), _names(tags, keys)
     if any(a == b for a in theirs for b in mine) or _branch_of_brand(tags, mine, here):
         return "exact"
-    # A brand alone is never a name match ("Zara Home" may carry brand=Zara). The prefix rule is only for branches
-    # from a chain's official list, named "<chain> <branch>", and tenants named "<chain> <branch>" too:
-    # "Super-pharm gallery" and "סופר-פארם גאלרי ביג גלילות". A record named just the brand, or a tenant named just
-    # the brand, is never matched this way ("Example" and "Example Home" are two shops).
-    brand = _names(tags, ("brand",))
-    if chain and brand and len(brand[0]) >= 5 and brand[0] not in _names(tags, ("name",)) \
-            and any(b.startswith(brand[0]) and b != brand[0] for b in mine):
+    if chain and _brand_prefix(tags, item):
         return "brand"
     if any(_close(a, b) for a in theirs for b in mine):
         return "close"
@@ -307,6 +350,9 @@ def _enrich(shop, t, d, doc, extra):
     if doc.get("opening_hours") and (mine or not tags.get("opening_hours")):
         tags["opening_hours"] = doc["opening_hours"]
         tags[HOURS_SRC] = _hours_source(doc)
+    elif mine and not doc.get("opening_hours"):   # the centre no longer publishes hours: drop the ones it gave
+        tags.pop("opening_hours", None)
+        tags.pop(HOURS_SRC, None)
     return moved
 
 
@@ -315,8 +361,12 @@ def _hours_source(doc):
 
 
 def _own_id(doc, t):
-    """The id of the place this importer adds for a tenant: m<centre>-<directory id>."""
-    return f"m{doc['slug']}-{t['id']}"[:60]
+    """The id of the place this importer adds for a tenant: m<centre>-<directory id>. Never cut: two tenants must
+    never share an id, and ids must fit hidden_shops.shop_id (64 characters) in the database."""
+    pid = f"m{doc['slug']}-{t['id']}"
+    if len(pid) > MAX_ID:
+        raise ValueError(f"place id too long ({len(pid)} > {MAX_ID}): {pid}")
+    return pid
 
 
 def _new_place(t, doc, extra, src):

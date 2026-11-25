@@ -139,6 +139,51 @@ def group(tags):
     return "shop"
 
 
+# A chain's official branch list pins a branch at its door; Overture often puts the same shop 60-150 m away and in
+# another category (Shufersal supermarkets come as "pharmacy"), which would leave a twin without hours beside it.
+CHAIN_RADIUS = 150
+
+
+def chain_of(shop):
+    """The chain whose official branch list added ("c<chain><id>") or confirmed (src "chain:<chain>@...") a place."""
+    for x in (shop[3].get("src") or "").split(";"):
+        if x.startswith("chain:"):
+            return x[len("chain:"):].split("@")[0]
+    m = re.match(r"c([a-z]+)\d", shop[0])
+    return m.group(1) if m else None
+
+
+def named_after(chain_key, name):
+    """Does a place name start with the chain's name, as whole words ("שופרסל דיל ...", "Super Pharm"), or is it the
+    chain's short name ("Be")? A name that only mentions the chain ("iTouch (ליד סופר פארם)") or merely starts with the
+    same letters ("ויקטוריה קוסמטיקס" and Victory) is not."""
+    import chains
+    n = norm(name)
+    for a in (norm(x) for x in chains.ALIASES.get(chain_key, [])):
+        if (n == a) if len(a) <= 3 else re.match(rf"{re.escape(a)}(?!\w)", n):
+            return True
+    return False
+
+
+def _chain_key(shop):
+    """chain_of(), with Shufersal's Be pharmacies told apart from its supermarkets."""
+    key = chain_of(shop)
+    if key == "shufersal" and named_after("shufersal:Be", shop[3].get("name")):
+        return "shufersal:Be"
+    return key
+
+
+def chain_twin(grid, lat, lon, tags):
+    """The nearest branch from a chain's official list within CHAIN_RADIUS m that this place is named after."""
+    import registries
+    gy, gx = round(lat * 200), round(lon * 200)
+    near = (s for dy in (-1, 0, 1) for dx in (-1, 0, 1) for s in grid.get((gy + dy, gx + dx), []))
+    found = [(registries.dist(lat, lon, s[1], s[2]), s[0], s) for s in near
+             if (key := _chain_key(s)) and named_after(key, tags.get("name"))]
+    found = [f for f in found if f[0] <= CHAIN_RADIUS]
+    return min(found)[2] if found else None
+
+
 def merge_into(shops):
     import registries
     grid = {}
@@ -171,6 +216,7 @@ def merge_into(shops):
                         break
                 if best: break
             if best: break
+        best = best or chain_twin(grid, lat, lon, tg)
         src = f"ovt@{upd}" if upd else "ovt"
         if best:
             st["confirmed"] += 1

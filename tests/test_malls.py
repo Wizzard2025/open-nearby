@@ -113,8 +113,8 @@ class Merge(unittest.TestCase):
         self.assertEqual((branch[3].get("amenity"), branch[3].get("shop")), ("pharmacy", None))
 
 
-class MergeIntoTwice(unittest.TestCase):
-    """merge_into() with a temporary centre file, run on the result of an earlier run."""
+class TempCentre(unittest.TestCase):
+    """A temporary data/malls folder holding one centre file, x.json."""
 
     def setUp(self):
         import json
@@ -132,6 +132,10 @@ class MergeIntoTwice(unittest.TestCase):
         doc = {"slug": "x", "name": "מרכז טסט", "name:en": "Test Centre", "fetched": "2026-11-22",
                "opening_hours": hours, "tenants": tenants}
         (self.dir / "x.json").write_text(self.json.dumps(doc), encoding="utf-8")
+
+
+class MergeIntoTwice(TempCentre):
+    """merge_into() run on the result of an earlier run."""
 
     def test_kind_change_across_groups_updates_the_same_record(self):
         t = {"id": "1", "lat": 32.1, "lon": 34.8, "name": "Derma", "level": "GF"}
@@ -157,6 +161,56 @@ class MergeIntoTwice(unittest.TestCase):
         self.assertEqual(by_id["mx-1"]["opening_hours"], "Mo-Su 09:00-23:00")
         self.assertEqual(by_id["csuperpharm1"]["opening_hours"], "Su-Th 09:00-23:00")
         self.assertEqual(len(shops), 2)
+
+
+class ProductLines(unittest.TestCase):
+    def test_product_line_with_the_centre_in_the_name(self):
+        self.assertIsNone(malls._match({"name": "Example Glilot", "brand": "Example"}, {"name": "Example Home"},
+                                       chain=True, here=HERE))
+        self.assertIsNone(malls._match({"name": "Example Home Glilot", "brand": "Example"}, {"name": "Example"},
+                                       chain=True, here=HERE))
+
+    def test_branch_name_after_the_brand_still_matches(self):
+        osm = {"name": "Super-Pharm", "brand": "Super-Pharm", "amenity": "pharmacy"}
+        self.assertEqual(malls._match(osm, {"name": "Super-pharm gallery"}, chain=True, here=HERE), "brand")
+
+
+class MergeEndToEnd(TempCentre):
+    def test_osm_chain_branch_named_just_the_brand(self):
+        shops = [["n1", 32.1, 34.8, {"name": "Super-Pharm", "brand": "Super-Pharm", "amenity": "pharmacy",
+                                     "src": "osm@2025-01-01;chain:superpharm@2026-11-21"}]]
+        self.write([{"id": "1", "lat": 32.1003, "lon": 34.8, "name": "Super-pharm gallery", "shop": "cosmetics"}])
+        malls.merge_into(shops)
+        self.assertEqual([s[0] for s in shops], ["n1"])
+        self.assertEqual(shops[0][3]["amenity"], "pharmacy")
+
+    def test_product_line_stays_a_separate_shop(self):
+        shops = [["cexample1", 32.1, 34.8, {"name": "Example", "brand": "Example", "shop": "clothes"}]]
+        self.write([{"id": "1", "lat": 32.1, "lon": 34.8, "name": "Example Home", "shop": "houseware"}])
+        malls.merge_into(shops)
+        self.assertEqual(sorted(s[0] for s in shops), ["cexample1", "mx-1"])
+
+    def test_withdrawn_centre_hours_are_removed(self):
+        t = [{"id": "1", "lat": 32.1, "lon": 34.8, "name": "Derma", "shop": "cosmetics"}]
+        shops = []
+        self.write(t, hours="Mo-Su 10:00-22:00")
+        malls.merge_into(shops)
+        self.write(t, hours=None)
+        malls.merge_into(shops)
+        self.assertNotIn("opening_hours", shops[0][3])
+        self.assertNotIn("source:hours", shops[0][3])
+
+
+class Ids(unittest.TestCase):
+    def test_long_ids_are_refused_not_cut(self):
+        with self.assertRaises(ValueError):
+            malls._own_id({"slug": "x" * 40}, {"id": "y" * 30})
+        self.assertEqual(malls._own_id({"slug": "big-fashion-glilot"}, {"id": "242"}), "mbig-fashion-glilot-242")
+
+    def test_bad_slugs_are_refused(self):
+        for slug in ("Big Glilot", "x" * 41, "", "big/../x"):
+            with self.assertRaises(ValueError):
+                malls.convert("unused.zip", slug, "", "", "")
 
 
 if __name__ == "__main__":

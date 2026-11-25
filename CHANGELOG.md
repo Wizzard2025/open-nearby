@@ -5,7 +5,9 @@
 Shops inside shopping centres.
 
 - BIG Fashion Glilot: all 160 shops, restaurants and cafés from the centre's own directory are on the map, each at its unit, with its floor ("BIG Fashion Glilot, first floor") and the Hebrew and English name. Shops that were already on the map got the floor and moved to their unit; nothing appears twice.
-- The directory does not include opening hours, so these places are listed under "hours unknown" until hours are added.
+- Opening hours: the centre's official hours (Sun–Thu 9:30–22:00, Fri 9:00–15:00, Sat 10:00–23:00, from the BIG site) apply to its shops, so they show as open (green) or closed. The card says these are the centre's hours and that some shops and cafés may differ, and the status pill is dashed like other approximate hours. Shops with their own known hours keep them: the Super-Pharm branch keeps the chain's hours.
+- Search: a magnifier button next to 3D finds a place by name in any language (Hebrew, Russian, English, brand), nearest first, among the places of the map you have loaded. Choosing a result flies there and opens its card.
+- No more grey twins next to chain branches: Overture often pins a Shufersal, Super-Pharm, Rami Levy, Victory or Osher Ad branch 60–150 m from the chain's official pin and in another category (Shufersal supermarkets come as "pharmacy"), so a copy without hours stood next to the real branch and looked closed. A place named after a chain within 150 m of one of that chain's official branches is now that branch (108 such copies removed across the country).
 - `tools/malls.py` turns a centre's indoor-map export into a small facts file (`data/malls/<centre>.json`: names, kind, floor, position, phone, website; no map drawings or logos). The nightly data update merges every file in `data/malls/`, so more centres can be added the same way.
 - The shop card shows the centre and floor in the user's language; "the shopping centre's directory" is listed among the sources.
 

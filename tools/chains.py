@@ -227,29 +227,38 @@ def delek():
     return out
 
 
+def branch_ids(rows):
+    """Stable ids for branches listed as (name, street): the name, or "<name> <street>" for every branch whose name
+    another branch shares ("חדרה" twice). Independent of the page's order and of which branches geocode."""
+    seen = {}
+    for name, _ in rows:
+        seen[name] = seen.get(name, 0) + 1
+    return [name if seen[name] == 1 else f"{name} {street}" for name, street in rows]
+
+
 def ramilevy():
     """Parses the public branches page (plain HTML, nothing executed). Coordinates come from geocoding the address."""
     page = get("https://www.rami-levy.co.il/he/stores")
-    out, names = [], set()
+    rows = []
     for block in page.split('<h2 class="mt-1 mb-0 title-list"')[1:]:
         m = re.match(r"[^>]*>([^<]+)<small[^>]*>([^<]*)</small>", block)
         if not m:
             continue
         name, address = html.unescape(m.group(1)).strip(), html.unescape(m.group(2)).strip()
+        street, _, city = address.rpartition(",")
         hours = re.search(r"שעות פתיחה</h4>\s*<div[^>]*>(.*?)</div>", block, re.S)
         phone = re.search(r"טלפון</h4>\s*<div[^>]*>([^<]*)</div>", block)
-        street, _, city = address.rpartition(",")
-        ll = geocode(street.strip(), city.strip()) if city else None
+        rows.append((name, street.strip(), city.strip(), hours.group(1) if hours else None,
+                     phone.group(1).strip() if phone else ""))
+    out = []
+    for bid, (name, street, city, hours, phone) in zip(branch_ids([(r[0], r[1]) for r in rows]), rows):
+        ll = geocode(street, city) if city else None
         if not ll:
             continue
-        # Two branches may share a name ("חדרה"): the second one is told apart by its street, a stable id.
-        bid = name if name not in names else f"{name} {street.strip()}"
-        names.add(name)
         out.append({"chain": "ramilevy", "id": bid, "lat": ll[0], "lon": ll[1],
-                    "opening_hours": hebrew_to_oh(hours.group(1)) if hours else None,
+                    "opening_hours": hebrew_to_oh(hours) if hours else None,
                     "tags": {"name": "רמי לוי " + name, "name:en": "Rami Levy", "name:ru": "Рами Леви", "brand": "Rami Levy",
-                             "shop": "supermarket", "addr:street": street.strip(), "addr:city": city.strip(),
-                             "phone": phone.group(1).strip() if phone else ""}})
+                             "shop": "supermarket", "addr:street": street, "addr:city": city, "phone": phone}})
     return out
 
 

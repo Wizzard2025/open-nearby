@@ -16,10 +16,30 @@ class DuplicateIds(unittest.TestCase):
         self.assertEqual([s[0] for s in shops], ["c1", "n1"])
         self.assertEqual(shops[0][3]["src"], "chain:x@2026-11-21;ovt@2026-11-02")
 
+    def test_repeat_elsewhere_is_another_place_and_kept(self):
+        shops = [["c1", 32.1, 34.8, {}], ["c1", 31.7, 34.9, {}]]
+        update_data.drop_duplicate_ids(shops)
+        self.assertEqual([s[0] for s in shops], ["c1", "c1~2"])
+
     def test_unique_ids_are_left_alone(self):
         shops = [["a", 0, 0, {}], ["b", 0, 0, {}]]
         self.assertEqual(update_data.drop_duplicate_ids(shops), [])
         self.assertEqual(len(shops), 2)
+
+
+class BranchIds(unittest.TestCase):
+    ROWS = [("חדרה", "השלום 1 חדרה"), ("בת ים", "העמל 20 בת ים"), ("חדרה", 'תרנ"א 20 חדרה')]
+
+    def test_shared_names_get_the_street_whatever_the_order(self):
+        ids = dict(zip(self.ROWS, chains.branch_ids(self.ROWS)))
+        rev = dict(zip(self.ROWS[::-1], chains.branch_ids(self.ROWS[::-1])))
+        self.assertEqual(ids, rev)
+        self.assertEqual(ids[self.ROWS[0]], "חדרה השלום 1 חדרה")
+        self.assertEqual(ids[self.ROWS[1]], "בת ים")
+
+    def test_id_does_not_depend_on_other_branches_geocoding(self):
+        # ids are given before geocoding, so a branch that fails to geocode never hands its id to another
+        self.assertEqual(chains.branch_ids(self.ROWS)[2], 'חדרה תרנ"א 20 חדרה')
 
 
 class SharedPins(unittest.TestCase):

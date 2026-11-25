@@ -45,19 +45,28 @@ TILE = 10  # tiles of 1/10 degree (~10 km): a phone downloads only the area it s
 
 
 def drop_duplicate_ids(shops):
-    """The app keys pins, cards and lists on the id, so each id must appear once. A repeat (a source listing a place
-    twice) is dropped and its sources are kept on the first copy. Returns the repeated ids."""
-    first, dups = {}, []
+    """The app keys pins, cards and lists on the id, so each id must appear once. A repeat at the same place (a source
+    listing a place twice) is dropped and its sources kept on the first copy; a repeat elsewhere is another place and
+    gets "~2", "~3"... so it is never lost. Returns the repeated ids."""
+    first, dups, keep = {}, [], []
     for s in shops:
-        if s[0] in first:
-            dups.append(s[0])
-            for src in filter(None, (s[3].get("src") or "").split(";")):
-                registries.add_src(first[s[0]][3], src)
-        else:
+        f = first.get(s[0])
+        if f is None:
             first[s[0]] = s
-    if dups:
-        keep = {id(s) for s in first.values()}
-        shops[:] = [s for s in shops if id(s) in keep]
+            keep.append(s)
+            continue
+        dups.append(s[0])
+        if registries.dist(f[1], f[2], s[1], s[2]) <= 50:
+            for src in filter(None, (s[3].get("src") or "").split(";")):
+                registries.add_src(f[3], src)
+            continue
+        n = 2
+        while f"{s[0]}~{n}" in first:
+            n += 1
+        s[0] = f"{s[0]}~{n}"
+        first[s[0]] = s
+        keep.append(s)
+    shops[:] = keep
     return dups
 
 
@@ -120,7 +129,7 @@ def main():
     out[:] = [x for x in out if 29.3 < x[1] < 33.5 and 34.2 < x[2] < 35.95]
     dups = drop_duplicate_ids(out)
     if dups:
-        print(f"  dropped {len(dups)} repeated ids: {dups[:5]}")
+        print(f"  repeated ids (dropped at the same place, renamed elsewhere): {dups[:5]}")
     write_tiles(out)
     OUT.write_text(json.dumps({"updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "shops": out},
                               ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

@@ -334,6 +334,154 @@ def osherad():
     return out
 
 
+GOODPHARM = "https://goodpharm.co.il"
+_GP_SEASON = re.compile(r"שעון\s+(חורף|קיץ)\s*,\s*(.*)")
+_GP_TYPO = re.compile(r"(\d{1,2}[:.]\d{2})[:.](\d{1,2}[:.]\d{2})")  # "08:00:14:30" means 08:00-14:30
+_GP_DAYS = {"א-ה": [0, 1, 2, 3, 4], "ב-ה": [1, 2, 3, 4], "א": [0], "ו": [5], "שבת/חג": [6], "שבת": [6]}
+
+
+def _gp_after_shabbat(text):
+    """ "חצי שעה מצאת שבת - 22:00" -> ("(sunset+01:10)", "22:00"). Shabbat ends about 40 minutes after sunset."""
+    end = re.findall(TIME, text)
+    if not end:
+        return None
+    delay = "00:45"
+    if "חצי שעה" in text:
+        delay = "01:10"
+    elif "שעה" in text:
+        delay = "01:40"
+    return f"(sunset+{delay})", hhmm(*end[-1])
+
+
+def _gp_spans(part):
+    """Hours of one part of a line: [] when closed, None when unreadable."""
+    if "צאת" in part:
+        span = _gp_after_shabbat(part)
+        return [span] if span else None
+    if "סגור" in part:
+        return []
+    spans = []
+    for a, b, c, e in RANGE.findall(part):
+        to = hhmm(c, e)
+        spans.append((hhmm(a, b), "24:00" if to == "00:00" else to))
+    return spans or None
+
+
+def _gp_line(line):
+    """ "א' - ה' 08:30-21:30" -> [([0..4], spans)]. In "א' - ה' א' 08:00-20:00 | ב'-ה' 08:00-21:00" the parts name
+    their own days. Unreadable parts are left out rather than guessed."""
+    line = _GP_TYPO.sub(r"\1-\2", line.replace("׳", "'").replace("״", '"'))
+    parts = [x.strip() for x in line.split("|")]
+    head = re.match(r"(א' ?- ?ה'|ו'|שבת/חג)\s*(.*)", parts[0])
+    if not head:
+        return []
+    days = _GP_DAYS[head.group(1).replace("'", "").replace(" ", "")]
+    parts[0] = head.group(2)
+    out = []
+    for part in parts:
+        own = re.match(r"([אבו])'(?:\s*-\s*ה')?\s+(.*)", part)
+        if own:
+            days = _GP_DAYS[own.group(1) + ("-ה" if "-" in part[:own.start(2)] else "")]
+            part = own.group(2)
+        spans = _gp_spans(part)
+        if spans is not None:
+            out.append((days, spans))
+    return out
+
+
+def goodpharm_hours(lines, summer=None):
+    """Lines of a Good Pharm branch page -> OSM opening_hours. Lines look like
+    "שעון חורף, א׳ - ה׳ 08:30-21:30", "שעון חורף, ו׳ 08:30-15:00", "שעון חורף, שבת/חג סגור" (one set per season)."""
+    if summer is None:
+        summer = is_summer()
+    want = "קיץ" if summer else "חורף"
+    seasonal = [m.group(2) for m in map(_GP_SEASON.match, lines) if m and m.group(1) == want]
+    if not seasonal:  # a page without the seasonal list writes the hours as one free-text line
+        return next((oh for oh in map(hebrew_to_oh, lines) if oh), None)
+    rules = {}
+    for days, spans in (x for line in seasonal for x in _gp_line(line)):
+        rules.update(dict.fromkeys(days, spans))
+    return compose(rules) if any(rules.values()) else None
+
+
+def _gp_address(address, title):
+    """Street and town of a branch page. The address is "רחוב דיזינגוף 45, תל אביב" or "הגלבוע 1, מתחם מול הרים, נוף
+    הגליל" or names a mall where the town should be, so the town is taken from the title ("דיזנגוף סנטר, תל אביב")
+    when it has one."""
+    parts = [" ".join(x.split()) for x in html.unescape(address).split(",")]
+    street = re.sub(r"\([^)]*\)", "", parts[0])
+    street = " ".join(re.sub(r"^\s*(?:רחוב|רח'|רח׳)\s+", "", street).split())
+    town = parts[-1] if len(parts) > 1 else ""
+    if "," in title:
+        town = title.rpartition(",")[2]
+    return street, " ".join(town.split())
+
+
+_TOWN_ABBR = {'ראשל"צ': "ראשון לציון", 'פ"ת': "פתח תקווה", 'ב"ש': "באר שבע", 'ר"ג': "רמת גן"}
+
+
+def _norm_town(text):
+    for a, b in _TOWN_ABBR.items():
+        text = text.replace(a, b)
+    text = text.replace("יי", "י").replace("וו", "ו").replace("-", " ")
+    return " ".join(re.sub(r"[^\w ]", "", text).split())
+
+
+def _street_key(street):
+    """ "שד' הנשיא ויצמן 1" -> ("ויצמן", 1): the last word of the name without the article, and the house number."""
+    num = re.search(r"\d+", street)
+    name = street[:num.start()].split() if num else []
+    if not name:
+        return None
+    word = re.sub(r"\W", "", name[-1])
+    if word.startswith("ה") and len(word) > 3:
+        word = word[1:]
+    return word, int(num.group())
+
+
+def _gp_place(street, town, title, stores):
+    """The price-list store at the same address: the same street within 4 house numbers, in the town named by the page."""
+    key, where = _street_key(street), _norm_town(f"{town} {title}")
+    if not key:
+        return None
+    best = None
+    for r in stores:
+        k = _street_key(r["addr"])
+        if k and k[0] == key[0] and abs(k[1] - key[1]) <= 4 and _norm_town(r["city"]) in where:
+            if best is None or abs(k[1] - key[1]) < best[0]:
+                best = (abs(k[1] - key[1]), (r["lat"], r["lon"]))
+    return best[1] if best else None
+
+
+def goodpharm():
+    """Branch pages of goodpharm.co.il (WordPress; the list comes from its public REST API, robots.txt allows it).
+    The pages give an address and the hours, but no position: the branch is placed at the store of the same address in
+    the chain's price-transparency list (data/registries/stores_goodpharm.json), else geocoded."""
+    listing = json.loads(get(f"{GOODPHARM}/wp-json/wp/v2/pharm_storelocation?per_page=100&_fields=id,link,title"))
+    reg = DATA / "registries" / "stores_goodpharm.json"
+    stores = [r for r in (json.loads(reg.read_text(encoding="utf-8")) if reg.exists() else []) if not r.get("approx")]
+    out = []
+    for item in listing:
+        title = html.unescape(item["title"]["rendered"]).strip()
+        if "סגור" in title or not item["link"].startswith(GOODPHARM + "/"):
+            continue  # "סגור לצמיתות!!" = closed for good
+        page = get(item["link"])
+        time.sleep(0.5)
+        addr = re.search(r'data-widget_type="text-editor.default">\s*<div class="elementor-widget-container">([^<]*)</div>', page)
+        lines = [html.unescape(x).strip() for x in re.findall(r'<span class="elementor-icon-list-text">([^<]*)</span>', page)]
+        if not addr:
+            continue
+        street, city = _gp_address(addr.group(1), title)
+        ll = _gp_place(street, city, title, stores) or (geocode(street, city) if street and city else None)
+        if not ll:
+            continue
+        out.append({"chain": "goodpharm", "id": str(item["id"]), "lat": ll[0], "lon": ll[1],
+                    "opening_hours": goodpharm_hours(lines),
+                    "tags": {"name": "גוד פארם " + title, "name:en": "Good Pharm", "name:ru": "Гуд Фарм", "brand": "Good Pharm",
+                             "shop": "chemist", "addr:street": street, "addr:city": city, "website": item["link"]}})
+    return out
+
+
 def manual():
     """Hand-verified shops from data/manual.json (independent makolets etc. missing from every other source)."""
     path = DATA / "manual.json"
@@ -364,8 +512,9 @@ def geocode(street, city):
         try:
             j = json.loads(get(url))
         except Exception:
-            j = []
-        time.sleep(1.1)
+            return None  # network trouble is not "no such address": do not cache it, try again next run
+        finally:
+            time.sleep(1.1)
         if j:
             res = [round(float(j[0]["lat"]), 6), round(float(j[0]["lon"]), 6)]
             if q == city:
@@ -385,6 +534,7 @@ ALIASES = {
     "ramilevy": ["רמי לוי", "rami levy", "rami-levy"],
     "victory": ["ויקטורי", "victory"],
     "osherad": ["אושר עד", "osher ad", "osher-ad"],
+    "goodpharm": ["גוד פארם", "גוד-פארם", "good pharm", "good-pharm", "goodpharm"],
     "manual": [],
 }
 
@@ -459,7 +609,8 @@ def merge_into(shops, branches):
 
 # Delek is off by default: its station list is only served through the site's internal AJAX call guarded by a
 # per-page token. Enable it (--with-delek) only after Delek agrees to the data being reused.
-FETCHERS = {"shufersal": shufersal, "superpharm": superpharm, "ramilevy": ramilevy, "victory": victory, "osherad": osherad, "manual": manual}
+FETCHERS = {"shufersal": shufersal, "superpharm": superpharm, "ramilevy": ramilevy, "victory": victory, "osherad": osherad, "goodpharm": goodpharm,
+            "manual": manual}
 if "--with-delek" in sys.argv:
     FETCHERS["delek"] = delek
 

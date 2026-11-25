@@ -88,5 +88,67 @@ class SharedPins(unittest.TestCase):
         self.assertEqual(a["lat"], 32.400589)
 
 
+class GoodPharmHours(unittest.TestCase):
+    WINTER = ["שעון חורף, א׳ - ה׳ 08:30-21:30", "שעון חורף, ו׳ 08:30-15:00", "שעון חורף, שבת/חג סגור",
+              "שעון קיץ, א׳ - ה׳08:30-21:30", "שעון קיץ, ו׳ 08:30-16:30", "שעון קיץ, שבת/חג סגור", "צלע ההר 17, מודיעין"]
+
+    def test_season_is_chosen(self):
+        self.assertEqual(chains.goodpharm_hours(self.WINTER, summer=False), "Su-Th 08:30-21:30; Fr 08:30-15:00")
+        self.assertEqual(chains.goodpharm_hours(self.WINTER, summer=True), "Su-Th 08:30-21:30; Fr 08:30-16:30")
+
+    def test_after_shabbat_and_typo(self):
+        lines = ["שעון חורף, א׳ - ה׳ 08:00-22:00", "שעון חורף, ו׳ 08:00:14:30", "שעון חורף, שבת/חג חצי שעה מצאת שבת - 22:00"]
+        self.assertEqual(chains.goodpharm_hours(lines, summer=False),
+                         "Su-Th 08:00-22:00; Fr 08:00-14:30; Sa (sunset+01:10)-22:00")
+
+    def test_days_named_inside_the_line(self):
+        lines = ["שעון חורף, א׳ - ה׳  א׳ 10:00-20:00 | ב׳-ה׳ 09:00-20:30", "שעון חורף, ו׳ 09:00-15:00"]
+        self.assertEqual(chains.goodpharm_hours(lines, summer=False), "Su 10:00-20:00; Mo-Th 09:00-20:30; Fr 09:00-15:00")
+
+    def test_unreadable_page_gives_no_hours(self):
+        self.assertIsNone(chains.goodpharm_hours(["צלע ההר 17, מודיעין", "אודות"], summer=False))
+
+
+class GoodPharmPlace(unittest.TestCase):
+    STORES = [{"addr": "בן גוריון 4", "city": "הרצלייה", "lat": 32.166, "lon": 34.842},
+              {"addr": "הרצל 23", "city": "נתניה", "lat": 32.33, "lon": 34.85},
+              {"addr": "הרצל 32", "city": "נתניה", "lat": 32.32, "lon": 34.86},
+              {"addr": "שד' הנשיא ויצמן 1", "city": "אור עקיבא", "lat": 32.5, "lon": 34.92}]
+
+    def place(self, address, title):
+        street, town = chains._gp_address(address, title)
+        return chains._gp_place(street, town, title, self.STORES)
+
+    def test_town_spelling_and_street_prefixes(self):
+        self.assertEqual(self.place("רחוב בן גוריון 4, הרצליה", "בן גוריון, הרצליה"), (32.166, 34.842))
+        self.assertEqual(self.place("רחוב שד' נשיא ויצמן 1 (קניון אורות), אור עקיבא", "קניון אורות, אור עקיבא"), (32.5, 34.92))
+
+    def test_nearest_house_number_on_the_street(self):
+        self.assertEqual(self.place("רחוב הרצל 32, נתניה", "הרצל 32, נתניה"), (32.32, 34.86))
+        self.assertIsNone(self.place("רחוב הרצל 60, נתניה", "הרצל 60, נתניה"))
+
+    def test_other_town_is_not_matched(self):
+        self.assertIsNone(self.place("רחוב הרצל 23, רחובות", "הרצל 23, רחובות"))
+
+    def test_town_from_the_title_when_the_address_names_a_mall(self):
+        self.assertEqual(chains._gp_address("שד' שבעת הכוכבים 8, קניון שבעת הכוכבים", "שבעת הכוכבים, הרצליה"),
+                         ("שד' שבעת הכוכבים 8", "הרצליה"))
+
+
+class GeocodeNetworkFailure(unittest.TestCase):
+    def test_failure_is_not_cached(self):
+        import tempfile
+        old = (chains.get, chains.DATA, chains._geocache, chains.time.sleep)
+        tmp = tempfile.TemporaryDirectory()
+        try:
+            chains.DATA, chains._geocache, chains.time.sleep = pathlib.Path(tmp.name), None, lambda s: None
+            chains.get = lambda *a, **k: (_ for _ in ()).throw(OSError("network down"))
+            self.assertIsNone(chains.geocode("הרצל 1", "חיפה"))
+            self.assertNotIn("הרצל 1|חיפה", chains._geocache)
+        finally:
+            chains.get, chains.DATA, chains._geocache, chains.time.sleep = old
+            tmp.cleanup()
+
+
 if __name__ == "__main__":
     unittest.main()

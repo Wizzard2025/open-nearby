@@ -96,10 +96,15 @@ function plural(n) {
 }
 
 // ---------- opening hours ----------
+// A rule that is only `closed "…"` / `off "…"` covers every day, so after other rules it would close the place for
+// good. Mappers write it to mean "closed on the remaining days", which is already true without it.
+const isBareClosed = (r) => /^(?:closed|off)(?:\s+"[^"]*")?$/i.test(r);
 function normalizeHours(v) {
   const s = v.trim();
   if (/^24\/6$/.test(s)) return 'Su-Th 00:00-24:00; Fr 00:00-(sunset-01:00); Sa (sunset+01:00)-24:00';
-  return s;
+  const rules = s.split(';').map((r) => r.trim()).filter(Boolean);
+  const kept = rules.filter((r) => !isBareClosed(r));
+  return kept.length && kept.length < rules.length ? kept.join('; ') : s;
 }
 function stripPH(v) {
   // opening_hours.js has no Israeli holiday calendar; drop PH rules (holidays are flagged via Hebcal).
@@ -123,13 +128,18 @@ function parseHours(v, lat, lon) {
   ohCache.set(key, oh);
   return oh;
 }
+const OPEN_END = 'Specified as open end. Closing time was guessed.';
 function statusOf(it, now) {
   const v = it.tags.opening_hours;
   if (!v) return { k: 'unknown' };
   const oh = parseHours(v, it.lat, it.lon);
   if (!oh) return { k: 'unknown' };
   try {
-    if (oh.getUnknown(now)) return { k: 'unknown', oh };
+    if (oh.getUnknown(now)) {
+      // "12:00+" (open end): open from 12:00, closing time not given. opening_hours.js reports it as unknown, with this comment.
+      if (oh.getComment(now) === OPEN_END) { return { k: 'open', openEnd: true, oh }; }
+      return { k: 'unknown', oh };
+    }
     const open = oh.getState(now);
     const next = oh.getNextChange(now);
     if (open) {
@@ -155,7 +165,7 @@ const isOpen = (k) => k === 'open' || k === 'open24' || k === 'soon' || k === 'c
 function statusText(st, now) {
   switch (st.k) {
     case 'open24': return t('open24');
-    case 'open': return t('open') + ' · ' + t('until', { t: fmtTime(st.next) });
+    case 'open': return t('open') + ' · ' + (st.openEnd ? t('openEnd') : t('until', { t: fmtTime(st.next) }));
     case 'soon': return t('soon', { m: st.mins });
     case 'closed': {
       if (!st.next) return t('closed');

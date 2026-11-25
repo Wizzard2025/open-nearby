@@ -15,10 +15,10 @@ Quality gate **Strict (open-nearby)**: **OK**
 | software_quality_reliability_rating | 1 | GT 1 | OK |
 | software_quality_security_rating | 1 | GT 1 | OK |
 
-Lines of code: 5430. Open issues: 540. Hotspots to review: 0.
+Lines of code: 5437. Open issues: 539. Hotspots to review: 0.
 
-Open issues by quality: maintainability 540.
-Most frequent rules: javascript:S121 (299), javascript:S2681 (22), css:S4664 (19), python:S3776 (17), python:S7498 (16), javascript:S134 (15), javascript:S6582 (13), javascript:S3776 (13).
+Open issues by quality: maintainability 539.
+Most frequent rules: javascript:S121 (298), javascript:S2681 (22), css:S4664 (19), python:S3776 (17), python:S7498 (16), javascript:S134 (15), javascript:S6582 (13), javascript:S3776 (13).
 
 Recorded reviews applied (tools/sonar/reviews.json): 0 hotspots, 1 false positives.
 
@@ -33,7 +33,7 @@ SonarQube 26.11.0.134175, profile "Strict (open-nearby)", scanner 12.4.0.4321_8.
 | @supabase/supabase-js | 2.118.0 | npm | index.html:191 (CDN) |
 | opening_hours | 3.14.0 | npm | index.html:190 (vendored vendor/opening_hours.js) |
 | suncalc | 1.9.0 | npm | index.html:189 (vendored vendor/suncalc.js) |
-| @mapbox/mapbox-gl-rtl-text | 0.3.0 | npm | app.js:402 (vendored vendor/mapbox-gl-rtl-text.js) |
+| @mapbox/mapbox-gl-rtl-text | 0.3.0 | npm | app.js:412 (vendored vendor/mapbox-gl-rtl-text.js) |
 | actions/checkout | 4.4.0 | GitHub Actions | .github/workflows/deploy.yml:15 (workflow) |
 | actions/setup-python | 5.6.0 | GitHub Actions | .github/workflows/deploy.yml:16 (workflow) |
 | actions/upload-pages-artifact | 3.0.1 | GitHub Actions | .github/workflows/deploy.yml:30 (workflow) |

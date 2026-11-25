@@ -140,6 +140,17 @@ function statusOf(it, now) {
     return { k: 'closed', next, oh };
   } catch { return { k: 'unknown' }; }
 }
+// Status from the hours, corrected by visitors: an "open" check-in in the last hour makes a place without hours
+// "confirmed open"; one in the last 2 hours that says the opposite of the hours marks the status as doubtful.
+function effectiveStatus(it, now) {
+  const st = statusOf(it, now);
+  const ci = ciLatest(it.id);
+  if (!ci) { return st; }
+  const age = Date.now() / 1000 - ci.time;
+  if (ci.v === 'open' && st.k === 'unknown' && age < 3600) { return { k: 'ciopen', ci }; }
+  if (SH.live !== false && age < 7200 && st.k !== 'unknown' && (ci.v === 'closed') === isOpen(st.k)) { st.doubt = ci; }
+  return st;
+}
 const isOpen = (k) => k === 'open' || k === 'open24' || k === 'soon' || k === 'ciopen';
 function statusText(st, now) {
   switch (st.k) {
@@ -685,9 +696,11 @@ function trustOf(it) {
   return src ? 'chain' : 'osm';
 }
 // Where the hours come from, in words; the less certain kinds get a dashed status pill.
+// Approximate hours: a dashed pill whose tooltip says where the hours come from. Ends the class attribute.
+const approxPill = (it, st = it.st) => (approxHours(it, st) ? ` approx" title="${esc(t(SRC_TEXT[trustOf(it)]))}"` : '"');
 const SRC_TEXT = { chain: 'srcChain', user: 'srcUser', osm: 'srcOsm', est: 'srcEst', mall: 'srcMall' };
 const APPROX_HOURS = new Set(['osm', 'est', 'mall']);
-const approxHours = (it) => !!it.st.oh && APPROX_HOURS.has(trustOf(it));
+const approxHours = (it, st = it.st) => !!st?.oh && APPROX_HOURS.has(trustOf(it));
 // Is the place really there? Independent sources that list it (OpenStreetMap, the chain's site, official registries,
 // a visitor's check-in) and how fresh each one is.
 function sourcesOf(it) {
@@ -781,7 +794,7 @@ function shopHTML(it, now) {
   }
   const walk = it.d < 2500 ? `<b>${esc(t('walk', { m: Math.max(1, Math.round(it.d / 80)) }))}</b>` : '';
   // Approximate hours: a dashed pill, and its tooltip says where the hours come from.
-  const pillApprox = approxHours(it) ? ` approx" title="${esc(t(SRC_TEXT[trustOf(it)]))}"` : '"';
+  const pillApprox = approxPill(it);
   const doubtKey = st.doubt?.v === 'closed' ? 'doubtClosed' : 'doubtOpen';
   const doubtTag = st.doubt ? `<span class="tag ci-bad">${esc(t(doubtKey, { m: ciAgo(st.doubt.time) }))}</span>` : '';
   return `<li class="shop${S.selected === it.id ? ' sel' : ''}" data-id="${esc(it.id)}" tabindex="0">
@@ -816,11 +829,7 @@ function refresh() {
       if (!('origOh' in it)) { it.origOh = it.tags.opening_hours; }   // so staff can undo the fix
       it.tags = { ...it.tags, opening_hours: fx.oh }; it.fixed = true;
     }
-    it.st = statusOf(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon);
-    const ci = ciLatest(it.id);
-    if (ci && ci.v === 'open' && it.st.k === 'unknown' && Date.now() / 1000 - ci.time < 3600) it.st = { k: 'ciopen', ci };
-    // A visitor in the last 2 hours said the opposite of the hours: show it as doubtful, never hide it.
-    else if (ci && SH.live !== false && Date.now() / 1000 - ci.time < 7200 && it.st.k !== 'unknown' && (ci.v === 'closed') === isOpen(it.st.k)) it.st.doubt = ci;
+    it.st = effectiveStatus(it, now); it.d = distM(ref.lat, ref.lon, it.lat, it.lon);
   }
   if (z >= 13) { background(loadCommunity(b)); }
   S.view = inView;
@@ -1817,12 +1826,12 @@ function searchPlaces(q) {
   return out.slice(0, SEARCH_MAX);
 }
 function searchResultHTML({ it, d }, now) {
-  const st = statusOf(it, now);
+  const st = effectiveStatus(it, now);
   const type = I18N[S.lang].types[typeKey(it.tags)] || '';
   const where = mallLine(it.tags) || [it.tags['addr:street'], it.tags['addr:housenumber']].filter(Boolean).join(' ');
   return `<li><button type="button" data-search-id="${esc(it.id)}">
     <span class="sr-name" dir="auto">${esc(nameOf(it))}</span>
-    <span class="pill ${st.k}">${esc(statusText(st, now))}</span>
+    <span class="pill ${st.k}${approxPill(it, st)}>${esc(statusText(st, now))}</span>
     <span class="sr-meta">${esc([type, fmtDist(d), where].filter(Boolean).join(' · '))}</span>
   </button></li>`;
 }
@@ -1846,7 +1855,13 @@ function goToPlace(id) {
   setSearchOpen(false);
   track('search', 'open result');
   let done = false;
-  const open = () => { if (done) { return; } done = true; refresh(); select(id, true); };
+  const open = () => {
+    if (done) { return; }
+    done = true;
+    // The card is shown in the list, so a result outside the chosen category switches the list to "all".
+    if (S.cat !== 'all' && it.cat !== S.cat) { S.cat = 'all'; }
+    refresh(); select(id, true);
+  };
   map.gm.once('moveend', () => setTimeout(open, 60));
   map.setView([it.lat, it.lon], Math.max(map.getZoom(), 17));
   setTimeout(open, 900);   // in case the map was already there and did not move

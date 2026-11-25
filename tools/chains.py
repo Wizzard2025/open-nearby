@@ -179,13 +179,15 @@ def shufersal():
 
 
 def superpharm():
-    out, page, pages = [], 0, 1
+    out, page, pages, seen = [], 0, 1, set()
     while page < pages:
         j = json.loads(get(f"https://shop.super-pharm.co.il/branches/filter?q=&page={page}&buildFacets=false&selectedCity=&clinic=&service=&brand=&branch=&ignoreDistanceLimit=true"))
         pages = j["pagination"]["numberOfPages"]
         for s in j["storeList"]:
-            if s.get("latitude") is None:
+            # Pages overlap: the same branch can come on two pages.
+            if s.get("latitude") is None or s["branchCode"] in seen:
                 continue
+            seen.add(s["branchCode"])
             oh = None
             if not s.get("temporarilyClosed"):
                 oh = "24/7" if s.get("hours24") else hebrew_to_oh(s.get("branchOpeningTime"))
@@ -228,7 +230,7 @@ def delek():
 def ramilevy():
     """Parses the public branches page (plain HTML, nothing executed). Coordinates come from geocoding the address."""
     page = get("https://www.rami-levy.co.il/he/stores")
-    out = []
+    out, names = [], set()
     for block in page.split('<h2 class="mt-1 mb-0 title-list"')[1:]:
         m = re.match(r"[^>]*>([^<]+)<small[^>]*>([^<]*)</small>", block)
         if not m:
@@ -240,7 +242,10 @@ def ramilevy():
         ll = geocode(street.strip(), city.strip()) if city else None
         if not ll:
             continue
-        out.append({"chain": "ramilevy", "id": name, "lat": ll[0], "lon": ll[1],
+        # Two branches may share a name ("חדרה"): the second one is told apart by its street, a stable id.
+        bid = name if name not in names else f"{name} {street.strip()}"
+        names.add(name)
+        out.append({"chain": "ramilevy", "id": bid, "lat": ll[0], "lon": ll[1],
                     "opening_hours": hebrew_to_oh(hours.group(1)) if hours else None,
                     "tags": {"name": "רמי לוי " + name, "name:en": "Rami Levy", "name:ru": "Рами Леви", "brand": "Rami Levy",
                              "shop": "supermarket", "addr:street": street.strip(), "addr:city": city.strip(),
@@ -282,7 +287,22 @@ def victory():
                     "tags": {"name": "ויקטורי " + title, "name:en": "Victory", "name:ru": "Виктори", "brand": "Victory",
                              "shop": "supermarket", "addr:street": html.unescape(addr.group(1)).strip() if addr else "",
                              "phone": phone.group(1) if phone else ""}})
-    return out
+    return _fix_shared_pins(out)
+
+
+def _fix_shared_pins(branches):
+    """The chain's site sometimes gives two branches the same pin (Victory Bat Yam carried Emek Hefer's). A branch on
+    a shared pin whose address geocodes more than 2 km away is moved there; the branch the pin is right for stays."""
+    pins = {}
+    for b in branches:
+        pins.setdefault((b["lat"], b["lon"]), []).append(b)
+    for group in (g for g in pins.values() if len(g) > 1):
+        for b in group:
+            street, _, city = (b["tags"].get("addr:street") or "").rpartition(",")
+            ll = geocode(street.strip(), city.strip()) if street.strip() and city.strip() else None
+            if ll and dist(b["lat"], b["lon"], ll[0], ll[1]) > 2000:
+                b["lat"], b["lon"] = ll
+    return branches
 
 
 def osherad():

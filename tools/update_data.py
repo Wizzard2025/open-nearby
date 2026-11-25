@@ -44,6 +44,23 @@ def fetch():
 TILE = 10  # tiles of 1/10 degree (~10 km): a phone downloads only the area it shows
 
 
+def drop_duplicate_ids(shops):
+    """The app keys pins, cards and lists on the id, so each id must appear once. A repeat (a source listing a place
+    twice) is dropped and its sources are kept on the first copy. Returns the repeated ids."""
+    first, dups = {}, []
+    for s in shops:
+        if s[0] in first:
+            dups.append(s[0])
+            for src in filter(None, (s[3].get("src") or "").split(";")):
+                registries.add_src(first[s[0]][3], src)
+        else:
+            first[s[0]] = s
+    if dups:
+        keep = {id(s) for s in first.values()}
+        shops[:] = [s for s in shops if id(s) in keep]
+    return dups
+
+
 def write_tiles(out):
     tiles_dir = OUT.parent / "tiles"
     tiles_dir.mkdir(exist_ok=True)
@@ -101,6 +118,9 @@ def main():
     if bad:
         print(f"  dropped {len(bad)} places with coordinates outside Israel: {[x[0] for x in bad][:5]}")
     out[:] = [x for x in out if 29.3 < x[1] < 33.5 and 34.2 < x[2] < 35.95]
+    dups = drop_duplicate_ids(out)
+    if dups:
+        print(f"  dropped {len(dups)} repeated ids: {dups[:5]}")
     write_tiles(out)
     OUT.write_text(json.dumps({"updated": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "shops": out},
                               ensure_ascii=False, separators=(",", ":")), encoding="utf-8")

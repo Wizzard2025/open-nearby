@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.5.0 — 2026-11-22
+
+Shops inside shopping centres.
+
+- BIG Fashion Glilot: all 160 shops, restaurants and cafés from the centre's own directory are on the map, each at its unit, with its floor ("BIG Fashion Glilot, first floor") and the Hebrew and English name. Shops that were already on the map got the floor and moved to their unit; nothing appears twice.
+- Opening hours: the centre's official hours (Sun–Thu 9:30–22:00, Fri 9:00–15:00, Sat 10:00–23:00, from the BIG site) apply to its shops, so they show as open (green) or closed. The card says these are the centre's hours and that some shops and cafés may differ, and the status pill is dashed like other approximate hours. Shops with their own known hours keep them: the Super-Pharm branch keeps the chain's hours.
+- Search: a magnifier button next to 3D finds a place by name in any language (Hebrew, Russian, English, brand), nearest first, among the places of the map you have loaded. Choosing a result flies there and opens its card.
+- No more grey twins next to chain branches: Overture often pins a Shufersal, Super-Pharm, Rami Levy, Victory or Osher Ad branch 60–150 m from the chain's official pin and in another category (Shufersal supermarkets come as "pharmacy"), so a copy without hours stood next to the real branch and looked closed. A place named after a chain within 150 m of one of that chain's official branches is now that branch (108 such copies removed across the country).
+- Search results show the same status as the map: a visitor's recent "open" check-in, and the dashed pill for the centre's approximate hours. Opening a result from another category switches the list to "All", so its card is shown.
+- Opening hours check across all 3,778 places that have hours: hours given with an open end ("12:00+", 33 places) showed as "No hours listed" once open; they now show "Open · closing time not given". A rule that only says `closed "…"` after the real hours (a mapper's note "closed on Shabbat") closed the place on every day; it is now read as closing the remaining days only. The other places that show as closed are closed by their listed hours. Most places on the map still have no known hours (in central Herzliya 431 of 465): they are shown as "No hours listed", not as closed.
+- Good Pharm hours: the chain's 83 branch pages (goodpharm.co.il) are read nightly, with winter or summer hours as the chain lists them, including Saturday-night opening. 54 branches have hours now (five in Herzliya). They are placed at the matching store of the chain's price list, so the branches already on the map get the hours and nothing appears twice. The other 29, mostly in Tel Aviv, are placed by their address in the nightly update. A branch page marked "closed for good" is skipped.
+- Geocoding: a failed request to the address service is no longer saved as "address not found", so the address is looked up again on the next run.
+- Chain data fixes: Victory Bat Yam was pinned on the Emek Hefer branch (the chain's site gives both the same pin; a branch whose address is over 2 km from a shared pin is now placed by its address); Rami Levy branches sharing a name (two in Hadera, two in Beit Shemesh, two listed as Or Akiva) had the same id, so only one could be opened — each now has a name-and-street id that does not depend on the order of the chain's page; Super-Pharm's branch list repeated 37 branches across pages, which put 21 ids on the map twice. Each id is now unique.
+- `tools/malls.py` turns a centre's indoor-map export into a small facts file (`data/malls/<centre>.json`: names, kind, floor, position, phone, website; no map drawings or logos). The nightly data update merges every file in `data/malls/`, so more centres can be added the same way.
+- The shop card shows the centre and floor in the user's language; "the shopping centre's directory" is listed among the sources.
+
 ## 1.4.0 — 2026-11-21
 
 Accounts, and moderation by staff.
